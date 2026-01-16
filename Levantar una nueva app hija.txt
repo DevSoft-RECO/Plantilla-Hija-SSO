@@ -1,0 +1,216 @@
+Manual de Despliegue: Microservicios Laravel (App Hija)
+Este manual detalla los pasos para configurar una App Hija que consuma autenticación mediante SSO (Single Sign-On) desde una App Madre utilizando tokens JWT y llaves RS256.
+
+Paso 1: Instalación y Dependencias
+Crear el proyecto:
+
+Bash
+
+composer create-project laravel/laravel NombreDeTuApp
+Instalar soporte para JWT: Necesario para decodificar los tokens emitidos por la Madre.
+
+Bash
+
+composer require firebase/php-jwt
+Publicar configuración de CORS:
+
+Bash
+
+php artisan config:publish cors
+Paso 2: Configuración de Seguridad y Middleware
+2.1 Sincronizar Llave Pública
+Copia el archivo oauth-public.key desde la carpeta storage/ de la App Madre hacia la carpeta storage/ de tu App Hija.
+
+Nota: Esto permite a la Hija verificar que los tokens fueron firmados por la Madre sin necesidad de consultarle cada vez.
+
+2.2 Crear el Middleware de Validación (ValidateSSO.php)
+Crea el archivo en app/Http/Middleware/ValidateSSO.php:
+php artisan make:middleware ValidateSSO
+
+PHP
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\GenericUser; 
+
+class ValidateSSO
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['message' => 'Token requerido'], 401);
+        }
+
+        try {
+            $publicKeyPath = storage_path('oauth-public.key');
+            
+            if (!file_exists($publicKeyPath)) {
+                throw new \Exception("Falta llave pública en servidor hijo");
+            }
+            
+            $publicKey = file_get_contents($publicKeyPath);
+            JWT::$leeway = 60; // Margen de error para relojes desincronizados
+
+            // Decodificar Token con RS256
+            $decoded = JWT::decode($token, new Key($publicKey, 'RS256'));
+
+            // Inyectar usuario en la sesión de Laravel (Memoria)
+            $user = new GenericUser([
+                'id' => $decoded->sub,
+                'token_scopes' => $decoded->scopes ?? [],
+            ]);
+
+            Auth::setUser($user);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Acceso Denegado: ' . $e->getMessage()], 401);
+        }
+
+        return $next($request);
+    }
+}
+2.3 Registrar Middleware y Rutas API
+En bootstrap/app.php, habilita las rutas de API y registra el alias del middleware:
+
+PHP
+
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+// ESTA LÍNEA DEBE SER EXACTA:
+use App\Http\Middleware\ValidateSSO; 
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'sso' => ValidateSSO::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+	
+Paso 3: Definición de Rutas y CORS
+Rutas Protegidas: En routes/api.php, usa el middleware sso:
+
+PHP
+
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// Asegúrate de que el middleware 'sso' esté registrado en bootstrap/app.php
+Route::middleware('sso')->group(function () {
+
+
+});
+
+
+Configuración de CORS: En config/cors.php, permite el acceso desde el origen de tu Frontend:
+
+PHP
+
+'allowed_origins' => ['http://localhost:5174'], // URL del Frontend Hija
+'supports_credentials' => true,
+Paso 4: Variables de Entorno (.env)
+Configura la base de datos propia de la app hija y su URL:
+
+Fragmento de código
+
+APP_URL=http://localhost:8001
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nombre_db_hija
+DB_USERNAME=root
+DB_PASSWORD=
+Ejecuta php artisan migrate y levanta el servidor con php artisan serve --port=8001.
+
+Paso 5: Registro en App Madre esto solo se ejecuta en la app madre en la shijas nos saltamos el paso 5 y nos vamos a la 6
+Para que la conexión funcione, la App Madre debe reconocer a la Hija:
+
+Base de Datos: En PassportSeeder.php (o directamente en la tabla oauth_clients), agrega el nuevo cliente con su UUID y la URL del Frontend (http://localhost:5174).
+
+Seed: Ejecuta php artisan db:seed.
+
+CORS Madre: Agrega la URL del nuevo Frontend en el config/cors.php de la Madre.
+
+Paso 6: Configuración del Frontend (Hija)
+Ajusta el archivo .env del Frontend para que sepa a quién pedir el token y a quién los datos:
+
+Fragmento de código
+
+# Autenticación (Madre)
+VITE_AUTH_URL=http://localhost:8000
+VITE_CLIENT_ID=99999999-aaaa-bbbb-cccc-dddddddddddd esta linea solo es para la madre para la shija no la incluimos verificar el id ocn el que esta en el seeder
+VITE_REDIRECT_URI=http://localhost:5174/callback
+
+# Consumo de Datos (Backend Hija)
+VITE_API_URL=http://localhost:8001
+
+
+
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cross-Origin Resource Sharing (CORS) Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure your settings for cross-origin resource sharing
+    | or "CORS". This determines what cross-origin operations may execute
+    | in web browsers. You are free to adjust these settings as needed.
+    |
+    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    |
+    */
+
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+
+    'allowed_methods' => ['*'],
+
+    'allowed_origins' => [
+        // ---------------------------------------------------------
+        // 1. ENTORNO LOCAL (Desarrollo)
+        // ---------------------------------------------------------
+        'http://localhost:5174',      // Tu App Hija Local
+        'http://127.0.0.1:5174',      // Variante IP
+
+        // ---------------------------------------------------------
+        // 2. ENTORNO PRODUCCIÓN (Google Cloud)
+        // ---------------------------------------------------------
+        'https://inventarioit.yamankutx.com.gt',       // Tu App Madre Real
+    ],
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
+
+    'supports_credentials' => true,
+];
