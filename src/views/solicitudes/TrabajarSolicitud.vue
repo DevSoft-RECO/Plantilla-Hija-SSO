@@ -32,6 +32,7 @@ const showValidarModal = ref(false);
 const validarLoading = ref(false);
 const validarData = ref({
     accion: 'cerrar',
+    tipo_solucion: 'total',
     comentario: ''
 });
 
@@ -55,6 +56,20 @@ const canFinalize = computed(() => {
     // Solo si es responsable y status asignada/en_seguimiento
     return isAssignee.value &&
            ['asignada', 'en_seguimiento'].includes(solicitud.value?.estado);
+});
+
+const canComment = computed(() => {
+    // Si soy admin o asignado: SIEMPRE (salvo cerrada)
+    if (authStore.hasRole('Super Admin') || isAssignee.value) return true;
+
+    // Si soy solicitante: SOLO si está en seguimiento, validación O reabierta
+    // (Bloqueado en reportada y asignada)
+    if (isRequester.value) {
+        return ['en_seguimiento', 'pendiente_validacion', 'reabierta'].includes(solicitud.value?.estado);
+    }
+
+    // Otros (auditor, jefe): pueden comentar si no está cerrada
+    return true;
 });
 
 onMounted(() => {
@@ -169,19 +184,21 @@ const confirmarCierre = async () => {
 // --- Lógica de Validación (Requester) ---
 const abrirValidarModal = () => {
     validarData.value.accion = 'cerrar';
+    validarData.value.tipo_solucion = 'total';
     validarData.value.comentario = '';
     showValidarModal.value = true;
 };
 
 const confirmarValidacion = async () => {
-    if (!validarData.value.comentario) {
-        return Swal.fire('Atención', 'Escribe un comentario de validación', 'warning');
+    if (validarData.value.accion === 'reabrir' && !validarData.value.comentario) {
+        return Swal.fire('Atención', 'El motivo de rechazo es obligatorio.', 'warning');
     }
 
     validarLoading.value = true;
     try {
          await SolicitudService.validateSolicitud(id, {
             accion: validarData.value.accion,
+            tipo_solucion: validarData.value.tipo_solucion,
             comentario: validarData.value.comentario
          });
 
@@ -346,9 +363,8 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                     </div>
                 </div>
 
-                <!-- Input Area -->
                 <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
-                    <div class="flex flex-col gap-3">
+                    <div v-if="canComment" class="flex flex-col gap-3">
                         <textarea
                             v-model="nuevoSeguimiento.comentario"
                             rows="3"
@@ -366,6 +382,15 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                                 <span v-else>Enviar <i class="fas fa-paper-plane ml-1"></i></span>
                             </button>
                         </div>
+                    </div>
+                    <div v-else class="text-center py-4 bg-yellow-50 dark:bg-gray-700/50 rounded-lg border border-yellow-100 dark:border-gray-600">
+                        <i class="fas fa-user-clock text-yellow-500 mb-2 text-xl"></i>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm font-medium">
+                            Esperando inicio de soporte...
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Podrás interactuar cuando el agente comience a trabajar en tu caso.
+                        </p>
                     </div>
                 </div>
                 <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 text-center">
@@ -459,9 +484,27 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                         </label>
                      </div>
 
+                     <div v-if="validarData.accion === 'cerrar'" class="bg-blue-50 dark:bg-gray-700/30 p-3 rounded-lg border border-blue-100 dark:border-gray-600">
+                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alcance de la Solución:</p>
+                        <div class="flex gap-4">
+                             <label class="flex items-center gap-2 cursor-pointer">
+                                 <input type="radio" v-model="validarData.tipo_solucion" value="total" class="text-green-600 focus:ring-green-500">
+                                 <span class="text-sm text-gray-600 dark:text-gray-400">Total</span>
+                             </label>
+                             <label class="flex items-center gap-2 cursor-pointer">
+                                 <input type="radio" v-model="validarData.tipo_solucion" value="parcial" class="text-yellow-600 focus:ring-yellow-500">
+                                 <span class="text-sm text-gray-600 dark:text-gray-400">Parcial</span>
+                             </label>
+                        </div>
+                     </div>
+
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentario <span class="text-red-500">*</span></label>
-                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" placeholder="Motivo de la aprobación o rechazo..."></textarea>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Comentario
+                            <span v-if="validarData.accion === 'reabrir'" class="text-red-500">*</span>
+                            <span v-else class="text-gray-400 font-normal">(Opcional)</span>
+                        </label>
+                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" :placeholder="validarData.accion === 'reabrir' ? 'Motivo del rechazo...' : 'Observaciones adicionales...'"></textarea>
                      </div>
                 </div>
 

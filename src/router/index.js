@@ -45,7 +45,7 @@ const router = createRouter({
           path: 'solicitudes/bandeja',
           name: 'bandeja-solicitudes',
           component: () => import('@/views/solicitudes/BandejaSolicitudes.vue'),
-          meta: { title: 'Bandeja de Solicitudes', permission: 'solicitudes.ver_bandeja' }
+          meta: { title: 'Bandeja de Solicitudes', role: 'Super Admin' }
         },
         {
           path: 'solicitudes/crear',
@@ -64,19 +64,19 @@ const router = createRouter({
           path: 'solicitudes/categorias',
           name: 'categorias-solicitud',
           component: () => import('@/views/solicitudes/CategoriasSolicitud.vue'),
-          meta: { title: 'Categorías', permission: 'solicitudes.categorias' } // Ajustar permiso real
+          meta: { title: 'Categorías', role: 'Super Admin' }
         },
         {
           path: 'solicitudes/mis-asignaciones',
           name: 'mi-bandeja',
           component: () => import('@/views/solicitudes/MiBandeja.vue'),
-          meta: { title: 'Mi Bandeja' }
+          meta: { title: 'Mi Bandeja', permission: 'seguimiento_gestiones' }
         },
         {
           path: 'solicitudes/mis-solicitudes',
           name: 'mis-solicitudes',
           component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
-          meta: { title: 'Mis Solicitudes' }
+          meta: { title: 'Mis Solicitudes', permission: 'crear_gestiones' }
         },
         {
           path: 'solicitudes/trabajar/:id',
@@ -130,7 +130,7 @@ router.beforeEach(async (to, from, next) => {
 
 
     // Verificar Permiso
-    if (to.meta.permission && !authStore.can(to.meta.permission)) {
+    if (to.meta.permission && !authStore.hasPermission(to.meta.permission)) {
       const motherAppUrl = import.meta.env.VITE_MOTHER_APP_URL || 'http://localhost:5173';
       console.warn(`⛔ Acceso denegado: Usuario no tiene el permiso '${to.meta.permission}'. Redirigiendo a App Madre...`);
       window.location.href = `${motherAppUrl}/apps`;

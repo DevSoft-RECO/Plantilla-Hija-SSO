@@ -204,9 +204,11 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const layoutStore = useLayoutStore()
+const authStore = useAuthStore()
 const openGroups = ref([])
 
 // --- NUEVA FUNCIÓN PARA CERRAR EN MÓVIL ---
@@ -236,10 +238,10 @@ const menuItems = computed(() => {
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />',
             show: true,
             children: [
-                { label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' },
-                { label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' },
-                { label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' },
-                { label: 'Categorías', route: '/admin/solicitudes/categorias' }
+                ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' }] : []),
+                ...(authStore.hasPermission('seguimiento_gestiones') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : []),
+                ...(authStore.hasPermission('crear_gestiones') ? [{ label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' }] : []),
+                 ...(authStore.hasRole('Super Admin') ? [{ label: 'Categorías', route: '/admin/solicitudes/categorias' }] : [])
             ]
         },
         // --- EJEMPLO DE GRUPO (PLANTILLA) ---

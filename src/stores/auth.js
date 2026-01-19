@@ -90,15 +90,17 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Helper para verificar permisos en la App Hija
    */
-  function can(permission) {
+  function hasPermission(permission) {
     if (!user.value) return false
 
     // Super Admin siempre puede todo
     if (user.value.roles && user.value.roles.includes('Super Admin')) return true
 
     // Verificar lista de permisos (si existe)
-    if (user.value.permissions && Array.isArray(user.value.permissions)) {
-      return user.value.permissions.includes(permission)
+    // Backend puede enviar 'permissions' o 'permisos'
+    const userPerms = user.value.permissions || user.value.permisos || []
+    if (Array.isArray(userPerms)) {
+      return userPerms.includes(permission)
     }
 
     return false
@@ -128,7 +130,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     fetchUser,
     checkAuth,
-    can,
+    hasPermission,
     hasRole
   }
 })
