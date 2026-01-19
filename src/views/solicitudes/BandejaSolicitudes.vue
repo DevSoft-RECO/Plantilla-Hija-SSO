@@ -91,7 +91,9 @@ const getEstadoClass = (estado) => {
                         <td class="p-3">{{ sol.responsable_nombre || '-' }}</td>
                         <td class="p-3 text-gray-500">{{ new Date(sol.created_at).toLocaleDateString() }}</td>
                         <td class="p-3 text-center">
-                            <button @click="verDetalle(sol.id)" class="text-blue-600 hover:text-blue-800 font-medium">Ver Detalle</button>
+                            <button @click="verDetalle(sol.id)" class="bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 font-medium px-3 py-1 rounded transition text-xs border border-blue-200">
+                                Asignar
+                            </button>
                         </td>
                     </tr>
                 </tbody>

@@ -13,8 +13,8 @@ export default {
     assignSolicitud(id, data) {
         return axios.put(`/solicitudes/${id}/asignar`, data);
     },
-    takeSolicitud(id) {
-        return axios.put(`/solicitudes/${id}/tomar`);
+    takeSolicitud(id, data = {}) {
+        return axios.put(`/solicitudes/${id}/tomar`, data);
     },
     addSeguimiento(id, data) {
         return axios.post(`/solicitudes/${id}/seguimiento`, data);

@@ -12,17 +12,7 @@
 
       <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 relative custom-scrollbar">
         <RouterView v-slot="{ Component }">
-          <Transition
-            enter-active-class="transition ease-out duration-200"
-            enter-from-class="opacity-0 translate-y-2"
-            enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100 translate-y-0"
-            leave-to-class="opacity-0 translate-y-2"
-            mode="out-in"
-          >
             <component :is="Component" />
-          </Transition>
         </RouterView>
       </main>
     </div>

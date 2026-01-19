@@ -1,16 +1,49 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 import AsignarSolicitudModal from './components/AsignarSolicitudModal.vue';
+import TomarCasoModal from './components/TomarCasoModal.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
+const authStore = useAuthStore();
 const solicitud = ref(null);
 const loading = ref(true);
 const showAssignModal = ref(false);
+const showTomarModal = ref(false);
+const showValidarModal = ref(false);
+
+const saving = ref(false);
+const validarLoading = ref(false);
+
+const isIntervenir = ref(false);
+
+// Datos para validación/cierre
+const validarData = ref({
+    accion: 'cerrar', // cerrar | reabrir
+    comentario: ''
+});
 
 const id = route.params.id;
+
+const nuevoSeguimiento = ref({
+    comentario: '',
+    evidencias: []
+});
+
+const isChatLocked = computed(() => {
+    // Bloqueado si NO he intervenido Y NO soy el responsable ni el creador
+    // (Ajustar según lógica de negocio. El usuario dijo: "Jefe interviene para desbloquear")
+    // Si soy Jefe (role check mock) -> Locked by default.
+    // Simplificación: Siempre bloqueado por defecto en esta vista para "externos" al caso, salvo intervención.
+    // Asumimos que esta vista es "Detalle General".
+    // Si soy el responsable, debería usar TrabajarSolicitud, pero si estoy aquí...
+
+    // Lógica requerida: "Historial bloqueado si el jefe quiere intervenir...boton intervenir desbloquea"
+    return !isIntervenir.value;
+});
 
 onMounted(() => {
     cargarDetalle();
@@ -33,15 +66,17 @@ const formatFecha = (fecha) => {
     return new Date(fecha).toLocaleString();
 };
 
+const isImage = (url) => {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+};
+
 // Acciones
-const tomarCaso = async () => {
-    try {
-        await SolicitudService.takeSolicitud(id);
-        Swal.fire('Éxito', 'Has tomado el caso', 'success');
-        cargarDetalle();
-    } catch {
-        Swal.fire('Error', 'No tienes permiso o ya está asignada', 'error');
-    }
+const tomarCaso = () => {
+    showTomarModal.value = true;
+};
+
+const onCaseTaken = () => {
+    cargarDetalle();
 };
 
 const asignarCaso = () => {
@@ -52,123 +87,245 @@ const onAssigned = () => {
     cargarDetalle();
 };
 
-const agregarSeguimiento = async () => {
-    const { value: text } = await Swal.fire({
-        input: 'textarea',
-        inputLabel: 'Comentario / Seguimiento',
-        inputPlaceholder: 'Escribe aquí...',
-        inputAttributes: {
-            'aria-label': 'Escribe tu comentario'
-        },
-        showCancelButton: true
-    });
+const toggleIntervenir = () => {
+    isIntervenir.value = !isIntervenir.value;
+};
 
-    if (text) {
-        try {
-            await SolicitudService.addSeguimiento(id, {
-                comentario: text,
-                tipo_accion: 'comentario'
-            });
-            Swal.fire('Agregado', '', 'success');
-            cargarDetalle();
-        } catch {
-            Swal.fire('Error', 'No se pudo agregar', 'error');
-        }
+// Validación
+const abrirValidarModal = () => {
+    validarData.value.accion = 'cerrar';
+    validarData.value.comentario = '';
+    showValidarModal.value = true;
+};
+
+const confirmarValidacion = async () => {
+    if (!validarData.value.comentario) {
+        return Swal.fire('Atención', 'Escribe un comentario de validación', 'warning');
+    }
+
+    validarLoading.value = true;
+    try {
+        // Suponiendo endpoint validateValidation en service
+         await SolicitudService.validateSolicitud(id, {
+            accion: validarData.value.accion,
+            comentario: validarData.value.comentario
+         });
+
+         Swal.fire('Procesado', 'La solicitud ha sido actualizada', 'success');
+         showValidarModal.value = false;
+         isIntervenir.value = false; // Reset intervención
+         cargarDetalle();
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'No se pudo validar el caso', 'error');
+    } finally {
+        validarLoading.value = false;
     }
 };
 
-const validarSolicitud = async (accion) => {
-    // accion: cerrar or reabrir
-    const { value: text } = await Swal.fire({
-        input: 'textarea',
-        inputLabel: `Justificación para ${accion}`,
-        inputPlaceholder: 'Escriba un motivo...',
-        showCancelButton: true
-    });
 
-    if (text) {
-        try {
-             await SolicitudService.validateSolicitud(id, {
-                accion: accion,
-                comentario: text
-            });
-            Swal.fire('Procesado', `Solicitud ${accion === 'cerrar' ? 'cerrada' : 'reabierta'}`, 'success');
-            cargarDetalle();
-        } catch {
-            Swal.fire('Error', 'Falló la validación', 'error');
-        }
-    }
+const handleFileUpload = (event) => {
+    nuevoSeguimiento.value.evidencias = event.target.files;
 };
 
+const enviarSeguimiento = async () => {
+    if (!nuevoSeguimiento.value.comentario) {
+        return Swal.fire('Atención', 'Escribe un comentario', 'warning');
+    }
+
+    saving.value = true;
+    try {
+        const formData = new FormData();
+        formData.append('comentario', nuevoSeguimiento.value.comentario);
+        formData.append('tipo_accion', 'comentario');
+
+        if (nuevoSeguimiento.value.evidencias) {
+            for (let i = 0; i < nuevoSeguimiento.value.evidencias.length; i++) {
+                formData.append('evidencias[]', nuevoSeguimiento.value.evidencias[i]);
+            }
+        }
+
+        await SolicitudService.addSeguimiento(id, formData);
+
+        nuevoSeguimiento.value.comentario = '';
+        nuevoSeguimiento.value.evidencias = [];
+        await cargarDetalle();
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Enviado',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'No se pudo enviar el comentario', 'error');
+    } finally {
+        saving.value = false;
+    }
+};
 </script>
 
 <template>
+    <!-- Root para animaciones -->
     <div>
         <div v-if="loading" class="p-6 text-center">Cargando...</div>
-        <div v-else class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Detalle Columna Izquierda -->
-            <div class="md:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded shadow">
-                    <div class="flex justify-between items-start mb-4">
-                        <h1 class="text-2xl font-bold text-gray-800">{{ solicitud.titulo }}</h1>
-                        <span class="px-3 py-1 rounded text-sm font-bold bg-gray-200">{{ solicitud.estado }}</span>
-                    </div>
-                    <p class="text-gray-600 whitespace-pre-line mb-4">{{ solicitud.descripcion }}</p>
-                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-500">
-                        <div>
-                            <span class="block font-medium text-gray-700">Solicitante:</span>
-                            {{ solicitud.creado_por_nombre }}
-                        </div>
-                        <div>
-                            <span class="block font-medium text-gray-700">Agencia:</span>
-                            {{ solicitud.agencia_id }}
-                        </div>
-                        <div>
-                            <span class="block font-medium text-gray-700">Asignado a:</span>
-                            {{ solicitud.responsable_nombre || 'Sin asignar' }}
-                            <span v-if="solicitud.responsable_tipo" class="text-xs bg-gray-100 px-1 rounded">{{ solicitud.responsable_tipo }}</span>
-                        </div>
-                        <div>
-                            <span class="block font-medium text-gray-700">Fecha Creación:</span>
-                            {{ formatFecha(solicitud.created_at) }}
-                        </div>
-                    </div>
-                </div>
+        <div v-else class="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- Timeline -->
-                <div class="bg-white p-6 rounded shadow">
-                    <h2 class="text-lg font-bold mb-4">Historia y Seguimiento</h2>
-                    <div class="border-l-2 border-gray-200 ml-3 space-y-6">
-                        <div v-for="seg in solicitud.seguimientos" :key="seg.id" class="relative pl-6">
-                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
-                            <div class="text-sm font-semibold text-gray-800 flex justify-between">
-                                <span>{{ seg.seguimiento_por_nombre }} ({{ seg.tipo_accion }})</span>
-                                <span class="text-gray-400 font-normal text-xs">{{ formatFecha(seg.created_at) }}</span>
+            <!-- Columna Izquierda: Información -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="mb-4">
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                            :class="{
+                                'bg-red-50 text-red-700': solicitud.estado === 'reportada',
+                                'bg-blue-50 text-blue-700': solicitud.estado === 'asignada',
+                                'bg-yellow-50 text-yellow-700': solicitud.estado === 'en_seguimiento',
+                                'bg-purple-50 text-purple-700': solicitud.estado === 'pendiente_validacion',
+                                'bg-green-50 text-green-700': solicitud.estado === 'cerrada',
+                                'bg-orange-50 text-orange-700': solicitud.estado === 'reabierta'
+                            }"
+                        >
+                            {{ solicitud.estado?.replace('_', ' ') }}
+                        </span>
+                        <h1 class="text-xl font-bold text-gray-800 dark:text-white mt-2">{{ solicitud.titulo }}</h1>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                             <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Descripción</h3>
+                             <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ solicitud.descripcion }}</p>
+                        </div>
+
+                        <div v-if="solicitud.evidencias_inicial?.length">
+                            <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Evidencias</h3>
+                            <div class="grid grid-cols-3 gap-2">
+                                <a v-for="(ev, i) in solicitud.evidencias_inicial" :key="i" :href="ev" target="_blank" class="aspect-square border rounded overflow-hidden">
+                                     <img v-if="isImage(ev)" :src="ev" class="w-full h-full object-cover">
+                                     <div v-else class="w-full h-full flex items-center justify-center bg-gray-100"><i class="far fa-file"></i></div>
+                                </a>
                             </div>
-                            <p class="text-gray-600 text-sm mt-1">{{ seg.comentario }}</p>
+                        </div>
+
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 gap-4">
+                             <div>
+                                <span class="block text-xs font-semibold text-gray-400 uppercase">Solicitante</span>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por_nombre }}</div>
+                             </div>
+                             <div>
+                                <span class="block text-xs font-semibold text-gray-400 uppercase">Responsable</span>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.responsable_nombre || 'Sin Asignar' }}</div>
+                             </div>
+                        </div>
+
+                        <div class="pt-4 flex flex-col gap-2">
+                            <div v-if="solicitud.estado !== 'cerrada'" class="flex gap-2">
+                                <button @click="asignarCaso" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded transition">Asignar</button>
+                                <button @click="tomarCaso" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">Tomar Caso</button>
+                            </div>
+
+                            <!-- Botón Validar (Solo si pendiente validación) -->
+                            <button
+                                v-if="solicitud.estado === 'pendiente_validacion'"
+                                @click="abrirValidarModal"
+                                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition flex items-center justify-center gap-2 mt-2"
+                            >
+                                <i class="fas fa-clipboard-check"></i> Validar Solución
+                            </button>
                         </div>
                     </div>
-                    <button @click="agregarSeguimiento" class="mt-4 text-blue-600 hover:underline text-sm font-medium">+ Agregar Comentario / Evidencia</button>
                 </div>
             </div>
 
-            <!-- Acciones Columna Derecha -->
-            <div class="md:col-span-1">
-                <div class="bg-white p-6 rounded shadow sticky top-6">
-                    <h2 class="text-lg font-bold mb-4">Acciones</h2>
-                    <div class="flex flex-col gap-2">
-                        <button @click="tomarCaso" class="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Tomar Caso</button>
-                        <button @click="asignarCaso" class="bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200 transition">Asignar Responsable</button>
-                        <hr class="my-2">
-                        <button v-if="solicitud.estado !== 'cerrada'" @click="validarSolicitud('cerrar')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">Validar y Cerrar</button>
-                        <button v-if="solicitud.estado === 'cerrada'" @click="validarSolicitud('reabrir')" class="bg-red-50 text-red-600 border border-red-200 py-2 rounded hover:bg-red-100 transition">Reabrir Caso</button>
+            <!-- Columna Derecha: Chat / Seguimiento -->
+            <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-[600px]">
+                <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-700 dark:text-gray-200">Actividad y Comentarios</h3>
+
+                    <button
+                        v-if="solicitud.estado !== 'cerrada'"
+                        @click="toggleIntervenir"
+                        class="text-xs px-3 py-1 rounded-full border transition-colors flex items-center gap-1"
+                        :class="isIntervenir ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'"
+                    >
+                        <i class="fas" :class="isIntervenir ? 'fa-unlock' : 'fa-lock'"></i>
+                        {{ isIntervenir ? 'Interviniendo' : 'Intervenir' }}
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50 dark:bg-transparent">
+                     <div v-if="!solicitud.seguimientos?.length" class="text-center text-gray-400 py-10 italic">
+                        No hay comentarios aún.
+                     </div>
+
+                     <div
+                        v-for="seg in solicitud.seguimientos"
+                        :key="seg.id"
+                        class="flex gap-3"
+                        :class="{ 'flex-row-reverse': seg.seguimiento_por_id === authStore.user.id }"
+                     >
+                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
+                             :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-600'">
+                             {{ seg.seguimiento_por_nombre?.charAt(0) }}
+                        </div>
+
+                        <div class="max-w-[80%] rounded-2xl p-3 text-sm shadow-sm"
+                             :class="[
+                                seg.seguimiento_por_id === authStore.user.id
+                                    ? 'bg-indigo-600 text-white rounded-tr-none'
+                                    : 'bg-white border text-gray-700 rounded-tl-none'
+                             ]">
+                             <div class="flex justify-between items-center gap-4 mb-1 opacity-80 text-[10px] uppercase font-bold">
+                                <span>{{ seg.seguimiento_por_nombre }}</span>
+                                <span>{{ formatFecha(seg.created_at) }}</span>
+                             </div>
+                             <p class="whitespace-pre-wrap">{{ seg.comentario }}</p>
+
+                             <div v-if="seg.evidencias?.length" class="mt-2 flex flex-wrap gap-2">
+                                <a v-for="(ev, i) in seg.evidencias" :key="i" :href="ev" target="_blank" class="px-2 py-1 bg-black/10 rounded text-xs hover:bg-black/20 transition flex items-center gap-1">
+                                    <i class="fas fa-paperclip"></i> Adjunto
+                                </a>
+                             </div>
+                        </div>
+                     </div>
+                </div>
+
+                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700">
+                    <!-- Overlay de bloqueo -->
+                    <div v-if="isChatLocked" class="text-center py-2">
+                        <p class="text-sm text-gray-400 italic mb-2">El chat está en modo solo lectura.</p>
+                        <button @click="toggleIntervenir" class="text-blue-600 text-xs hover:underline">Habilitar escritura</button>
                     </div>
-                    <div class="mt-4 text-xs text-gray-400">
-                        * Las acciones requieren permisos específicos.
+
+                    <div v-else class="flex flex-col gap-2 transition-all">
+                        <textarea v-model="nuevoSeguimiento.comentario" rows="2" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="Escribe un comentario..."></textarea>
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs text-gray-500 hover:text-indigo-600 cursor-pointer flex items-center gap-1">
+                                <i class="fas fa-paperclip"></i> Adjuntar
+                                <input type="file" multiple @change="handleFileUpload" class="hidden">
+                            </label>
+                            <button @click="enviarSeguimiento" :disabled="saving" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2">
+                                <i v-if="saving" class="fas fa-spinner fa-spin"></i>
+                                <span>Enviar</span>
+                            </button>
+                        </div>
+                        <div v-if="nuevoSeguimiento.evidencias.length" class="text-xs text-indigo-600">{{ nuevoSeguimiento.evidencias.length }} archivos</div>
                     </div>
                 </div>
+                <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 text-center">
+                     <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                        <i class="fas fa-lock mr-2"></i> Este caso está cerrado y en modo histórico.
+                    </p>
+                </div>
             </div>
+
         </div>
+
         <AsignarSolicitudModal
             v-if="solicitud"
             :isOpen="showAssignModal"
@@ -176,5 +333,70 @@ const validarSolicitud = async (accion) => {
             @close="showAssignModal = false"
             @assigned="onAssigned"
         />
+        <TomarCasoModal
+            v-if="solicitud"
+            :isOpen="showTomarModal"
+            :solicitudId="solicitud.id"
+            @close="showTomarModal = false"
+            @taken="onCaseTaken"
+        />
+
+        <!-- Modal Validar -->
+        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
+                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                     <p class="text-sm text-gray-600 dark:text-gray-300">
+                        ¿Cómo deseas proceder con esta solicitud que está pendiente de validación?
+                     </p>
+
+                     <div class="flex gap-4">
+                        <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'cerrar' ? 'ring-2 ring-green-500 border-green-500 bg-green-50' : 'border-gray-200'">
+                            <input type="radio" v-model="validarData.accion" value="cerrar" class="hidden">
+                            <div class="text-center">
+                                <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
+                                <div class="font-bold text-sm text-gray-800">Aprobar y Cerrar</div>
+                            </div>
+                        </label>
+
+                         <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'reabrir' ? 'ring-2 ring-orange-500 border-orange-500 bg-orange-50' : 'border-gray-200'">
+                            <input type="radio" v-model="validarData.accion" value="reabrir" class="hidden">
+                            <div class="text-center">
+                                <i class="fas fa-undo text-2xl text-orange-500 mb-2"></i>
+                                <div class="font-bold text-sm text-gray-800">Rechazar / Devolver</div>
+                            </div>
+                        </label>
+                     </div>
+
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentario de Validación <span class="text-red-500">*</span></label>
+                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" placeholder="Motivo de la aprobación o rechazo..."></textarea>
+                     </div>
+                </div>
+
+                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t">
+                    <button @click="showValidarModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition font-medium">Cancelar</button>
+                    <button
+                        @click="confirmarValidacion"
+                        :disabled="validarLoading"
+                        class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md transition font-medium flex items-center gap-2 disabled:opacity-70"
+                    >
+                        <i v-if="validarLoading" class="fas fa-spinner fa-spin"></i>
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+</style>

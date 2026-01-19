@@ -68,10 +68,16 @@ const router = createRouter({
         },
         {
           path: 'solicitudes/mis-asignaciones',
-          name: 'mis-asignaciones',
-          component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
-          meta: { title: 'Mis Asignaciones' }
-        }
+          name: 'mi-bandeja',
+          component: () => import('@/views/solicitudes/MiBandeja.vue'),
+          meta: { title: 'Mi Bandeja' }
+        },
+        {
+          path: 'solicitudes/trabajar/:id',
+          name: 'trabajar-solicitud',
+          component: () => import('@/views/solicitudes/TrabajarSolicitud.vue'),
+          meta: { title: 'Trabajar Solicitud' }
+        },
       ]
     },
 
