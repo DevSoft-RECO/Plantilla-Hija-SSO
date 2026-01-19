@@ -15,9 +15,7 @@ onMounted(async () => {
 const cargarSolicitudes = async () => {
     loading.value = true;
     try {
-        const params = {
-            mis_asignaciones: true
-        };
+        const params = {};
         if (filtroEstado.value) params.estado = filtroEstado.value;
 
         const response = await SolicitudService.getSolicitudes(params);
@@ -29,9 +27,7 @@ const cargarSolicitudes = async () => {
     }
 };
 
-const verDetalle = (id) => {
-    router.push({ name: 'detalle-solicitud', params: { id } });
-};
+
 
 const getEstadoClass = (estado) => {
     switch (estado) {
@@ -48,13 +44,20 @@ const getEstadoClass = (estado) => {
 <template>
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Mis Asignaciones</h1>
-            <!-- No botón de crear aquí, es solo bandeja de trabajo -->
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Mis Solicitudes</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Solicitudes realizadas por mi agencia</p>
+            </div>
+            <!-- Botón opcional para recargar -->
+            <button @click="cargarSolicitudes" class="text-blue-600 hover:text-blue-800 transition">
+                <i class="fas fa-sync-alt" :class="{ 'fa-spin': loading }"></i>
+            </button>
         </div>
 
         <div class="mb-4">
-            <select v-model="filtroEstado" @change="cargarSolicitudes" class="border p-2 rounded focus:ring-2 focus:ring-blue-500 outline-none">
+            <select v-model="filtroEstado" @change="cargarSolicitudes" class="bg-white dark:bg-gray-800 border dark:border-gray-700 p-2 rounded focus:ring-2 focus:ring-emerald-500 outline-none text-gray-700 dark:text-gray-200">
                 <option value="">Todos los estados</option>
+                <option value="reportada">Reportada</option>
                 <option value="asignada">Asignada</option>
                 <option value="en_seguimiento">En Seguimiento</option>
                 <option value="pendiente_validacion">Pendiente Validación</option>
@@ -62,37 +65,57 @@ const getEstadoClass = (estado) => {
             </select>
         </div>
 
-        <div class="overflow-x-auto bg-white rounded shadow">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
+                <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold">
                     <tr>
-                        <th class="p-3 border-b">ID</th>
-                        <th class="p-3 border-b">Título</th>
-                        <th class="p-3 border-b">Estado</th>
-                        <th class="p-3 border-b">Solicitante</th>
-                        <th class="p-3 border-b">Fecha Asignación</th>
-                        <th class="p-3 border-b text-center">Acciones</th>
+                        <th class="p-4 border-b dark:border-gray-700">ID</th>
+                        <th class="p-4 border-b dark:border-gray-700">Título</th>
+                        <th class="p-4 border-b dark:border-gray-700">Estado</th>
+                        <th class="p-4 border-b dark:border-gray-700">Asignado A</th>
+                        <th class="p-4 border-b dark:border-gray-700">Fecha Creación</th>
+                        <th class="p-4 border-b dark:border-gray-700 text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm">
+                <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                     <tr v-if="loading">
-                        <td colspan="6" class="p-4 text-center">Cargando mis asignaciones...</td>
+                        <td colspan="6" class="p-8 text-center text-gray-500">
+                            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando solicitudes...
+                        </td>
                     </tr>
                     <tr v-else-if="solicitudes.length === 0">
-                        <td colspan="6" class="p-4 text-center text-gray-500">No tienes solicitudes asignadas.</td>
+                        <td colspan="6" class="p-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                            <p>No hay solicitudes registradas por tu agencia.</p>
+                        </td>
                     </tr>
-                    <tr v-else v-for="sol in solicitudes" :key="sol.id" class="border-b hover:bg-gray-50 transition">
-                        <td class="p-3 font-mono text-gray-500">{{ sol.id }}</td>
-                        <td class="p-3 font-medium">{{ sol.titulo }}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-1 rounded-full text-xs font-bold" :class="getEstadoClass(sol.estado)">
-                                {{ sol.estado }}
+                    <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                        <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
+                        <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getEstadoClass(sol.estado)">
+                                {{ sol.estado?.replace('_', ' ') }}
                             </span>
                         </td>
-                        <td class="p-3">{{ sol.creado_por_nombre }}</td>
-                        <td class="p-3 text-gray-500">{{ sol.fecha_asignacion ? new Date(sol.fecha_asignacion).toLocaleDateString() : '-' }}</td>
-                        <td class="p-3 text-center">
-                            <button @click="verDetalle(sol.id)" class="text-blue-600 hover:text-blue-800 font-medium">Trabajar Caso</button>
+                        <td class="p-4 text-gray-600 dark:text-gray-300">
+                            <div v-if="sol.responsable_nombre" class="flex items-center gap-2">
+                                <div class="bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                    {{ sol.responsable_nombre.charAt(0) }}
+                                </div>
+                                {{ sol.responsable_nombre }}
+                            </div>
+                            <span v-else class="text-gray-400 italic">Sin asignar</span>
+                        </td>
+                        <td class="p-4 text-gray-500 dark:text-gray-400">
+                            {{ new Date(sol.created_at).toLocaleDateString() }}
+                        </td>
+                        <td class="p-4 text-center">
+    <button
+        @click="router.push({ name: 'trabajar-solicitud', params: { id: sol.id } })"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg shadow-sm shadow-emerald-200 dark:shadow-none transition text-xs font-medium flex items-center gap-2 mx-auto"
+    >
+        <i class="fas fa-eye"></i> Ver Seguimiento
+    </button>
                         </td>
                     </tr>
                 </tbody>

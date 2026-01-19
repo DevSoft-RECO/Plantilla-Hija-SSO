@@ -73,6 +73,12 @@ const router = createRouter({
           meta: { title: 'Mi Bandeja' }
         },
         {
+          path: 'solicitudes/mis-solicitudes',
+          name: 'mis-solicitudes',
+          component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
+          meta: { title: 'Mis Solicitudes' }
+        },
+        {
           path: 'solicitudes/trabajar/:id',
           name: 'trabajar-solicitud',
           component: () => import('@/views/solicitudes/TrabajarSolicitud.vue'),

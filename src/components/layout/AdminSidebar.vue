@@ -237,7 +237,8 @@ const menuItems = computed(() => {
             show: true,
             children: [
                 { label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' },
-                { label: 'Mi Bandeja', route: '/admin/solicitudes/mis-asignaciones' },
+                { label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' },
+                { label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' },
                 { label: 'Categorías', route: '/admin/solicitudes/categorias' }
             ]
         },

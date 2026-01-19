@@ -34,14 +34,7 @@ const nuevoSeguimiento = ref({
 });
 
 const isChatLocked = computed(() => {
-    // Bloqueado si NO he intervenido Y NO soy el responsable ni el creador
-    // (Ajustar según lógica de negocio. El usuario dijo: "Jefe interviene para desbloquear")
-    // Si soy Jefe (role check mock) -> Locked by default.
-    // Simplificación: Siempre bloqueado por defecto en esta vista para "externos" al caso, salvo intervención.
-    // Asumimos que esta vista es "Detalle General".
-    // Si soy el responsable, debería usar TrabajarSolicitud, pero si estoy aquí...
-
-    // Lógica requerida: "Historial bloqueado si el jefe quiere intervenir...boton intervenir desbloquea"
+    // Bloqueado si NO he intervenido
     return !isIntervenir.value;
 });
 
@@ -125,9 +118,7 @@ const confirmarValidacion = async () => {
 };
 
 
-const handleFileUpload = (event) => {
-    nuevoSeguimiento.value.evidencias = event.target.files;
-};
+
 
 const enviarSeguimiento = async () => {
     if (!nuevoSeguimiento.value.comentario) {
@@ -229,9 +220,9 @@ const enviarSeguimiento = async () => {
                                 <button @click="tomarCaso" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">Tomar Caso</button>
                             </div>
 
-                            <!-- Botón Validar (Solo si pendiente validación) -->
+                            <!-- Botón Validar (Solo si pendiente validación y NO es externo) -->
                             <button
-                                v-if="solicitud.estado === 'pendiente_validacion'"
+                                v-if="solicitud.estado === 'pendiente_validacion' && authStore.user.tipo !== 'externo'"
                                 @click="abrirValidarModal"
                                 class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition flex items-center justify-center gap-2 mt-2"
                             >
@@ -304,17 +295,12 @@ const enviarSeguimiento = async () => {
 
                     <div v-else class="flex flex-col gap-2 transition-all">
                         <textarea v-model="nuevoSeguimiento.comentario" rows="2" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="Escribe un comentario..."></textarea>
-                        <div class="flex justify-between items-center">
-                            <label class="text-xs text-gray-500 hover:text-indigo-600 cursor-pointer flex items-center gap-1">
-                                <i class="fas fa-paperclip"></i> Adjuntar
-                                <input type="file" multiple @change="handleFileUpload" class="hidden">
-                            </label>
+                        <div class="flex justify-end items-center">
                             <button @click="enviarSeguimiento" :disabled="saving" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2">
                                 <i v-if="saving" class="fas fa-spinner fa-spin"></i>
                                 <span>Enviar</span>
                             </button>
                         </div>
-                        <div v-if="nuevoSeguimiento.evidencias.length" class="text-xs text-indigo-600">{{ nuevoSeguimiento.evidencias.length }} archivos</div>
                     </div>
                 </div>
                 <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 text-center">

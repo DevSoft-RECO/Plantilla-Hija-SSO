@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
@@ -25,6 +25,36 @@ const cierreData = ref({
 const nuevoSeguimiento = ref({
     comentario: '',
     evidencias: []
+});
+
+// Validación
+const showValidarModal = ref(false);
+const validarLoading = ref(false);
+const validarData = ref({
+    accion: 'cerrar',
+    comentario: ''
+});
+
+// Computed Roles
+const isRequester = computed(() => {
+    return solicitud.value && authStore.user && authStore.user.id === solicitud.value.creado_por_id;
+});
+
+const isAssignee = computed(() => {
+    return solicitud.value && authStore.user && authStore.user.id === solicitud.value.responsable_id;
+});
+
+const canValidate = computed(() => {
+    // Solo si es creador, status pendiente_validacion y NO es externo
+    return isRequester.value &&
+           solicitud.value?.estado === 'pendiente_validacion' &&
+           authStore.user.tipo !== 'externo';
+});
+
+const canFinalize = computed(() => {
+    // Solo si es responsable y status asignada/en_seguimiento
+    return isAssignee.value &&
+           ['asignada', 'en_seguimiento'].includes(solicitud.value?.estado);
 });
 
 onMounted(() => {
@@ -135,6 +165,38 @@ const confirmarCierre = async () => {
     }
 };
 
+
+// --- Lógica de Validación (Requester) ---
+const abrirValidarModal = () => {
+    validarData.value.accion = 'cerrar';
+    validarData.value.comentario = '';
+    showValidarModal.value = true;
+};
+
+const confirmarValidacion = async () => {
+    if (!validarData.value.comentario) {
+        return Swal.fire('Atención', 'Escribe un comentario de validación', 'warning');
+    }
+
+    validarLoading.value = true;
+    try {
+         await SolicitudService.validateSolicitud(id, {
+            accion: validarData.value.accion,
+            comentario: validarData.value.comentario
+         });
+
+         Swal.fire('Procesado', 'La solicitud ha sido actualizada', 'success');
+         showValidarModal.value = false;
+         router.push({ name: 'mis-solicitudes' }); // Volver a lista
+
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'No se pudo validar el caso', 'error');
+    } finally {
+        validarLoading.value = false;
+    }
+};
+
 const formatFecha = (fecha) => new Date(fecha).toLocaleString();
 const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
 
@@ -203,14 +265,28 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                     </div>
                 </div>
 
-                <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700">
+                <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">
                     <button
+                        v-if="canFinalize"
                         @click="finalizarCaso"
                         class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-green-200 dark:shadow-none transition flex items-center justify-center gap-2"
                     >
                         <i class="fas fa-check-circle"></i>
                         Finalizar Caso
                     </button>
+
+                    <button
+                        v-if="canValidate"
+                        @click="abrirValidarModal"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-purple-200 dark:shadow-none transition flex items-center justify-center gap-2"
+                    >
+                        <i class="fas fa-clipboard-check"></i>
+                        Validar Solución
+                    </button>
+
+                    <p v-if="!canFinalize && !canValidate && solicitud.estado !== 'cerrada'" class="text-xs text-center text-gray-400 italic">
+                        Esperando acción del {{ isRequester ? 'técnico' : 'solicitante' }}...
+                    </p>
                 </div>
             </div>
 
@@ -347,6 +423,57 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                     >
                         <i v-if="finalizarLoading" class="fas fa-spinner fa-spin"></i>
                         {{ finalizarLoading ? 'Enviando...' : 'Confirmar Solución' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Validar -->
+        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
+                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                     <p class="text-sm text-gray-600 dark:text-gray-300">
+                        ¿Cómo deseas proceder con esta solicitud?
+                     </p>
+
+                     <div class="flex gap-4">
+                        <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'cerrar' ? 'ring-2 ring-green-500 border-green-500 bg-green-50' : 'border-gray-200'">
+                            <input type="radio" v-model="validarData.accion" value="cerrar" class="hidden">
+                            <div class="text-center">
+                                <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
+                                <div class="font-bold text-sm text-gray-800">Aprobar y Cerrar</div>
+                            </div>
+                        </label>
+
+                         <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'reabrir' ? 'ring-2 ring-orange-500 border-orange-500 bg-orange-50' : 'border-gray-200'">
+                            <input type="radio" v-model="validarData.accion" value="reabrir" class="hidden">
+                            <div class="text-center">
+                                <i class="fas fa-undo text-2xl text-orange-500 mb-2"></i>
+                                <div class="font-bold text-sm text-gray-800">Rechazar / Devolver</div>
+                            </div>
+                        </label>
+                     </div>
+
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentario <span class="text-red-500">*</span></label>
+                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" placeholder="Motivo de la aprobación o rechazo..."></textarea>
+                     </div>
+                </div>
+
+                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
+                    <button @click="showValidarModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition font-medium dark:text-gray-300 dark:hover:bg-gray-700">Cancelar</button>
+                    <button
+                        @click="confirmarValidacion"
+                        :disabled="validarLoading"
+                        class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md transition font-medium flex items-center gap-2 disabled:opacity-70"
+                    >
+                        <i v-if="validarLoading" class="fas fa-spinner fa-spin"></i>
+                        Confirmar
                     </button>
                 </div>
             </div>
