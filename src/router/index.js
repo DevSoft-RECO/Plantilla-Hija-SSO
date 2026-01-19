@@ -32,13 +32,45 @@ const router = createRouter({
     {
       path: '/admin',
       component: AdminLayout,
-      meta: { requiresAuth: true, permission: 'app_mercadeo' },
+      meta: { requiresAuth: true, permission: 'app_gestiones' },
       children: [
         {
           path: 'dashboard',
           name: 'dashboard',
           component: DashboardView,
-          meta: { title: 'Gestiones' } // Ejemplo: si necesitara permiso, agregar permission: 'ver_dashboard'
+          meta: { title: 'Gestiones' }
+        },
+        // Solicitudes
+        {
+          path: 'solicitudes/bandeja',
+          name: 'bandeja-solicitudes',
+          component: () => import('@/views/solicitudes/BandejaSolicitudes.vue'),
+          meta: { title: 'Bandeja de Solicitudes', permission: 'solicitudes.ver_bandeja' }
+        },
+        {
+          path: 'solicitudes/crear',
+          name: 'crear-solicitud',
+          component: () => import('@/views/solicitudes/CrearSolicitud.vue'),
+          meta: { title: 'Nueva Solicitud', permission: 'solicitudes.crear' }
+        },
+        {
+          path: 'solicitudes/:id',
+          name: 'detalle-solicitud',
+          component: () => import('@/views/solicitudes/DetalleSolicitud.vue'),
+          props: true,
+          meta: { title: 'Detalle Solicitud' }
+        },
+        {
+          path: 'solicitudes/categorias',
+          name: 'categorias-solicitud',
+          component: () => import('@/views/solicitudes/CategoriasSolicitud.vue'),
+          meta: { title: 'Categorías', permission: 'solicitudes.categorias' } // Ajustar permiso real
+        },
+        {
+          path: 'solicitudes/mis-asignaciones',
+          name: 'mis-asignaciones',
+          component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
+          meta: { title: 'Mis Asignaciones' }
         }
       ]
     },
