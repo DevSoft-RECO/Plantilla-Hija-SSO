@@ -53,9 +53,9 @@ const canValidate = computed(() => {
 });
 
 const canFinalize = computed(() => {
-    // Solo si es responsable y status asignada/en_seguimiento
+    // Solo si es responsable y status asignada/en_seguimiento/reabierta
     return isAssignee.value &&
-           ['asignada', 'en_seguimiento'].includes(solicitud.value?.estado);
+           ['asignada', 'en_seguimiento', 'reabierta'].includes(solicitud.value?.estado);
 });
 
 const canComment = computed(() => {
@@ -108,14 +108,34 @@ const enviarSeguimiento = async () => {
             }
         }
 
-        await SolicitudService.addSeguimiento(id, formData);
+        const response = await SolicitudService.addSeguimiento(id, formData);
+
+        // Optimización: Agregar el nuevo seguimiento a la lista local sin recargar todo
+        if (solicitud.value && response.data) {
+            // Aseguramos que evidencias sea array si viene null
+            const newSeg = response.data;
+            if (!newSeg.evidencias) newSeg.evidencias = [];
+
+            // Agregamos al final (orden cronológico)
+            solicitud.value.seguimientos.push(newSeg);
+
+            // Si cambio el estado (ej: asignada -> en_seguimiento), actualizarlo
+            if (solicitud.value.estado === 'asignada' && newSeg.tipo_accion === 'comentario') {
+                solicitud.value.estado = 'en_seguimiento';
+            }
+
+            // Scroll al fondo
+            setTimeout(() => {
+                const container = document.querySelector('.custom-scrollbar.flex-1');
+                if (container) container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
 
         // Limpiar form
         nuevoSeguimiento.value.comentario = '';
         nuevoSeguimiento.value.evidencias = [];
 
-        // Recargar info
-        await cargarDetalle();
+        // await cargarDetalle(); // Eliminado para eficiencia
 
         Swal.fire({
             icon: 'success',
@@ -322,12 +342,12 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                         v-for="seg in solicitud.seguimientos"
                         :key="seg.id"
                         class="flex gap-4"
-                        :class="{ 'flex-row-reverse': seg.seguimiento_por_id === authStore.user.id }"
+                        :class="{ 'flex-row-reverse': seg.seguimiento_por_id == authStore.user.id }"
                     >
                         <!-- Avatar -->
                         <div
                             class="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
-                            :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-600'"
+                            :class="seg.seguimiento_por_id == authStore.user.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-600'"
                         >
                             {{ seg.seguimiento_por_nombre?.charAt(0) }}
                         </div>
@@ -336,7 +356,7 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                         <div
                             class="max-w-[80%] rounded-2xl p-4 text-sm shadow-sm"
                             :class="[
-                                seg.seguimiento_por_id === authStore.user.id
+                                seg.seguimiento_por_id == authStore.user.id
                                     ? 'bg-indigo-600 text-white rounded-tr-none'
                                     : 'bg-white border border-gray-100 text-gray-700 rounded-tl-none'
                             ]"
