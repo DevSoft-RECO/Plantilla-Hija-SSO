@@ -11,6 +11,7 @@ const route = useRoute();
 const authStore = useAuthStore();
 const solicitud = ref(null);
 const loading = ref(true);
+const refreshing = ref(false);
 const showAssignModal = ref(false);
 const showTomarModal = ref(false);
 const showValidarModal = ref(false);
@@ -42,15 +43,19 @@ onMounted(() => {
     cargarDetalle();
 });
 
-const cargarDetalle = async () => {
-    loading.value = true;
+const cargarDetalle = async (background = false) => {
+    if (!background) loading.value = true;
+    else refreshing.value = true;
+
     try {
         const response = await SolicitudService.getSolicitud(id);
         solicitud.value = response.data;
     } catch {
         Swal.fire('Error', 'No se pudo cargar el detalle', 'error');
+        if (!background) loading.value = false; // Solo paramos loading si no era background (bug safety)
     } finally {
         loading.value = false;
+        refreshing.value = false;
     }
 };
 
@@ -236,7 +241,19 @@ const enviarSeguimiento = async () => {
             <!-- Columna Derecha: Chat / Seguimiento -->
             <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-[600px]">
                 <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-700 dark:text-gray-200">Actividad y Comentarios</h3>
+                    <div class="flex items-center gap-2">
+                         <h3 class="font-bold text-gray-700 dark:text-gray-200">Actividad y Comentarios</h3>
+                         <button
+                            @click="cargarDetalle(true)"
+                            class="text-gray-500 hover:text-indigo-600 transition p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                            title="Actualizar conversación"
+                            :disabled="refreshing"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" :class="{ 'animate-spin': refreshing }">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <button
                         v-if="solicitud.estado !== 'cerrada'"
