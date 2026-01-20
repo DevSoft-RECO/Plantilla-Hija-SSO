@@ -39,6 +39,44 @@ const isChatLocked = computed(() => {
     return !isIntervenir.value;
 });
 
+const activeTab = ref('chat');
+
+const allAttachments = computed(() => {
+    let files = [];
+    if (!solicitud.value) return [];
+
+    // Iniciales
+    if (solicitud.value.evidencias_inicial_urls) {
+        solicitud.value.evidencias_inicial_urls.forEach(url => {
+             files.push({
+                 url,
+                 is_image: isImage(url),
+                 source: 'Evidencia Inicial',
+                 date: solicitud.value.created_at
+             });
+        });
+    }
+
+    // Seguimientos
+    if (solicitud.value.seguimientos) {
+        solicitud.value.seguimientos.forEach(seg => {
+            if (seg.evidencias) {
+                seg.evidencias.forEach(url => {
+                    files.push({
+                        url,
+                        is_image: isImage(url),
+                        source: 'Comentario de ' + seg.seguimiento_por_nombre,
+                        date: seg.created_at
+                    });
+                });
+            }
+        });
+    }
+
+    // Ordenar más reciente primero
+    return files.sort((a, b) => new Date(b.date) - new Date(a.date));
+});
+
 onMounted(() => {
     cargarDetalle();
 });
@@ -198,22 +236,9 @@ const enviarSeguimiento = async () => {
                              <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ solicitud.descripcion }}</p>
                         </div>
 
+
                         <div v-if="solicitud.evidencias_inicial_urls?.length">
-                            <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Evidencias Iniciales</h3>
-                            <div class="grid grid-cols-3 gap-2">
-                                <a v-for="(url, i) in solicitud.evidencias_inicial_urls" :key="i" :href="url" target="_blank" class="aspect-square border rounded overflow-hidden hover:opacity-80 transition">
-                                     <img v-if="isImage(url)" :src="url" class="w-full h-full object-cover">
-                                     <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                        </svg>
-                                        <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
-                                     </div>
-                                </a>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-2 italic">
-                                <i class="fas fa-clock"></i> Enlaces válidos por 20 minutos
-                            </p>
+
                         </div>
 
                         <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 gap-4">
@@ -249,8 +274,26 @@ const enviarSeguimiento = async () => {
             <!-- Columna Derecha: Chat / Seguimiento -->
             <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-[600px]">
                 <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                         <h3 class="font-bold text-gray-700 dark:text-gray-200">Actividad y Comentarios</h3>
+                    <div class="flex items-center gap-4">
+                        <!-- Tabs Selector -->
+                        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                @click="activeTab = 'chat'"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
+                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                            >
+                                Actividad
+                            </button>
+                            <button
+                                @click="activeTab = 'files'"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
+                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                            >
+                                Archivos
+                                <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
+                            </button>
+                        </div>
+
                          <button
                             @click="cargarDetalle(true)"
                             class="text-gray-500 hover:text-indigo-600 transition p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -275,6 +318,35 @@ const enviarSeguimiento = async () => {
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50 dark:bg-transparent">
+
+                    <!-- TAB: ARCHIVOS (Gallery) -->
+                    <div v-if="activeTab === 'files'" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-gray-400 italic">
+                            No hay archivos adjuntos.
+                        </div>
+                        <a
+                            v-for="(file, i) in allAttachments"
+                            :key="i"
+                            :href="file.url"
+                            target="_blank"
+                            class="group relative aspect-square bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+                        >
+                            <img v-if="file.is_image" :src="file.url" class="w-full h-full object-cover">
+                            <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 group-hover:bg-gray-100 transition gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                </svg>
+                                <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
+                            </div>
+                            <!-- Metadata overlay on hover -->
+                            <div class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition">
+                                {{ formatFecha(file.date) }}
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- TAB: CHAT (Existing) -->
+                    <template v-else>
                      <div v-if="!solicitud.seguimientos?.length" class="text-center text-gray-400 py-10 italic">
                         No hay comentarios aún.
                      </div>
@@ -309,6 +381,7 @@ const enviarSeguimiento = async () => {
                              </div>
                         </div>
                      </div>
+                    </template>
                 </div>
 
                 <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700">

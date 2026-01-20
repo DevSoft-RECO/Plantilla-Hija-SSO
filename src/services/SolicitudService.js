@@ -27,6 +27,17 @@ export default {
             params: { type, index }
         });
     },
+    // Gestión de evidencias sueltas
+    addEvidence(id, formData) {
+        return axios.post(`/solicitudes/${id}/evidence`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
+    deleteEvidence(id, path) {
+        return axios.delete(`/solicitudes/${id}/evidence`, {
+            data: { path } // Axios delete body
+        });
+    },
     // Categorias
     getCategorias(params) {
         return axios.get('/solicitudes/categorias', { params });

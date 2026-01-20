@@ -46,6 +46,150 @@ const isAssignee = computed(() => {
     return solicitud.value && authStore.user && authStore.user.id === solicitud.value.responsable_id;
 });
 
+// TABS Logic
+const activeTab = ref('chat');
+
+const fileInput = ref(null);
+
+const allAttachments = computed(() => {
+    let files = [];
+    if (!solicitud.value) return [];
+
+    // Set to track unique paths/urls to avoid duplication
+    // We use the URL without query params (signature) as a key, since paths might be hidden in some views
+    const seenFiles = new Set();
+    const cleanUrl = (url) => {
+        if (!url) return '';
+        return url.split('?')[0]; // Remove signature Query Params
+    };
+
+    // 1. Iniciales (Subidos por Creador)
+    if (solicitud.value.evidencias_inicial_urls) {
+        solicitud.value.evidencias_inicial_urls.forEach((url, index) => {
+             let base = cleanUrl(url);
+             if (seenFiles.has(base)) return;
+             seenFiles.add(base);
+
+             let originalPath = solicitud.value.evidencias_inicial ? solicitud.value.evidencias_inicial[index] : null;
+
+             files.push({
+                 url,
+                 path: originalPath,
+                 is_image: isImage(url),
+                 source: 'Evidencia Inicial',
+                 uploader_id: solicitud.value.creado_por_id,
+                 date: solicitud.value.created_at,
+                 can_delete: isRequester.value || authStore.hasRole('Super Admin')
+             });
+        });
+    }
+
+    // 2. Finales (Subidos por Responsable)
+    if (solicitud.value.evidencias_final_urls) {
+        solicitud.value.evidencias_final_urls.forEach((url, index) => {
+             let base = cleanUrl(url);
+             if (seenFiles.has(base)) return; // Should not overlap with initial usually, but safety check
+             seenFiles.add(base);
+
+             let originalPath = solicitud.value.evidencias_final ? solicitud.value.evidencias_final[index] : null;
+
+             files.push({
+                 url,
+                 path: originalPath,
+                 is_image: isImage(url),
+                 source: 'Evidencia Final',
+                 uploader_id: solicitud.value.responsable_id,
+                 date: solicitud.value.updated_at,
+                 can_delete: isAssignee.value || authStore.hasRole('Super Admin')
+             });
+        });
+    }
+
+    // 3. Seguimientos (Adjuntos en comentarios - Historial)
+    if (solicitud.value.seguimientos) {
+        solicitud.value.seguimientos.forEach(seg => {
+            if (seg.evidencias) {
+                seg.evidencias.forEach((url) => {
+                     let base = cleanUrl(url);
+                     // deduplicate: if this file is already in Initial or Final, SKIP IT
+                     if (seenFiles.has(base)) return;
+
+                     // --- FIX: Filter out "Phantom" deleted files ---
+                     // If it looks like a managed file (/inicial/ or /final/) but wasn't in the lists above (seenFiles),
+                     // it means it was DELETED from the main columns. We must NOT show it.
+                     const isManaged = base.includes('/inicial/') || base.includes('/final/');
+                     if (isManaged) return;
+
+                     seenFiles.add(base);
+
+                     files.push({
+                        url,
+                        is_image: isImage(url),
+                        source: 'Adjunto en comentario',
+                        uploader_id: seg.seguimiento_por_id,
+                        date: seg.created_at,
+                        can_delete: false
+                    });
+                });
+            }
+        });
+    }
+
+    // Ordenar (Recientes primero)
+    return files.sort((a, b) => new Date(b.date) - new Date(a.date));
+});
+
+// File Management (Via Chat now)
+const triggerUpload = () => {
+    fileInput.value.click();
+};
+
+const handleChatFileUpload = (event) => {
+    const files = event.target.files;
+    if (!files.length) return;
+
+    // Convert FileList to Array and add to nuevoSeguimiento
+    if (!nuevoSeguimiento.value.evidencias) nuevoSeguimiento.value.evidencias = [];
+
+    // We store the RAW FILES for FormData, not URLs yet
+    for(let i=0; i<files.length; i++) {
+        nuevoSeguimiento.value.evidencias.push(files[i]);
+    }
+
+    // Reset inputs
+    event.target.value = '';
+};
+
+const removeAttachedFile = (index) => {
+    nuevoSeguimiento.value.evidencias.splice(index, 1);
+};
+
+const deleteFile = async (file) => {
+    if (!file.path) return; // Si es de comentario antiguo no tiene path "suelto" facil
+
+    const result = await Swal.fire({
+        title: '¿Eliminar archivo?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            await SolicitudService.deleteEvidence(id, file.path);
+            Swal.fire('Eliminado', 'El archivo ha sido eliminado.', 'success');
+            await cargarDetalle(true);
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'No se pudo eliminar', 'error');
+        }
+    }
+};
+
 const canValidate = computed(() => {
     // Solo si es creador, status pendiente_validacion y NO es externo
     return isRequester.value &&
@@ -149,6 +293,7 @@ const enviarSeguimiento = async () => {
         nuevoSeguimiento.value.evidencias = [];
 
         // await cargarDetalle(); // Eliminado para eficiencia
+        await cargarDetalle(true); // Restaurado para actualizar listas de evidencias (evitar falso 'Eliminado')
 
         Swal.fire({
             icon: 'success',
@@ -202,6 +347,7 @@ const confirmarCierre = async () => {
             icon: 'success'
         });
 
+        // showFinalizarModal.value = false; // Se cierra solo al cambiar de pagina, o si nos quedamos:
         showFinalizarModal.value = false;
         router.push({ name: 'mi-bandeja' });
 
@@ -249,6 +395,29 @@ const confirmarValidacion = async () => {
 
 const formatFecha = (fecha) => new Date(fecha).toLocaleString();
 const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null;
+
+const isDeletedFile = (url) => {
+    if (!url) return true;
+    const clean = url.split('?')[0];
+
+    // 1. Identify if it belongs to managed folders
+    const isManaged = clean.includes('/inicial/') || clean.includes('/final/');
+    if (!isManaged) return false;
+
+    // 2. Check strictly against the ACTIVE lists (evidencias_inicial_urls, evidencias_final_urls)
+    // Create a Set of all active cleansed URLs for performance
+    const activeFiles = new Set();
+
+    if (solicitud.value.evidencias_inicial_urls) {
+        solicitud.value.evidencias_inicial_urls.forEach(u => activeFiles.add(u.split('?')[0]));
+    }
+    if (solicitud.value.evidencias_final_urls) {
+        solicitud.value.evidencias_final_urls.forEach(u => activeFiles.add(u.split('?')[0]));
+    }
+
+    // If it's managed but NOT in activeFiles, it's deleted.
+    return !activeFiles.has(clean);
+};
 
 </script>
 
@@ -299,28 +468,8 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null
                     <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">{{ solicitud.descripcion }}</p>
                 </div>
 
-                <div v-if="solicitud.evidencias_inicial_urls?.length" class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Evidencias Iniciales</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <a
-                            v-for="(url, idx) in solicitud.evidencias_inicial_urls"
-                            :key="idx"
-                            :href="url"
-                            target="_blank"
-                            class="aspect-square rounded-lg border border-gray-200 overflow-hidden hover:opacity-75 transition"
-                        >
-                            <img v-if="isImage(url)" :src="url" class="w-full h-full object-cover">
-                            <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                </svg>
-                                <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
-                            </div>
-                        </a>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-2 italic">
-                        <i class="fas fa-clock"></i> Enlaces válidos por 20 minutos
-                    </p>
+                <div v-if="solicitud.evidencias_inicial_urls?.length">
+                    <!-- Removed: Now in Archivos tab -->
                 </div>
 
                 <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">
@@ -351,7 +500,27 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null
             <!-- Columna Derecha: Área de Trabajo / Chat -->
             <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                 <div class="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-700 dark:text-gray-200">Historial de Seguimiento</h3>
+                    <div class="flex items-center gap-4">
+                        <!-- Tabs Selector -->
+                        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                @click="activeTab = 'chat'"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
+                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                            >
+                                Actividad
+                            </button>
+                            <button
+                                @click="activeTab = 'files'"
+                                class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
+                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                            >
+                                Archivos
+                                <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <button
                         @click="cargarDetalle(true)"
                         class="text-gray-500 hover:text-indigo-600 transition p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -365,9 +534,57 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/30 dark:bg-transparent">
-                    <div v-if="solicitud.seguimientos.length === 0" class="text-center text-gray-400 py-10 italic">
-                        No hay actualizaciones aún.
+
+                    <!-- TAB: ARCHIVOS (Gallery + Upload) -->
+                    <div v-if="activeTab === 'files'">
+                         <!-- Upload Zone removed as per request (Chat centric) -->
+
+                         <!-- Grid -->
+
+                         <!-- Grid -->
+                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-gray-400 italic">
+                                No hay archivos adjuntos.
+                            </div>
+
+                            <div
+                                v-for="(file, i) in allAttachments"
+                                :key="i"
+                                class="group relative aspect-square bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+                            >
+                                <a :href="file.url" target="_blank" class="block w-full h-full">
+                                    <img v-if="file.is_image" :src="file.url" class="w-full h-full object-cover">
+                                    <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                        </svg>
+                                        <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
+                                    </div>
+                                </a>
+
+                                <!-- Delete Button (Only owner) -->
+                                <button
+                                    v-if="file.can_delete"
+                                    @click.prevent="deleteFile(file)"
+                                    class="absolute top-1 right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-600 transition opacity-0 group-hover:opacity-100 z-10"
+                                    title="Eliminar archivo"
+                                >
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+
+                                <!-- Metadata Label -->
+                                <div class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                                    {{ file.source }}
+                                </div>
+                            </div>
+                         </div>
                     </div>
+
+                    <!-- TAB: CHAT -->
+                    <template v-else>
+                     <div v-if="solicitud.seguimientos.length === 0" class="text-center text-gray-400 py-10 italic">
+                        No hay actualizaciones aún.
+                     </div>
 
                     <div
                         v-for="seg in solicitud.seguimientos"
@@ -392,42 +609,101 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null
                                     : 'bg-white border border-gray-100 text-gray-700 rounded-tl-none'
                             ]"
                         >
-                            <div class="flex justify-between items-center gap-4 mb-1 opacity-80 text-xs">
+                            <div class="flex justify-between items-center gap-4 mb-2 opacity-80 text-xs">
                                 <span class="font-semibold">{{ seg.seguimiento_por_nombre }}</span>
                                 <span>{{ formatFecha(seg.created_at) }}</span>
                             </div>
 
-                            <p class="whitespace-pre-wrap">{{ seg.comentario }}</p>
+                            <p v-if="seg.comentario" class="whitespace-pre-wrap mb-2">{{ seg.comentario }}</p>
 
-                            <div v-if="seg.evidencias && seg.evidencias.length" class="mt-3 flex flex-wrap gap-2">
-                                <a
-                                    v-for="(ev, idx) in seg.evidencias"
-                                    :key="idx"
-                                    :href="ev"
-                                    target="_blank"
-                                    class="text-xs flex items-center gap-1 bg-black/10 px-2 py-1 rounded hover:bg-black/20 transition"
-                                >
-                                    <i class="fas fa-paperclip"></i> Adjunto {{ idx + 1 }}
-                                </a>
+                            <div v-if="seg.evidencias && seg.evidencias.length" class="flex flex-wrap gap-2">
+                                <template v-for="(ev, idx) in seg.evidencias" :key="idx">
+                                    <a
+                                        v-if="!isDeletedFile(ev)"
+                                        :href="ev"
+                                        target="_blank"
+                                        class="group relative w-32 h-32 aspect-square rounded overflow-hidden border border-gray-200/50 hover:shadow-md transition"
+                                    >
+                                        <img v-if="isImage(ev)" :src="ev" class="w-full h-full object-cover">
+                                        <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800 gap-2 p-2 group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition">
+                                            <i v-if="ev.toLowerCase().includes('.pdf')" class="fas fa-file-pdf text-red-500 text-3xl drop-shadow-sm"></i>
+                                            <i v-else-if="ev.toLowerCase().includes('.doc') || ev.toLowerCase().includes('.docx')" class="fas fa-file-word text-blue-600 text-3xl drop-shadow-sm"></i>
+                                            <i v-else-if="ev.toLowerCase().includes('.xls') || ev.toLowerCase().includes('.xlsx')" class="fas fa-file-excel text-green-600 text-3xl drop-shadow-sm"></i>
+                                            <i v-else class="fas fa-file-alt text-gray-400 text-3xl"></i>
+
+                                            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-400 uppercase truncate w-full text-center">
+                                                {{ ev.split('/').pop().split('?')[0].replace(/^\d+_/, '') }}
+                                            </span>
+                                        </div>
+                                        <!-- Hover overlay -->
+                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                            <i class="fas fa-external-link-alt text-white drop-shadow-md"></i>
+                                        </div>
+                                    </a>
+                                    <!-- Deleted Placeholder -->
+                                    <div v-else class="w-32 h-32 aspect-square rounded overflow-hidden border border-gray-100 bg-gray-50 flex flex-col items-center justify-center opacity-60">
+                                         <i class="fas fa-trash text-gray-300 text-2xl mb-1"></i>
+                                         <span class="text-[10px] text-gray-400 font-medium">Eliminado</span>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
+                </template>
                 </div>
 
                 <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
                     <div v-if="canComment" class="flex flex-col gap-3">
-                        <textarea
-                            v-model="nuevoSeguimiento.comentario"
-                            rows="3"
-                            placeholder="Escribe una actualización o nota interna..."
-                            class="w-full bg-gray-50 dark:bg-gray-700 border-0 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 resize-none text-sm"
-                        ></textarea>
+                        <div class="relative">
+                            <textarea
+                                v-model="nuevoSeguimiento.comentario"
+                                rows="3"
+                                placeholder="Escribe un mensaje..."
+                                class="w-full bg-gray-50 dark:bg-gray-700 border-0 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 resize-none text-sm transition-all"
+                            ></textarea>
+
+
+                        </div>
+
+                        <!-- Toolbar -->
+                        <div class="flex items-center justify-between">
+                             <button
+                                @click="triggerUpload"
+                                class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 text-sm font-medium flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                            >
+                                <i class="fas fa-paperclip text-lg"></i>
+                                <span>Adjuntar archivos</span>
+                            </button>
+                            <!-- Hidden Input -->
+                            <input
+                                type="file"
+                                ref="fileInput"
+                                multiple
+                                class="hidden"
+                                @change="handleChatFileUpload"
+                            >
+                        </div>
+
+                        <!-- File Previews -->
+                        <div v-if="nuevoSeguimiento.evidencias.length" class="flex flex-wrap gap-2">
+                             <div
+                                v-for="(file, idx) in nuevoSeguimiento.evidencias"
+                                :key="idx"
+                                class="relative bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-xs flex items-center gap-2 border border-gray-200 dark:border-gray-600"
+                             >
+                                <i class="fas fa-file text-indigo-500"></i>
+                                <span class="max-w-[150px] truncate text-gray-600 dark:text-gray-300">{{ file.name }}</span>
+                                <button @click="removeAttachedFile(idx)" class="text-gray-400 hover:text-red-500 transition">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                             </div>
+                        </div>
 
                         <div class="flex justify-end">
                             <button
                                 @click="enviarSeguimiento"
-                                :disabled="saving"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition shadow-md flex items-center gap-2 disabled:opacity-50"
+                                :disabled="saving || (!nuevoSeguimiento.comentario && !nuevoSeguimiento.evidencias.length)"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <i v-if="saving" class="fas fa-spinner fa-spin"></i>
                                 <span v-else>Enviar <i class="fas fa-paper-plane ml-1"></i></span>
