@@ -5,7 +5,6 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/api`, // Aseguramos que apunte a /api
   // withCredentials: true, // COMENTADO: Esto puede causar 401 si el backend no espera cookies
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
   }
 });

@@ -86,12 +86,12 @@ const cargarDetalle = async (background = false) => {
         solicitud.value = response.data;
 
         // Scroll al fondo si es recarga manual y estamos abajo (opcional, por ahora solo actualizamos datos)
-        if (background) {
-             setTimeout(() => {
-                const container = document.querySelector('.custom-scrollbar.flex-1');
-                 // Solo scroll si el usuario quiere? Por ahora no forzamos scroll en refresh para no molestar si está leyendo arriba
-            }, 100);
-        }
+        // if (background) {
+        //      setTimeout(() => {
+        //         const container = document.querySelector('.custom-scrollbar.flex-1');
+        //          // Solo scroll si el usuario quiere? Por ahora no forzamos scroll en refresh para no molestar si está leyendo arriba
+        //     }, 100);
+        // }
 
     } catch {
         Swal.fire('Error', 'No se pudo cargar el caso', 'error');
@@ -248,7 +248,7 @@ const confirmarValidacion = async () => {
 };
 
 const formatFecha = (fecha) => new Date(fecha).toLocaleString();
-const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) != null;
 
 </script>
 
@@ -299,20 +299,28 @@ const isImage = (url) => url.match(/\.(jpeg|jpg|gif|png)$/) != null;
                     <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">{{ solicitud.descripcion }}</p>
                 </div>
 
-                <div v-if="solicitud.evidencias_inicial?.length" class="mb-6">
+                <div v-if="solicitud.evidencias_inicial_urls?.length" class="mb-6">
                     <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Evidencias Iniciales</h3>
                     <div class="grid grid-cols-3 gap-2">
                         <a
-                            v-for="(ev, idx) in solicitud.evidencias_inicial"
+                            v-for="(url, idx) in solicitud.evidencias_inicial_urls"
                             :key="idx"
-                            :href="ev"
+                            :href="url"
                             target="_blank"
                             class="aspect-square rounded-lg border border-gray-200 overflow-hidden hover:opacity-75 transition"
                         >
-                            <img v-if="isImage(ev)" :src="ev" class="w-full h-full object-cover">
-                            <div v-else class="w-full h-full flex items-center justify-center bg-gray-50"><i class="far fa-file"></i></div>
+                            <img v-if="isImage(url)" :src="url" class="w-full h-full object-cover">
+                            <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                                </svg>
+                                <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
+                            </div>
                         </a>
                     </div>
+                    <p class="text-xs text-gray-400 mt-2 italic">
+                        <i class="fas fa-clock"></i> Enlaces válidos por 20 minutos
+                    </p>
                 </div>
 
                 <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">

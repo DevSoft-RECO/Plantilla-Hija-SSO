@@ -22,6 +22,11 @@ export default {
     validateSolicitud(id, data) {
         return axios.post(`/solicitudes/${id}/validar`, data);
     },
+    getFileUrl(id, type, index) {
+        return axios.get(`/solicitudes/${id}/file-url`, {
+            params: { type, index }
+        });
+    },
     // Categorias
     getCategorias(params) {
         return axios.get('/solicitudes/categorias', { params });
