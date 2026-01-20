@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
+import { useSolicitudCache } from '@/composables/useSolicitudCache';
 
 const props = defineProps({
     isOpen: Boolean,
@@ -10,10 +11,17 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'assigned']);
 
-const categorias = ref([]);
-const usuarios = ref([]);
-const puestos = ref([]);
-const loading = ref(false);
+// Usar cache global
+const {
+    categorias,
+    usuarios,
+    puestos,
+    loading,
+    refreshing,
+    loadData,
+    refreshUsuariosYPuestos
+} = useSolicitudCache();
+
 const submitting = ref(false);
 
 const form = ref({
@@ -28,22 +36,14 @@ const form = ref({
 // Filtro local
 const puestoFiltro = ref(null);
 
-onMounted(async () => {
-    loading.value = true;
-    try {
-        const [catRes, userRes, puestoRes] = await Promise.all([
-            SolicitudService.getCategorias({ solo_activas: true }),
-            SolicitudService.getUsuarios(),
-            SolicitudService.getPuestos()
-        ]);
-        categorias.value = catRes.data;
-        usuarios.value = userRes.data;
-        puestos.value = puestoRes.data;
-    } catch (error) {
-        console.error("Error cargando datos", error);
-        Swal.fire('Error', 'No se pudieron cargar datos iniciales', 'error');
-    } finally {
-        loading.value = false;
+// Cargar datos cuando se abre el modal
+watch(() => props.isOpen, async (isOpen) => {
+    if (isOpen) {
+        try {
+            await loadData(); // Usa el cache global
+        } catch {
+            Swal.fire('Error', 'No se pudieron cargar datos iniciales', 'error');
+        }
     }
 });
 
@@ -86,6 +86,7 @@ const submit = async () => {
             responsable_tipo: form.value.tipo_atencion,
             responsable_id: form.value.responsable_id,
             responsable_nombre: u ? (u.name || u.username) : 'Desconocido',
+            responsable_email: u ? u.email : null, // Email del usuario SSO
             responsable_cargo: u ? (u.puesto || u.cargo) : '', // Adjust based on Mother App user object
             proveedor_id: form.value.tipo_atencion === 'externo' ? form.value.responsable_id : null
         };
@@ -138,9 +139,26 @@ const submit = async () => {
 
                 <!-- Responsable (Lista de Usuarios) -->
                 <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.tipo_atencion === 'interno' ? 'Filtrar por Puesto' : 'Filtrar Proveedores' }}
-                    </label>
+                     <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            {{ form.tipo_atencion === 'interno' ? 'Filtrar por Puesto' : 'Filtrar Proveedores' }}
+                        </label>
+                        <button
+                            type="button"
+                            @click="refreshUsuariosYPuestos"
+                            :disabled="refreshing"
+                            class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded hover:bg-emerald-100 transition disabled:opacity-50 flex items-center gap-1"
+                            title="Actualizar usuarios y puestos desde la aplicación madre"
+                        >
+                            <svg v-if="!refreshing" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            {{ refreshing ? 'Actualizando...' : 'Actualizar datos' }}
+                        </button>
+                    </div>
                     <select v-model="puestoFiltro" class="w-full border border-gray-300 rounded p-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50">
                         <option :value="null">Todos los puestos</option>
                         <option v-for="p in puestos" :key="p.id" :value="p.id">{{ p.nombre }}</option>

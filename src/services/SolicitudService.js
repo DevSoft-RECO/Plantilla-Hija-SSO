@@ -36,10 +36,10 @@ export default {
         return axios.delete(`/solicitudes/categorias/${id}`);
     },
     // Usuarios (Proxy)
-    getUsuarios() {
-        return axios.get('/usuarios');
+    getUsuarios(refresh = false) {
+        return axios.get('/usuarios', { params: { refresh: refresh ? 'true' : 'false' } });
     },
-    getPuestos() {
-        return axios.get('/puestos');
+    getPuestos(refresh = false) {
+        return axios.get('/puestos', { params: { refresh: refresh ? 'true' : 'false' } });
     },
 };
