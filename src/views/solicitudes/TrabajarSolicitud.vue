@@ -472,6 +472,18 @@ const isDeletedFile = (url) => {
                     <!-- Removed: Now in Archivos tab -->
                 </div>
 
+                <!-- Info Contexto -->
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                    <div v-if="solicitud.agencia_id">
+                        <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia_id }}</div>
+                    </div>
+                    <div v-if="solicitud.area">
+                        <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.area }}</div>
+                    </div>
+                </div>
+
                 <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">
                     <button
                         v-if="canFinalize"

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 
-const props = defineProps({
+const { isOpen } = defineProps({
     isOpen: Boolean
 });
 
@@ -11,6 +11,7 @@ const emit = defineEmits(['close', 'created']);
 
 const titulo = ref('');
 const descripcion = ref('');
+const area = ref(''); // Nuevo campo
 const files = ref([]);
 const isSubmitting = ref(false);
 const fileInput = ref(null);
@@ -29,6 +30,7 @@ const closeModal = () => {
     // Reset form properly if needed, usually better to destroy component or reset vars
     titulo.value = '';
     descripcion.value = '';
+    area.value = ''; // Reset area
     files.value = [];
 };
 
@@ -43,6 +45,9 @@ const submit = async () => {
         const formData = new FormData();
         formData.append('titulo', titulo.value);
         formData.append('descripcion', descripcion.value);
+        if (area.value) {
+            formData.append('area', area.value);
+        }
         // Categoría ya no se envía aquí, se asigna después.
 
         files.value.forEach((file) => {
@@ -98,6 +103,17 @@ const submit = async () => {
                         type="text"
                         class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400"
                         placeholder="Ej: Error en impresora de recepción"
+                    />
+                </div>
+
+                <!-- Area / Ubicación -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Area/ubicacion (Opcional)</label>
+                    <input
+                        v-model="area"
+                        type="text"
+                        class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400"
+                        placeholder="Ej: Recursos Humanos, Bodega..."
                     />
                 </div>
 

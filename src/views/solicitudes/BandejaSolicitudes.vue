@@ -92,9 +92,6 @@ const getEstadoClass = (estado) => {
                 <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Gestión centralizada de casos</p>
             </div>
-            <router-link :to="{ name: 'crear-solicitud' }" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition flex items-center gap-2">
-                <i class="fas fa-plus"></i> Nueva Solicitud
-            </router-link>
         </div>
 
         <!-- Tabs Filter -->
@@ -119,6 +116,7 @@ const getEstadoClass = (estado) => {
                     <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold sticky top-0 backdrop-blur-sm z-10">
                         <tr>
                             <th class="p-4 border-b dark:border-gray-700">ID</th>
+                            <th class="p-4 border-b dark:border-gray-700">Agencia</th>
                             <th class="p-4 border-b dark:border-gray-700">Título</th>
                             <th class="p-4 border-b dark:border-gray-700">Estado</th>
                             <th class="p-4 border-b dark:border-gray-700">Solicitante</th>
@@ -129,17 +127,18 @@ const getEstadoClass = (estado) => {
                     </thead>
                     <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                         <tr v-if="loading">
-                            <td colspan="7" class="p-8 text-center text-gray-500">
+                            <td colspan="8" class="p-8 text-center text-gray-500">
                                 <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando...
                             </td>
                         </tr>
                         <tr v-else-if="solicitudes.length === 0">
-                            <td colspan="7" class="p-8 text-center text-gray-500">
+                            <td colspan="8" class="p-8 text-center text-gray-500">
                                 No se encontraron solicitudes.
                             </td>
                         </tr>
                         <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                             <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
+                            <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ sol.agencia_id || 'N/A' }}</td>
                             <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
                             <td class="p-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getEstadoClass(sol.estado)">

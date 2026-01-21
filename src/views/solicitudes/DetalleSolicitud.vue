@@ -241,6 +241,18 @@ const enviarSeguimiento = async () => {
 
                         </div>
 
+                        <!-- Info Contexto -->
+                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                            <div v-if="solicitud.agencia_id">
+                                <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia_id }}</div>
+                            </div>
+                            <div v-if="solicitud.area">
+                                <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.area }}</div>
+                            </div>
+                        </div>
+
                         <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 gap-4">
                              <div>
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Solicitante</span>
@@ -253,9 +265,21 @@ const enviarSeguimiento = async () => {
                         </div>
 
                         <div class="pt-4 flex flex-col gap-2">
-                            <div v-if="solicitud.estado !== 'cerrada'" class="flex gap-2">
-                                <button @click="asignarCaso" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold py-2 rounded transition">Asignar</button>
-                                <button @click="tomarCaso" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">Tomar Caso</button>
+                            <!-- Botones solo para casos reportados (sin asignar) -->
+                            <div v-if="solicitud.estado === 'reportada'" class="flex gap-2">
+                                <button @click="asignarCaso" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-bold py-2 rounded transition">
+                                    <i class="fas fa-user-plus mr-1"></i> Asignar
+                                </button>
+                                <button @click="tomarCaso" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">
+                                    <i class="fas fa-hand-holding-medical mr-1"></i> Tomar Caso
+                                </button>
+                            </div>
+
+                            <!-- Botón de reasignación para casos ya asignados -->
+                            <div v-else-if="['asignada', 'en_seguimiento', 'pendiente_validacion', 'reabierta'].includes(solicitud.estado)" class="flex gap-2">
+                                <button @click="asignarCaso" class="w-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold py-2 rounded transition">
+                                    <i class="fas fa-user-edit mr-1"></i> Reasignar Caso
+                                </button>
                             </div>
 
                             <!-- Botón Validar (Solo si pendiente validación y NO es externo) -->

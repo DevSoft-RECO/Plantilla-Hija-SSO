@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 import { useSolicitudCache } from '@/composables/useSolicitudCache';
@@ -36,9 +36,13 @@ const form = ref({
 // Filtro local
 const puestoFiltro = ref(null);
 
-// Cargar datos cuando se abre el modal
+// Cargar datos DESPUÉS de que el modal se abre (para apertura instantánea)
 watch(() => props.isOpen, async (isOpen) => {
     if (isOpen) {
+        // Esperar a que el modal se renderice primero
+        await nextTick();
+
+        // Luego cargar datos en segundo plano
         try {
             await loadData(); // Usa el cache global
         } catch {
@@ -106,86 +110,114 @@ const submit = async () => {
 </script>
 
 <template>
-    <div v-if="isOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">Asignar Solicitud</h2>
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40 transition-all">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all scale-100 border border-gray-100 dark:border-gray-700 max-h-[90vh] flex flex-col">
 
-            <div v-if="loading" class="text-center py-4">Cargando datos...</div>
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 text-white flex justify-between items-center flex-shrink-0">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-user-check"></i> Asignar Solicitud
+                </h3>
+                <button @click="$emit('close')" class="text-white/80 hover:text-white transition p-1 rounded-full hover:bg-white/20">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
 
-            <form v-else @submit.prevent="submit" class="space-y-4">
-                <!-- Categoria -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
-                    <select v-model="form.categoria_id" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option :value="null">Seleccione una categoría</option>
-                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
-                    </select>
+            <!-- Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <div v-if="loading" class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Cargando datos...</p>
                 </div>
 
-                <!-- Tipo Atención -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Atención</label>
-                    <div class="flex gap-4 mt-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" v-model="form.tipo_atencion" value="interno" class="text-blue-600 focus:ring-blue-500">
-                            Interna (Personal IT)
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" v-model="form.tipo_atencion" value="externo" class="text-blue-600 focus:ring-blue-500">
-                            Externa (Proveedor)
-                        </label>
+                <form v-else @submit.prevent="submit" class="space-y-5">
+                    <!-- Categoria -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoría</label>
+                        <select v-model="form.categoria_id" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
+                            <option :value="null">Seleccione una categoría</option>
+                            <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
+                        </select>
                     </div>
-                </div>
 
-                <!-- Responsable (Lista de Usuarios) -->
-                <div>
-                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-sm font-medium text-gray-700">
-                            {{ form.tipo_atencion === 'interno' ? 'Filtrar por Puesto' : 'Filtrar Proveedores' }}
-                        </label>
-                        <button
-                            type="button"
-                            @click="refreshUsuariosYPuestos"
-                            :disabled="refreshing"
-                            class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded hover:bg-emerald-100 transition disabled:opacity-50 flex items-center gap-1"
-                            title="Actualizar usuarios y puestos desde la aplicación madre"
-                        >
-                            <svg v-if="!refreshing" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            {{ refreshing ? 'Actualizando...' : 'Actualizar datos' }}
-                        </button>
+                    <!-- Tipo Atención -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo de Atención</label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'interno' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                                <input type="radio" v-model="form.tipo_atencion" value="interno" class="text-emerald-600 focus:ring-emerald-500">
+                                Interna (Personal IT)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'externo' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                                <input type="radio" v-model="form.tipo_atencion" value="externo" class="text-emerald-600 focus:ring-emerald-500">
+                                Externa (Proveedor)
+                            </label>
+                        </div>
                     </div>
-                    <select v-model="puestoFiltro" class="w-full border border-gray-300 rounded p-2 mb-3 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50">
-                        <option :value="null">Todos los puestos</option>
-                        <option v-for="p in puestos" :key="p.id" :value="p.id">{{ p.nombre }}</option>
-                    </select>
 
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        {{ form.tipo_atencion === 'interno' ? 'Responsable Interno' : 'Proveedor Responsable' }}
-                    </label>
-                    <select v-model="form.responsable_id" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option :value="null">Seleccione...</option>
-                        <option v-for="user in usuariosFiltrados" :key="user.id" :value="user.id">
-                            {{ user.name || user.username }} {{ user.puesto ? `(${user.puesto.nombre || user.puesto})` : '' }}
-                        </option>
-                    </select>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Mostrando {{ usuariosFiltrados.length }} usuarios.
-                    </p>
-                </div>
+                    <!-- Responsable (Lista de Usuarios) -->
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ form.tipo_atencion === 'interno' ? 'Filtrar por Puesto' : 'Filtrar Proveedores' }}
+                            </label>
+                            <button
+                                type="button"
+                                @click="refreshUsuariosYPuestos"
+                                :disabled="refreshing"
+                                class="text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-md hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition disabled:opacity-50 flex items-center gap-1.5"
+                                title="Actualizar usuarios y puestos desde la aplicación madre"
+                            >
+                                <svg v-if="!refreshing" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                {{ refreshing ? 'Actualizando...' : 'Actualizar datos' }}
+                            </button>
+                        </div>
 
-                <!-- Buttons -->
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" @click="$emit('close')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded transition">Cancelar</button>
-                    <button type="submit" :disabled="submitting" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50">
-                        {{ submitting ? 'Asignando...' : 'Confirmar Asignación' }}
-                    </button>
-                </div>
-            </form>
+                        <select v-model="puestoFiltro" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 mb-3 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
+                            <option :value="null">Todos los puestos</option>
+                            <option v-for="p in puestos" :key="p.id" :value="p.id">{{ p.nombre }}</option>
+                        </select>
+
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {{ form.tipo_atencion === 'interno' ? 'Responsable Interno' : 'Proveedor Responsable' }}
+                        </label>
+                        <select v-model="form.responsable_id" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
+                            <option :value="null">Seleccione...</option>
+                            <option v-for="user in usuariosFiltrados" :key="user.id" :value="user.id">
+                                {{ user.name || user.username }} {{ user.puesto ? `(${user.puesto.nombre || user.puesto})` : '' }}
+                            </option>
+                        </select>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            Mostrando {{ usuariosFiltrados.length }} usuarios.
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="bg-gray-50 dark:bg-gray-700/30 p-4 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700 flex-shrink-0">
+                <button
+                    type="button"
+                    @click="$emit('close')"
+                    class="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition text-sm font-medium"
+                >
+                    Cancelar
+                </button>
+                <button
+                    @click="submit"
+                    :disabled="submitting || loading"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-md shadow-md transition text-sm font-medium flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                    <i v-if="submitting" class="fas fa-spinner fa-spin"></i>
+                    {{ submitting ? 'Asignando...' : 'Confirmar Asignación' }}
+                </button>
+            </div>
+
         </div>
     </div>
 </template>

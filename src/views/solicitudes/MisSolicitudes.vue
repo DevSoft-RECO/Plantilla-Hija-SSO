@@ -7,6 +7,14 @@ const solicitudes = ref([]);
 const loading = ref(true);
 const router = useRouter();
 const filtroEstado = ref('');
+const estados = [
+    { value: '', label: 'Todas' },
+    { value: 'reportada', label: 'Reportadas' },
+    { value: 'asignada', label: 'Asignadas' },
+    { value: 'en_seguimiento', label: 'En Seguimiento' },
+    { value: 'pendiente_validacion', label: 'Por Validar' },
+    { value: 'cerrada', label: 'Cerradas' }
+];
 
 onMounted(async () => {
     cargarSolicitudes();
@@ -27,7 +35,10 @@ const cargarSolicitudes = async () => {
     }
 };
 
-
+const setFiltro = (estado) => {
+    filtroEstado.value = estado;
+    cargarSolicitudes();
+};
 
 const getEstadoClass = (estado) => {
     switch (estado) {
@@ -54,15 +65,19 @@ const getEstadoClass = (estado) => {
             </button>
         </div>
 
-        <div class="mb-4">
-            <select v-model="filtroEstado" @change="cargarSolicitudes" class="bg-white dark:bg-gray-800 border dark:border-gray-700 p-2 rounded focus:ring-2 focus:ring-emerald-500 outline-none text-gray-700 dark:text-gray-200">
-                <option value="">Todos los estados</option>
-                <option value="reportada">Reportada</option>
-                <option value="asignada">Asignada</option>
-                <option value="en_seguimiento">En Seguimiento</option>
-                <option value="pendiente_validacion">Pendiente Validación</option>
-                <option value="cerrada">Cerrada</option>
-            </select>
+        <!-- Filters -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 flex-shrink-0 custom-scrollbar">
+            <button
+                v-for="est in estados"
+                :key="est.value"
+                @click="setFiltro(est.value)"
+                class="px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap border"
+                :class="filtroEstado === est.value
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-105'
+                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'"
+            >
+                {{ est.label }}
+            </button>
         </div>
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
