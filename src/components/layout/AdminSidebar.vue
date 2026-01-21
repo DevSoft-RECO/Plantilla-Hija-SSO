@@ -240,8 +240,19 @@ const menuItems = computed(() => {
             children: [
                 ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' }] : []),
                 ...(authStore.hasPermission('seguimiento_gestiones') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : []),
-                ...(authStore.hasPermission('crear_gestiones') ? [{ label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' }] : []),
+                ...(authStore.hasPermission('crear_gestiones') ? [{ label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' }] : [])
 
+            ]
+        },
+        // Solicitudes Administracion
+        {
+            id: 'solicitudes-admin',
+            label: 'Solicitudes Administración',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />',
+            show: true,
+            children: [
+                ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja-admin' }] : []),
+                // Podriamos agregar mas links especificos aqui si se requiere
             ]
         },
         // Config. Solicitudes (Nuevo Grupo)

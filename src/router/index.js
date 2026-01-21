@@ -45,7 +45,13 @@ const router = createRouter({
           path: 'solicitudes/bandeja',
           name: 'bandeja-solicitudes',
           component: () => import('@/views/solicitudes/BandejaSolicitudes.vue'),
-          meta: { title: 'Bandeja de Solicitudes', role: 'Super Admin' }
+          meta: { title: 'Bandeja de Solicitudes (Tec)', role: 'Super Admin' }
+        },
+        {
+          path: 'solicitudes/bandeja-admin',
+          name: 'bandeja-solicitudes-admin',
+          component: () => import('@/views/solicitudes/BandejaSolicitudesAdmin.vue'),
+          meta: { title: 'Bandeja de Solicitudes (Admin)', role: 'Super Admin' }
         },
         {
           path: 'solicitudes/:id',

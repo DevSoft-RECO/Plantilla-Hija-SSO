@@ -36,7 +36,7 @@ const cargarSolicitudes = async (page = 1) => {
         const params = {
             page: page,
             estado: filtroEstado.value,
-            categoria_general_id: 1 // Solo mostrar solicitudes Tecnologicas
+            categoria_general_id: 2 // Solo mostrar solicitudes Administrativas
         };
 
         const response = await SolicitudService.getSolicitudes(params);
@@ -90,8 +90,8 @@ const getEstadoClass = (estado) => {
     <div class="p-6 h-[calc(100vh-80px)] overflow-hidden flex flex-col">
         <div class="flex justify-between items-center mb-6 flex-shrink-0">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Gestión centralizada de casos</p>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes Administrativas</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Gestión de casos administrativos</p>
             </div>
         </div>
 
