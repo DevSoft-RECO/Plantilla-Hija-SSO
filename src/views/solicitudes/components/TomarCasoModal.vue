@@ -1,12 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/auth';
 
 const props = defineProps({
     isOpen: Boolean,
-    solicitudId: [Number, String]
+    solicitudId: [Number, String],
+    categoriaGeneralId: Number
 });
 
 const emit = defineEmits(['close', 'taken']);
@@ -16,6 +17,11 @@ const categorias = ref([]);
 const loading = ref(false);
 const submitting = ref(false);
 const categoria_id = ref(null);
+
+const categoriasFiltradas = computed(() => {
+    if (!props.categoriaGeneralId) return categorias.value;
+    return categorias.value.filter(c => c.categoria_general_id == props.categoriaGeneralId);
+});
 
 onMounted(async () => {
     loading.value = true;
@@ -100,7 +106,7 @@ const submit = async () => {
                         class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition text-gray-700 dark:text-gray-200"
                     >
                         <option :value="null">Selecciona una categoría...</option>
-                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
+                        <option v-for="cat in categoriasFiltradas" :key="cat.id" :value="cat.id">
                             {{ cat.nombre }}
                         </option>
                     </select>

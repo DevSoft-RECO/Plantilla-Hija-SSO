@@ -438,6 +438,7 @@ const enviarSeguimiento = async () => {
             v-if="solicitud"
             :isOpen="showAssignModal"
             :solicitudId="solicitud.id"
+            :categoriaGeneralId="solicitud.categoria_general_id"
             @close="showAssignModal = false"
             @assigned="onAssigned"
         />
@@ -445,6 +446,7 @@ const enviarSeguimiento = async () => {
             v-if="solicitud"
             :isOpen="showTomarModal"
             :solicitudId="solicitud.id"
+            :categoriaGeneralId="solicitud.categoria_general_id"
             @close="showTomarModal = false"
             @taken="onCaseTaken"
         />

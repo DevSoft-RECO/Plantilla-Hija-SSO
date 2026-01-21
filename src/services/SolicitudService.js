@@ -38,18 +38,18 @@ export default {
             data: { path } // Axios delete body
         });
     },
-    // Categorias
+    // Categorias (ahora Subcategorias)
     getCategorias(params) {
-        return axios.get('/solicitudes/categorias', { params });
+        return axios.get('/solicitudes/subcategorias', { params });
     },
     createCategoria(data) {
-        return axios.post('/solicitudes/categorias', data);
+        return axios.post('/solicitudes/subcategorias', data);
     },
     updateCategoria(id, data) {
-        return axios.put(`/solicitudes/categorias/${id}`, data);
+        return axios.put(`/solicitudes/subcategorias/${id}`, data);
     },
     deleteCategoria(id) {
-        return axios.delete(`/solicitudes/categorias/${id}`);
+        return axios.delete(`/solicitudes/subcategorias/${id}`);
     },
     // Usuarios (Proxy)
     getUsuarios(refresh = false) {

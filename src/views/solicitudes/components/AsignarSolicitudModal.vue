@@ -6,7 +6,8 @@ import { useSolicitudCache } from '@/composables/useSolicitudCache';
 
 const props = defineProps({
     isOpen: Boolean,
-    solicitudId: [Number, String]
+    solicitudId: [Number, String],
+    categoriaGeneralId: Number
 });
 
 const emit = defineEmits(['close', 'assigned']);
@@ -21,6 +22,11 @@ const {
     loadData,
     refreshUsuariosYPuestos
 } = useSolicitudCache();
+
+const categoriasFiltradas = computed(() => {
+    if (!props.categoriaGeneralId) return categorias.value;
+    return categorias.value.filter(c => c.categoria_general_id == props.categoriaGeneralId);
+});
 
 const submitting = ref(false);
 
@@ -137,7 +143,7 @@ const submit = async () => {
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categoría</label>
                         <select v-model="form.categoria_id" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
                             <option :value="null">Seleccione una categoría</option>
-                            <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
+                            <option v-for="cat in categoriasFiltradas" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
                         </select>
                     </div>
 
