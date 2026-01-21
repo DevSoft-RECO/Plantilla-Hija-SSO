@@ -55,10 +55,16 @@ const router = createRouter({
           meta: { title: 'Detalle Solicitud' }
         },
         {
-          path: 'solicitudes/categorias',
-          name: 'categorias-solicitud',
-          component: () => import('@/views/solicitudes/CategoriasSolicitud.vue'),
-          meta: { title: 'Categorías', role: 'Super Admin' }
+          path: 'solicitudes/config/categorias-generales',
+          name: 'categorias-generales',
+          component: () => import('@/views/solicitudes/config/CategoriasGeneralesView.vue'),
+          meta: { title: 'Categorías Generales', role: 'Super Admin' }
+        },
+        {
+          path: 'solicitudes/config/subcategorias',
+          name: 'subcategorias',
+          component: () => import('@/views/solicitudes/config/SubcategoriasView.vue'),
+          meta: { title: 'Subcategorías', role: 'Super Admin' }
         },
         {
           path: 'solicitudes/mis-asignaciones',
