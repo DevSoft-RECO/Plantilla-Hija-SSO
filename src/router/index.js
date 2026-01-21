@@ -74,9 +74,15 @@ const router = createRouter({
         },
         {
           path: 'solicitudes/mis-asignaciones',
-          name: 'mi-bandeja',
+          name: 'mis-asignaciones',
           component: () => import('@/views/solicitudes/MiBandeja.vue'),
-          meta: { title: 'Mi Bandeja', permission: 'seguimiento_gestiones' }
+          meta: { title: 'Mis Asignaciones (Tec)' }
+        },
+        {
+          path: 'solicitudes/mis-asignaciones-admin',
+          name: 'mis-asignaciones-admin',
+          component: () => import('@/views/solicitudes/MiBandejaAdmin.vue'),
+          meta: { title: 'Mis Asignaciones (Admin)' }
         },
         {
           path: 'solicitudes/mis-solicitudes',

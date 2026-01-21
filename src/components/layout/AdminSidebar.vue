@@ -239,7 +239,7 @@ const menuItems = computed(() => {
             show: true,
             children: [
                 ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' }] : []),
-                ...(authStore.hasPermission('seguimiento_gestiones') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : []),
+                ...(authStore.hasPermission('seguimiento_gestiones') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : []),
                 ...(authStore.hasPermission('crear_gestiones') ? [{ label: 'Mis Solicitudes', route: '/admin/solicitudes/mis-solicitudes' }] : [])
 
             ]
@@ -252,6 +252,7 @@ const menuItems = computed(() => {
             show: true,
             children: [
                 ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja-admin' }] : []),
+                ...(authStore.hasPermission('seguimiento_gestiones') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones-admin' }] : []),
                 // Podriamos agregar mas links especificos aqui si se requiere
             ]
         },

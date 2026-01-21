@@ -10,7 +10,6 @@ const filtroEstado = ref('');
 const estados = [
     { value: '', label: 'Todas' },
     { value: 'reportada', label: 'Reportadas' },
-    // { value: 'asignada', label: 'Asignadas' }, // Removed as per request
     { value: 'en_seguimiento', label: 'En Seguimiento' },
     { value: 'pendiente_validacion', label: 'Por Validar' },
     { value: 'cerrada', label: 'Cerradas' }
@@ -26,7 +25,7 @@ const loadMyRequests = async () => {
         // Enviar parametro mis_asignaciones=true para filtrar en backend
         const params = {
             mis_asignaciones: 'true',
-            categoria_general_id: 1 // Solo Tecnologicas
+            categoria_general_id: 2 // Solo Administrativas
         };
         if (filtroEstado.value) {
             params.estado = filtroEstado.value;
@@ -66,8 +65,8 @@ const getStatusClass = (status) => {
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Mi Bandeja de Casos Tecnológicos</h1>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Solicitudes asignadas a ti para gestión</p>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Mi Bandeja Administrativa</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Solicitudes administrativas asignadas a ti</p>
             </div>
             <button @click="loadMyRequests" class="text-blue-600 hover:text-blue-800 transition">
                 <i class="fas fa-sync-alt" :class="{ 'fa-spin': loading }"></i> Actualizar
@@ -112,7 +111,7 @@ const getStatusClass = (status) => {
                     <tr v-else-if="requests.length === 0">
                         <td colspan="7" class="p-8 text-center text-gray-500">
                             <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
-                            <p>No tienes casos asignados actualmente.</p>
+                            <p>No tienes casos administrativos asignados.</p>
                         </td>
                     </tr>
                     <tr v-else v-for="req in requests" :key="req.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
