@@ -22,23 +22,40 @@
       <!-- Quick Actions Grid -->
       <div v-if="canCreate" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Create Card -->
+            <!-- Tech Request Card -->
             <div
-                @click="showCreateModal = true"
+                @click="openTechModal"
                 class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-emerald-300 dark:hover:border-emerald-700"
             >
                 <div class="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
                     </svg>
                 </div>
-                <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Nueva Solicitud</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Crea un nuevo ticket de soporte o gestión para tu agencia.</p>
+                <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Solicitud Tecnológica</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Soporte técnico, equipos, internet, sistemas...</p>
+            </div>
+
+            <!-- Admin Request Card -->
+            <div
+                @click="openAdminModal"
+                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-blue-300 dark:hover:border-blue-700"
+            >
+                <div class="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Solicitud Administrativa</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Recursos humanos, insumos, permisos, otros...</p>
             </div>
       </div>
 
       <!-- Modal Crear Solicitud -->
       <CrearSolicitudModal
         :isOpen="showCreateModal"
+        :customTitle="createTitle"
+        :categoriaGeneralId="createCatId"
         @close="showCreateModal = false"
         @created="handleSolicitudCreated"
       />
@@ -53,12 +70,26 @@ import CrearSolicitudModal from '@/views/solicitudes/components/CrearSolicitudMo
 
 const authStore = useAuthStore();
 const showCreateModal = ref(false);
+const createTitle = ref(''); // Titulo del modal
+const createCatId = ref(null); // ID Categoria General
 
 const canCreate = computed(() => {
     return authStore.hasRole('Super Admin') ||
            authStore.hasRole('Jefes de Agencia') ||
            authStore.hasPermission('crear_gestiones');
 });
+
+const openTechModal = () => {
+    createTitle.value = 'Nueva Solicitud Tecnológica';
+    createCatId.value = 1; // 1 = Tecnologica
+    showCreateModal.value = true;
+};
+
+const openAdminModal = () => {
+    createTitle.value = 'Nueva Solicitud Administrativa';
+    createCatId.value = 2; // 2 = Administrativa
+    showCreateModal.value = true;
+};
 
 const handleSolicitudCreated = () => {
     // Podríamos recargar una lista de solicitudes recientes aquí si la tuviéramos

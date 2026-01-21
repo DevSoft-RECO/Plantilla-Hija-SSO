@@ -3,9 +3,11 @@ import { ref } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 
-const { isOpen } = defineProps({
-    isOpen: Boolean
-});
+const props = defineProps({
+    isOpen: Boolean,
+    categoriaGeneralId: Number,
+    customTitle: String
+}); // Removed destructuring to access props easily in script if needed, though destructuring is fine if we use props.categoriaGeneralId
 
 const emit = defineEmits(['close', 'created']);
 
@@ -48,7 +50,11 @@ const submit = async () => {
         if (area.value) {
             formData.append('area', area.value);
         }
-        // Categoría ya no se envía aquí, se asigna después.
+
+        // Asignar categoría general si viene en props
+        if (props.categoriaGeneralId) {
+            formData.append('categoria_general_id', props.categoriaGeneralId);
+        }
 
         files.value.forEach((file) => {
             formData.append('evidencias[]', file);
@@ -84,7 +90,7 @@ const submit = async () => {
             <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white flex justify-between items-start">
                 <div>
                     <h3 class="text-xl font-bold flex items-center gap-2">
-                        <i class="fas fa-plus-circle"></i> Nueva Solicitud
+                        <i class="fas fa-plus-circle"></i> {{ customTitle || 'Nueva Solicitud' }}
                     </h3>
                     <p class="text-emerald-100 text-sm mt-1">Describe tu problema o requerimiento</p>
                 </div>
