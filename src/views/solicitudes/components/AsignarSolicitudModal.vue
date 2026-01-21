@@ -91,6 +91,7 @@ const submit = async () => {
             responsable_id: form.value.responsable_id,
             responsable_nombre: u ? (u.name || u.username) : 'Desconocido',
             responsable_email: u ? u.email : null, // Email del usuario SSO
+            responsable_telefono: u ? (u.telefono || u.celular || u.phone) : null, // Telefono del usuario
             responsable_cargo: u ? (u.puesto || u.cargo) : '', // Adjust based on Mother App user object
             proveedor_id: form.value.tipo_atencion === 'externo' ? form.value.responsable_id : null
         };
