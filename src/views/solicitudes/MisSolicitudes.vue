@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import { useRouter } from 'vue-router';
 
@@ -44,6 +44,10 @@ const estados = [
 ];
 
 onMounted(async () => {
+    cargarSolicitudes();
+});
+
+watch(() => props.categoriaGeneralId, () => {
     cargarSolicitudes();
 });
 
