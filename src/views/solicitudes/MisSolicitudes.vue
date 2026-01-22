@@ -1,12 +1,39 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import { useRouter } from 'vue-router';
+
+const props = defineProps({
+    categoriaGeneralId: Number
+});
 
 const solicitudes = ref([]);
 const loading = ref(true);
 const router = useRouter();
 const filtroEstado = ref('');
+
+const pageTitle = computed(() => {
+    if (props.categoriaGeneralId === 1) return 'Mis Solicitudes Tecnológicas';
+    if (props.categoriaGeneralId === 2) return 'Mis Solicitudes Administrativas';
+    return 'Mis Solicitudes';
+});
+
+const cargarSolicitudes = async () => {
+    loading.value = true;
+    try {
+        const params = {};
+        if (filtroEstado.value) params.estado = filtroEstado.value;
+        if (props.categoriaGeneralId) params.categoria_general_id = props.categoriaGeneralId;
+
+        const response = await SolicitudService.getSolicitudes(params);
+        solicitudes.value = response.data.data;
+    } catch (e) {
+        console.error("Error cargando mis solicitudes", e);
+    } finally {
+        loading.value = false;
+    }
+};
+
 const estados = [
     { value: '', label: 'Todas' },
     { value: 'reportada', label: 'Reportadas' },
@@ -19,21 +46,6 @@ const estados = [
 onMounted(async () => {
     cargarSolicitudes();
 });
-
-const cargarSolicitudes = async () => {
-    loading.value = true;
-    try {
-        const params = {};
-        if (filtroEstado.value) params.estado = filtroEstado.value;
-
-        const response = await SolicitudService.getSolicitudes(params);
-        solicitudes.value = response.data.data;
-    } catch (e) {
-        console.error("Error cargando mis solicitudes", e);
-    } finally {
-        loading.value = false;
-    }
-};
 
 const setFiltro = (estado) => {
     filtroEstado.value = estado;
@@ -56,7 +68,7 @@ const getEstadoClass = (estado) => {
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Mis Solicitudes</h1>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ pageTitle }}</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Solicitudes realizadas por mi agencia</p>
             </div>
             <!-- Botón opcional para recargar -->

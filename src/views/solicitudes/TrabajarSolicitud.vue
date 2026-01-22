@@ -46,6 +46,22 @@ const isAssignee = computed(() => {
     return solicitud.value && authStore.user && authStore.user.id === solicitud.value.responsable_id;
 });
 
+const backRouteName = computed(() => {
+    // 2 is Administrative, everything else (or 1) is Technology/Default
+    if (solicitud.value?.categoria_general_id === 2) {
+        return 'mis-asignaciones-admin';
+    }
+    return 'mis-asignaciones';
+});
+
+const misSolicitudesRoute = computed(() => {
+    // 2 is Administrative, everything else (or 1) is Technology/Default
+    if (solicitud.value?.categoria_general_id === 2) {
+        return 'mis-solicitudes-admin';
+    }
+    return 'mis-solicitudes-tec';
+});
+
 // TABS Logic
 const activeTab = ref('chat');
 
@@ -239,7 +255,7 @@ const cargarDetalle = async (background = false) => {
 
     } catch {
         Swal.fire('Error', 'No se pudo cargar el caso', 'error');
-        if (!background) router.push({ name: 'mi-bandeja' });
+        if (!background) router.push({ name: backRouteName.value });
     } finally {
         loading.value = false;
         refreshing.value = false;
@@ -349,7 +365,7 @@ const confirmarCierre = async () => {
 
         // showFinalizarModal.value = false; // Se cierra solo al cambiar de pagina, o si nos quedamos:
         showFinalizarModal.value = false;
-        router.push({ name: 'mi-bandeja' });
+        router.push({ name: backRouteName.value });
 
     } catch (error) {
         console.error(error);
@@ -383,7 +399,7 @@ const confirmarValidacion = async () => {
 
          Swal.fire('Procesado', 'La solicitud ha sido actualizada', 'success');
          showValidarModal.value = false;
-         router.push({ name: 'mis-solicitudes' }); // Volver a lista
+         router.push({ name: misSolicitudesRoute.value }); // Volver a lista
 
     } catch (error) {
         console.error(error);
@@ -432,7 +448,7 @@ const isDeletedFile = (url) => {
 
             <!-- Columna Izquierda: Detalles del Caso -->
             <div class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 overflow-y-auto custom-scrollbar">
-                <button @click="router.push({ name: 'mi-bandeja' })" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 mb-4 flex items-center gap-2 text-sm">
+                <button @click="router.push({ name: backRouteName })" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 mb-4 flex items-center gap-2 text-sm">
                     <i class="fas fa-arrow-left"></i> Volver a Mi Bandeja
                 </button>
 

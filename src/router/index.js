@@ -85,10 +85,18 @@ const router = createRouter({
           meta: { title: 'Mis Asignaciones (Admin)' }
         },
         {
-          path: 'solicitudes/mis-solicitudes',
-          name: 'mis-solicitudes',
+          path: 'solicitudes/mis-solicitudes-tec',
+          name: 'mis-solicitudes-tec',
           component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
-          meta: { title: 'Mis Solicitudes', permission: 'crear_gestiones' }
+          props: { categoriaGeneralId: 1 },
+          meta: { title: 'Mis Solicitudes (Tec)', permission: 'crear_gestiones' }
+        },
+        {
+          path: 'solicitudes/mis-solicitudes-admin',
+          name: 'mis-solicitudes-admin',
+          component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
+          props: { categoriaGeneralId: 2 },
+          meta: { title: 'Mis Solicitudes (Admin)', permission: 'crear_gestiones' }
         },
         {
           path: 'solicitudes/trabajar/:id',
