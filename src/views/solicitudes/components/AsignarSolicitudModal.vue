@@ -18,9 +18,7 @@ const {
     usuarios,
     puestos,
     loading,
-    refreshing,
-    loadData,
-    refreshUsuariosYPuestos
+    loadData
 } = useSolicitudCache();
 
 const categoriasFiltradas = computed(() => {
@@ -60,18 +58,11 @@ watch(() => props.isOpen, async (isOpen) => {
 const usuariosFiltrados = computed(() => {
     if (!puestoFiltro.value) return usuarios.value;
 
-    // Encontrar el nombre del puesto seleccionado basado en el ID
-    const puestoSeleccionado = puestos.value.find(p => p.id === puestoFiltro.value);
-
-    if (!puestoSeleccionado) return usuarios.value;
-
-    const nombrePuesto = puestoSeleccionado.nombre;
-
+    // Filtro simplificado usando IDs locales
     return usuarios.value.filter(u => {
-        // La App Madre devuelve 'puesto' como string (ej: "Gerente de Agencia")
-        // Ojo: Podría venir null o con diferente casing
-        if (!u.puesto) return false;
-        return u.puesto === nombrePuesto;
+        // Validar primero si el usuario tiene puesto_id
+        if (!u.puesto_id) return false;
+        return u.puesto_id === puestoFiltro.value;
     });
 });
 
@@ -164,25 +155,10 @@ const submit = async () => {
 
                     <!-- Responsable (Lista de Usuarios) -->
                     <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center justify-between mb-3">
+                        <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 {{ form.tipo_atencion === 'interno' ? 'Filtrar por Puesto' : 'Filtrar Proveedores' }}
                             </label>
-                            <button
-                                type="button"
-                                @click="refreshUsuariosYPuestos"
-                                :disabled="refreshing"
-                                class="text-xs bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1.5 rounded-md hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition disabled:opacity-50 flex items-center gap-1.5"
-                                title="Actualizar usuarios y puestos desde la aplicación madre"
-                            >
-                                <svg v-if="!refreshing" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                {{ refreshing ? 'Actualizando...' : 'Actualizar datos' }}
-                            </button>
                         </div>
 
                         <select v-model="puestoFiltro" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 mb-3 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
@@ -196,7 +172,7 @@ const submit = async () => {
                         <select v-model="form.responsable_id" class="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none transition text-gray-700 dark:text-gray-200">
                             <option :value="null">Seleccione...</option>
                             <option v-for="user in usuariosFiltrados" :key="user.id" :value="user.id">
-                                {{ user.name || user.username }} {{ user.puesto ? `(${user.puesto.nombre || user.puesto})` : '' }}
+                                {{ user.name || user.username }} {{ user.puesto ? `(${user.puesto.nombre})` : '' }}
                             </option>
                         </select>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">

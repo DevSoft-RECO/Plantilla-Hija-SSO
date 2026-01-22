@@ -8,7 +8,6 @@ const usuarios = ref([]);
 const puestos = ref([]);
 const dataLoaded = ref(false);
 const loading = ref(false);
-const refreshing = ref(false);
 
 export function useSolicitudCache() {
     // Cargar datos iniciales
@@ -36,31 +35,7 @@ export function useSolicitudCache() {
         }
     };
 
-    // Refrescar usuarios y puestos manualmente
-    const refreshUsuariosYPuestos = async () => {
-        refreshing.value = true;
-        try {
-            const [userRes, puestoRes] = await Promise.all([
-                SolicitudService.getUsuarios(true), // Forzar refresh
-                SolicitudService.getPuestos(true)
-            ]);
-            usuarios.value = userRes.data;
-            puestos.value = puestoRes.data;
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Datos actualizados',
-                text: `${usuarios.value.length} usuarios y ${puestos.value.length} puestos cargados`,
-                timer: 2000,
-                showConfirmButton: false
-            });
-        } catch (error) {
-            console.error("Error refrescando usuarios y puestos", error);
-            Swal.fire('Error', 'No se pudieron actualizar los datos', 'error');
-        } finally {
-            refreshing.value = false;
-        }
-    };
+    // Método de refresh eliminado por solicitud del usuario
 
     return {
         // Estado (readonly para componentes)
@@ -68,11 +43,7 @@ export function useSolicitudCache() {
         usuarios,
         puestos,
         loading,
-        refreshing,
-        dataLoaded,
-
         // Métodos
-        loadData,
-        refreshUsuariosYPuestos
+        loadData
     };
 }

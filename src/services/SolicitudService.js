@@ -51,11 +51,11 @@ export default {
     deleteCategoria(id) {
         return axios.delete(`/solicitudes/subcategorias/${id}`);
     },
-    // Usuarios (Proxy)
-    getUsuarios(refresh = false) {
-        return axios.get('/usuarios', { params: { refresh: refresh ? 'true' : 'false' } });
+    // Usuarios (Locales)
+    getUsuarios() {
+        return axios.get('/usuarios');
     },
-    getPuestos(refresh = false) {
-        return axios.get('/puestos', { params: { refresh: refresh ? 'true' : 'false' } });
+    getPuestos() {
+        return axios.get('/puestos');
     },
 };
