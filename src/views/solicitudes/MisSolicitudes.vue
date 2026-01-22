@@ -129,11 +129,11 @@ const getEstadoClass = (estado) => {
                             </span>
                         </td>
                         <td class="p-4 text-gray-600 dark:text-gray-300">
-                            <div v-if="sol.responsable_nombre" class="flex items-center gap-2">
+                            <div v-if="sol.responsable" class="flex items-center gap-2">
                                 <div class="bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
-                                    {{ sol.responsable_nombre.charAt(0) }}
+                                    {{ sol.responsable.name.charAt(0) }}
                                 </div>
-                                {{ sol.responsable_nombre }}
+                                {{ sol.responsable.name }}
                             </div>
                             <span v-else class="text-gray-400 italic">Sin asignar</span>
                         </td>

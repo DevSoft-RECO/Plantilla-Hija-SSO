@@ -470,11 +470,11 @@ const isDeletedFile = (url) => {
                     <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Solicitante</h3>
                     <div class="flex items-center gap-3">
                         <div class="bg-blue-100 dark:bg-gray-700 h-8 w-8 rounded-full flex items-center justify-center text-blue-600 dark:text-gray-200 font-bold text-xs">
-                            {{ solicitud.creado_por_nombre?.charAt(0) }}
+                            {{ (solicitud.creado_por?.name || '?').charAt(0) }}
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por_nombre }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ solicitud.creado_por_cargo || 'Sin Cargo' }}</p>
+                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por?.name || 'Usuario desconocido' }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ solicitud.creado_por?.puesto?.nombre || 'Sin Cargo' }}</p>
                         </div>
                     </div>
                 </div>
@@ -492,7 +492,7 @@ const isDeletedFile = (url) => {
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
                     <div v-if="solicitud.agencia_id">
                         <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia_id }}</div>
+                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia?.nombre }}</div>
                     </div>
                     <div v-if="solicitud.area">
                         <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>

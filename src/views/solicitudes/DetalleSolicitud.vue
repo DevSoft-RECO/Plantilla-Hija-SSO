@@ -245,7 +245,7 @@ const enviarSeguimiento = async () => {
                         <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
                             <div v-if="solicitud.agencia_id">
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia_id }}</div>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia?.nombre }}</div>
                             </div>
                             <div v-if="solicitud.area">
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
@@ -256,11 +256,11 @@ const enviarSeguimiento = async () => {
                         <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 gap-4">
                              <div>
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Solicitante</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por_nombre }}</div>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por?.name || 'Desconocido' }}</div>
                              </div>
                              <div>
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Responsable</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.responsable_nombre || 'Sin Asignar' }}</div>
+                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.responsable?.name || 'Sin Asignar' }}</div>
                              </div>
                         </div>
 
