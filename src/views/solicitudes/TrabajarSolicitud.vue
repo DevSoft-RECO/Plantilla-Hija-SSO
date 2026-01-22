@@ -95,7 +95,7 @@ const allAttachments = computed(() => {
                  source: 'Evidencia Inicial',
                  uploader_id: solicitud.value.creado_por_id,
                  date: solicitud.value.created_at,
-                 can_delete: isRequester.value || authStore.hasRole('Super Admin')
+                 can_delete: (isRequester.value || authStore.hasRole('Super Admin')) && solicitud.value.estado !== 'cerrada'
              });
         });
     }
@@ -116,7 +116,7 @@ const allAttachments = computed(() => {
                  source: 'Evidencia Final',
                  uploader_id: solicitud.value.responsable_id,
                  date: solicitud.value.updated_at,
-                 can_delete: isAssignee.value || authStore.hasRole('Super Admin')
+                 can_delete: (isAssignee.value || authStore.hasRole('Super Admin')) && solicitud.value.estado !== 'cerrada'
              });
         });
     }
