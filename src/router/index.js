@@ -104,6 +104,13 @@ const router = createRouter({
           component: () => import('@/views/solicitudes/TrabajarSolicitud.vue'),
           meta: { title: 'Trabajar Solicitud' }
         },
+        // Configuración Global
+        {
+          path: 'config/sincronizacion',
+          name: 'sincronizacion',
+          component: () => import('@/views/config/SincronizacionView.vue'),
+          meta: { title: 'Sincronización', role: 'Super Admin' }
+        },
       ]
     },
 
