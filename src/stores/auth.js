@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import AuthService from '../services/AuthService'
 import MotherAuthService from '../services/MotherAuthService'
+import axiosInstance from '../api/axios'
 import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -74,12 +75,21 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      const userData = await MotherAuthService.getMyProfile()
+      // Cambio Importante: Solicitamos a la API LOCAL (/api/me)
+      // Esto dispara el middleware ValidateSSO en el Backend Hija,
+      // lo que a su vez sincroniza el usuario (JIT) en la base de datos local.
+      // Usamos el servicio de Axios configurado (que inyecta el token Bearer)
+      // No usamos MotherAuthService aqui para forzar el paso por el Backend Local.
+      const { default: axios } = await import('../api/axios') // Dynamic import to avoid circular deps if any
+
+      const response = await axios.get('/me')
+      const userData = response.data
+
       user.value = userData
       // Guardamos respaldo básico en localStorage por si acaso
       localStorage.setItem('user_data', JSON.stringify(userData))
     } catch (error) {
-      console.warn('Sesión expirada o inválida, o error al conectar con Madre')
+      console.warn('Sesión expirada o inválida, o error al conectar con Api Local', error)
       // Si falla la validación del token, hacemos logout
       logout()
     } finally {
