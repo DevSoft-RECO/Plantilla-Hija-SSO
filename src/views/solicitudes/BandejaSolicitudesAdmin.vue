@@ -147,7 +147,7 @@ const getEstadoClass = (estado) => {
                                 </span>
                             </td>
                             <td class="p-4 text-gray-600 dark:text-gray-300">
-                                <div class="text-xs font-bold">{{ sol.creadoPor?.name || 'Desconocido' }}</div>
+                                <div class="text-xs font-bold">{{ sol.creado_por?.name || 'Desconocido' }}</div>
                                 <div class="text-xs opacity-75">{{ sol.agencia?.nombre || 'S/A' }}</div>
                             </td>
                             <td class="p-4 text-gray-600 dark:text-gray-300">

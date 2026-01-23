@@ -107,11 +107,11 @@
                 </div>
 
                 <button
-                    @click="handleLogout"
-                    class="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                    @click="handleReturnToMother"
+                    class="flex w-full items-center gap-2 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Cerrar Sesión
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Volver a App Madre
                 </button>
             </div>
         </transition>
@@ -122,7 +122,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute } from "vue-router"
 import { useLayoutStore } from "@/stores/layout"
 import { useAuthStore } from "@/stores/auth"
 import { getAvatarUrl } from "@/utils/imageUtils"
@@ -130,7 +130,6 @@ import { getAvatarUrl } from "@/utils/imageUtils"
 const layoutStore = useLayoutStore()
 const authStore = useAuthStore()
 const route = useRoute()
-const router = useRouter()
 
 const isDropdownOpen = ref(false)
 
@@ -147,10 +146,10 @@ const userInitials = computed(() => {
     return (userName.value || "U").substring(0, 2).toUpperCase()
 })
 
-const handleLogout = async () => {
+const handleReturnToMother = () => {
     isDropdownOpen.value = false
-    await authStore.logout()
-    router.replace({ name: 'login' })
+    // Redirigir a la App Madre (Dashboard principal)
+    window.location.href = import.meta.env.VITE_MOTHER_APP_URL || 'http://localhost:5173'
 }
 
 // Asegurar que tenemos datos al cargar

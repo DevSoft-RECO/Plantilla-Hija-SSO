@@ -127,9 +127,9 @@ const getStatusClass = (status) => {
                         <td class="p-4 text-gray-600 dark:text-gray-300">
                             <div class="flex items-center gap-2">
                                 <div class="bg-blue-100 text-blue-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
-                                    {{ req.creado_por_nombre?.charAt(0) }}
+                                    {{ req.creado_por?.name?.charAt(0) }}
                                 </div>
-                                {{ req.creado_por_nombre }}
+                                {{ req.creado_por?.name }}
                             </div>
                         </td>
                         <td class="p-4 text-gray-500 dark:text-gray-400">
