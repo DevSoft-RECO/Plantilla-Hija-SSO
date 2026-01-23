@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import AuthService from '../services/AuthService'
-import MotherAuthService from '../services/MotherAuthService'
-import axiosInstance from '../api/axios'
+
+
 import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {

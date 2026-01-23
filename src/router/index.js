@@ -51,7 +51,7 @@ const router = createRouter({
           path: 'solicitudes/bandeja-admin',
           name: 'bandeja-solicitudes-admin',
           component: () => import('@/views/solicitudes/BandejaSolicitudesAdmin.vue'),
-          meta: { title: 'Bandeja de Solicitudes (Admin)', role: 'Super Admin' }
+          meta: { title: 'Bandeja de Solicitudes (Admin)', role: 'Super Admin', permission: 'crear-solicitudes-admin' }
         },
         {
           path: 'solicitudes/:id',
@@ -76,27 +76,27 @@ const router = createRouter({
           path: 'solicitudes/mis-asignaciones',
           name: 'mis-asignaciones',
           component: () => import('@/views/solicitudes/MiBandeja.vue'),
-          meta: { title: 'Mis Asignaciones (Tec)' }
+          meta: { title: 'Mis Asignaciones (Tec)', permission: 'solicitudes-tecnologicas-externas' }
         },
         {
           path: 'solicitudes/mis-asignaciones-admin',
           name: 'mis-asignaciones-admin',
           component: () => import('@/views/solicitudes/MiBandejaAdmin.vue'),
-          meta: { title: 'Mis Asignaciones (Admin)' }
+          meta: { title: 'Mis Asignaciones (Admin)', permission: 'gestionar_solicitudes-administrativas' }
         },
         {
           path: 'solicitudes/mis-solicitudes-tec',
           name: 'mis-solicitudes-tec',
           component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
           props: { categoriaGeneralId: 1 },
-          meta: { title: 'Mis Solicitudes (Tec)', permission: 'crear_gestiones' }
+          meta: { title: 'Mis Solicitudes (Tec)', permission: 'crear-solicitudes-tech' }
         },
         {
           path: 'solicitudes/mis-solicitudes-admin',
           name: 'mis-solicitudes-admin',
           component: () => import('@/views/solicitudes/MisSolicitudes.vue'),
           props: { categoriaGeneralId: 2 },
-          meta: { title: 'Mis Solicitudes (Admin)', permission: 'crear_gestiones' }
+          meta: { title: 'Mis Solicitudes (Admin)', permission: 'crear-solicitudes-admin' }
         },
         {
           path: 'solicitudes/trabajar/:id',

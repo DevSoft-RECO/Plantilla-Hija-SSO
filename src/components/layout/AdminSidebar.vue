@@ -223,6 +223,37 @@ const handleItemClick = () => {
 // Helper para verificar roles administrativos
 
 const menuItems = computed(() => {
+    // 1. Definir Hijos y permisos individuales
+    const solTecChildren = [
+        ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' }] : []),
+        ...(authStore.hasPermission('solicitudes-tecnologicas-externas') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : [])
+    ];
+
+    const solAdminChildren = [
+        ...(authStore.hasPermission('asignar_solicitudes-administrativas') || authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja-admin' }] : []),
+        ...(authStore.hasPermission('gestionar_solicitudes-administrativas') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones-admin' }] : [])
+    ];
+
+    const misSolicitudesChildren = [
+        ...(authStore.hasPermission('crear-solicitudes-tech') || authStore.hasRole('Super Admin') ? [{ label: 'Tecnología', route: '/admin/solicitudes/mis-solicitudes-tec' }] : []),
+        ...(authStore.hasPermission('crear-solicitudes-admin') || authStore.hasRole('Super Admin') ? [{ label: 'Administrativas', route: '/admin/solicitudes/mis-solicitudes-admin' }] : [])
+    ];
+
+    const configSolicitudesChildren = [
+        { label: 'Categorías Generales', route: '/admin/solicitudes/config/categorias-generales' },
+        { label: 'Subcategorías', route: '/admin/solicitudes/config/subcategorias' }
+    ];
+    // Para grupos de solo Super Admin, validamos todo el grupo o children igual?
+    // Si configSolicitudesChildren no tiene logica de permisos interna (son fijas), la validacion recae en el padre.
+    // Pero si queremos consistencia:
+    const showConfigSolicitudes = authStore.hasRole('Super Admin');
+
+    const configGeneralChildren = [
+        { label: 'Sincronización', route: '/admin/config/sincronizacion' }
+    ];
+    const showConfigGeneral = authStore.hasRole('Super Admin');
+
+
     const items = [
         {
             id: 'home',
@@ -231,75 +262,57 @@ const menuItems = computed(() => {
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2v10a1 1 0 01-1 1h-3m-4 0h4" />',
             show: true
         },
-        // Solicitudes
+        // Solicitudes Tecnologicas
         {
             id: 'solicitudes',
             label: 'Solicitudes Tecnologicas',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />',
-            show: true,
-            children: [
-                ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja' }] : []),
-                ...(authStore.hasPermission('seguimiento_gestiones') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones' }] : []),
-            ]
+            show: solTecChildren.length > 0,
+            children: solTecChildren
         },
         // Solicitudes Administracion
         {
             id: 'solicitudes-admin',
             label: 'Solicitudes Administración',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />',
-            show: true,
-            children: [
-                ...(authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja-admin' }] : []),
-                ...(authStore.hasPermission('seguimiento_gestiones') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones-admin' }] : []),
-            ]
+            show: solAdminChildren.length > 0,
+            children: solAdminChildren
         },
         // Mis Solicitudes (Creadas por mi)
         {
             id: 'mis-solicitudes-grupo',
             label: 'Mis Solicitudes',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />',
-            show: true,
-            children: [
-                 ...(authStore.hasPermission('crear_gestiones') ? [
-                    { label: 'Tecnología', route: '/admin/solicitudes/mis-solicitudes-tec' },
-                    { label: 'Administrativas', route: '/admin/solicitudes/mis-solicitudes-admin' }
-                 ] : [])
-            ]
+            show: misSolicitudesChildren.length > 0,
+            children: misSolicitudesChildren
         },
-        // Config. Solicitudes (Nuevo Grupo)
+        // Config. Solicitudes
         {
             id: 'config_solicitudes',
             label: 'Config. Solicitudes',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />',
-            show: authStore.hasRole('Super Admin'),
-            children: [
-                { label: 'Categorías Generales', route: '/admin/solicitudes/config/categorias-generales' },
-                { label: 'Subcategorías', route: '/admin/solicitudes/config/subcategorias' }
-            ]
+            show: showConfigSolicitudes,
+            children: configSolicitudesChildren
         },
         // Configuraciones Generales
         {
             id: 'configuraciones',
             label: 'Configuraciones',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />',
-            show: authStore.hasRole('Super Admin'),
-            children: [
-                { label: 'Sincronización', route: '/admin/config/sincronizacion' }
-            ]
+            show: showConfigGeneral,
+            children: configGeneralChildren
         },
         // --- EJEMPLO DE GRUPO (PLANTILLA) ---
         {
             id: 'caja',
             label: 'Caja (Ejemplo Grupo)',
-            // No tiene 'route' porque es un grupo desplegable
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />',
-            show: true,
+            show: authStore.hasRole('Super Admin'), // Ejemplo: mantener oculto para prod
             children: [
                 { label: 'Sub-item 1', route: '/admin/caja' },
                 { label: 'Sub-item 2', route: '/admin/caja/ejemplo' }
             ]
         },
-
     ]
 
     return items.filter(item => item.show)

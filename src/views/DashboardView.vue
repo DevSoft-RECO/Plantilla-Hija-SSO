@@ -20,10 +20,11 @@
       </div>
 
       <!-- Quick Actions Grid -->
-      <div v-if="canCreate" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Create Card -->
             <!-- Tech Request Card -->
             <div
+                v-if="canCreateTech"
                 @click="openTechModal"
                 class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-emerald-300 dark:hover:border-emerald-700"
             >
@@ -38,6 +39,7 @@
 
             <!-- Admin Request Card -->
             <div
+                v-if="canCreateAdmin"
                 @click="openAdminModal"
                 class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-blue-300 dark:hover:border-blue-700"
             >
@@ -73,10 +75,12 @@ const showCreateModal = ref(false);
 const createTitle = ref(''); // Titulo del modal
 const createCatId = ref(null); // ID Categoria General
 
-const canCreate = computed(() => {
-    return authStore.hasRole('Super Admin') ||
-           authStore.hasRole('Jefes de Agencia') ||
-           authStore.hasPermission('crear_gestiones');
+const canCreateTech = computed(() => {
+    return authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-tech');
+});
+
+const canCreateAdmin = computed(() => {
+    return authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-admin');
 });
 
 const openTechModal = () => {
