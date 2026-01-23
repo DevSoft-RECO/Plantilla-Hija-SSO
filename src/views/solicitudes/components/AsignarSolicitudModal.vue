@@ -43,6 +43,13 @@ const puestoFiltro = ref(null);
 // Cargar datos DESPUÉS de que el modal se abre (para apertura instantánea)
 watch(() => props.isOpen, async (isOpen) => {
     if (isOpen) {
+        // Auto-select type based on category
+        if (props.categoriaGeneralId === 1) {
+            form.value.tipo_atencion = 'interno';
+        } else if (props.categoriaGeneralId === 2) {
+            form.value.tipo_atencion = 'externo';
+        }
+
         // Esperar a que el modal se renderice primero
         await nextTick();
 
@@ -142,13 +149,13 @@ const submit = async () => {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo de Atención</label>
                         <div class="flex gap-4 mt-2">
-                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'interno' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                            <label v-if="!categoriaGeneralId || categoriaGeneralId === 1" class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'interno' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
                                 <input type="radio" v-model="form.tipo_atencion" value="interno" class="text-emerald-600 focus:ring-emerald-500">
-                                Interna (Personal IT)
+                                Interna
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'externo' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                            <label v-if="!categoriaGeneralId || categoriaGeneralId === 2" class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'externo' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
                                 <input type="radio" v-model="form.tipo_atencion" value="externo" class="text-emerald-600 focus:ring-emerald-500">
-                                Externa (Proveedor)
+                                Externa
                             </label>
                         </div>
                     </div>
