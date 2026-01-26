@@ -134,8 +134,9 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Total Resolution -->
               <div
-                @click="metrics.resolution?.total > 0 ? openResolutionModal('total') : null"
-                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 cursor-pointer hover:shadow-md transition-all group"
+                @click="canDrillDown && metrics.resolution?.total > 0 ? openResolutionModal('total') : null"
+                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
+                :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
               >
                   <div class="flex items-center justify-between">
                      <div>
@@ -143,7 +144,7 @@
                          <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.total || 0 }}</h3>
                          <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas al 100%</p>
                      </div>
-                     <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl group-hover:scale-110 transition-transform">
+                     <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
                          <i class="fas fa-check-double"></i>
                      </div>
                   </div>
@@ -151,8 +152,9 @@
 
               <!-- Partial Resolution -->
                <div
-                @click="metrics.resolution?.parcial > 0 ? openResolutionModal('parcial') : null"
-                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 cursor-pointer hover:shadow-md transition-all group"
+                @click="canDrillDown && metrics.resolution?.parcial > 0 ? openResolutionModal('parcial') : null"
+                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
+                :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
               >
                    <div class="flex items-center justify-between">
                      <div>
@@ -160,7 +162,7 @@
                          <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
                           <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas parcialmente</p>
                      </div>
-                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl group-hover:scale-110 transition-transform">
+                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
                          <i class="fas fa-check"></i>
                      </div>
                   </div>
