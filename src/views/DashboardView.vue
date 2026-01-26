@@ -222,6 +222,47 @@
               <!-- If we assume grid-cols-2, this slot is empty. -->
           </div>
 
+          <!-- Full Width Agency Bar Chart (Admin Only - All Agencies) -->
+          <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Total Solicitudes por todas las agencias</h3>
+              <div class="overflow-x-auto pb-6">
+                  <div class="flex items-end gap-3 min-h-[250px] min-w-max px-2 pt-8">
+                       <div
+                          v-for="(item, index) in metrics.charts?.all_agencies || metrics.charts?.agencies"
+                          :key="index"
+                          class="group relative flex flex-col justify-end items-center h-[250px] w-8 hover:bg-gray-50 dark:hover:bg-gray-700/20 rounded"
+                      >
+                           <!-- Tooltip -->
+                           <div class="absolute bottom-full mb-2 hidden group-hover:block z-20 left-1/2 transform -translate-x-1/2">
+                              <div class="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
+                                  {{ item.nombre }}: {{ item.count }}
+                              </div>
+                          </div>
+                           <!-- Bar -->
+                          <div
+                              class="w-full bg-blue-500 hover:bg-blue-400 rounded-t-sm transition-all duration-300 relative"
+                              :style="{ height: `${calculateGenericPercentage(item.count, (metrics.charts?.all_agencies?.[0]?.count || metrics.charts?.agencies?.[0]?.count))}%` }"
+                          >
+                               <span class="absolute -top-5 left-1/2 transform -translate-x-1/2 text-[10px] font-bold text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {{ item.count }}
+                              </span>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Axis Labels container (scrolls with bars) -->
+                  <div class="flex gap-3 min-w-max px-2 border-t border-gray-200 dark:border-gray-700 pt-2">
+                      <div
+                          v-for="(item, index) in metrics.charts?.all_agencies || metrics.charts?.agencies"
+                          :key="index"
+                          class="w-8 text-[9px] text-gray-500 dark:text-gray-400 text-center truncate transform -rotate-45 origin-top-left translate-y-2"
+                          :title="item.nombre"
+                      >
+                          {{ item.nombre }}
+                      </div>
+                  </div>
+              </div>
+          </div>
+
 
 
       </div>
