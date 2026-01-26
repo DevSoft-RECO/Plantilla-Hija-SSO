@@ -130,6 +130,43 @@
               </div>
           </div>
 
+          <!-- Resolution Stats (Total vs Partial) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Total Resolution -->
+              <div
+                @click="metrics.resolution?.total > 0 ? openResolutionModal('total') : null"
+                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 cursor-pointer hover:shadow-md transition-all group"
+              >
+                  <div class="flex items-center justify-between">
+                     <div>
+                         <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-1 uppercase tracking-wider">Solución Total</p>
+                         <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.total || 0 }}</h3>
+                         <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas al 100%</p>
+                     </div>
+                     <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl group-hover:scale-110 transition-transform">
+                         <i class="fas fa-check-double"></i>
+                     </div>
+                  </div>
+              </div>
+
+              <!-- Partial Resolution -->
+               <div
+                @click="metrics.resolution?.parcial > 0 ? openResolutionModal('parcial') : null"
+                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 cursor-pointer hover:shadow-md transition-all group"
+              >
+                   <div class="flex items-center justify-between">
+                     <div>
+                         <p class="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1 uppercase tracking-wider">Solución Parcial</p>
+                         <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
+                          <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas parcialmente</p>
+                     </div>
+                     <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl group-hover:scale-110 transition-transform">
+                         <i class="fas fa-check"></i>
+                     </div>
+                  </div>
+              </div>
+          </div>
+
           <!-- Charts Section -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
@@ -276,6 +313,16 @@
         @created="handleSolicitudCreated"
       />
 
+       <!-- Modal Resolution Details -->
+       <ResolutionDetailsModal
+        :isOpen="showResolutionModal"
+        :title="resolutionTitle"
+        :type="resolutionType"
+        :solicitudes="resolutionDetails"
+        :loading="resolutionLoading"
+        @close="showResolutionModal = false"
+       />
+
     </div>
 </template>
 
@@ -285,6 +332,7 @@ import { useAuthStore } from '@/stores/auth';
 // import { useRouter } from 'vue-router'; // Unused
 import DashboardService from '@/services/DashboardService';
 import CrearSolicitudModal from '@/views/solicitudes/components/CrearSolicitudModal.vue';
+import ResolutionDetailsModal from '@/views/solicitudes/components/ResolutionDetailsModal.vue';
 
 const authStore = useAuthStore();
 // const router = useRouter(); // Removed as unused for now, navigateTo uses console.log currently
@@ -302,6 +350,13 @@ const filters = reactive({
 const showCreateModal = ref(false);
 const createTitle = ref('');
 const createCatId = ref(null);
+
+// Resolution Modal State
+const showResolutionModal = ref(false);
+const resolutionType = ref('');
+const resolutionDetails = ref([]);
+const resolutionLoading = ref(false);
+const resolutionTitle = computed(() => resolutionType.value === 'total' ? 'Solicitudes con Solución Total' : 'Solicitudes con Solución Parcial');
 
 // Permissions & Scope
 const canViewGeneral = computed(() => {
@@ -414,6 +469,23 @@ const navigateTo = (type) => {
 const openTechModal = () => { createTitle.value = 'Nueva Solicitud Tecnológica'; createCatId.value = 1; showCreateModal.value = true; };
 const openAdminModal = () => { createTitle.value = 'Nueva Solicitud Administrativa'; createCatId.value = 2; showCreateModal.value = true; };
 const handleSolicitudCreated = () => { fetchMetrics(); }; // Refresh data
+
+// Resolution Modal Logic
+const openResolutionModal = async (type) => {
+    resolutionType.value = type;
+    showResolutionModal.value = true;
+    resolutionLoading.value = true;
+    resolutionDetails.value = [];
+    try {
+        const params = { type, ...filters };
+        const response = await DashboardService.getResolutionDetails(params);
+        resolutionDetails.value = response.data;
+    } catch (e) {
+        console.error("Error fetching resolution details:", e);
+    } finally {
+        resolutionLoading.value = false;
+    }
+};
 
 </script>
 

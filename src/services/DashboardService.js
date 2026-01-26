@@ -15,5 +15,9 @@ export default {
      */
     getAgencies() {
         return api.get('/agencias'); // Ensure this endpoint returns a list of agencies
+    },
+
+    getResolutionDetails(params = {}) {
+        return api.get('/dashboard/resolution-details', { params });
     }
 };
