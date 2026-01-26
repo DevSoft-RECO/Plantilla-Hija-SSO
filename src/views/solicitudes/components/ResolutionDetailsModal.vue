@@ -5,8 +5,8 @@
       <!-- Header -->
       <div class="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-3">
-             <div class="p-2 rounded-lg" :class="isTotal ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-100 text-blue-600'">
-                 <i class="fas" :class="isTotal ? 'fa-check-double' : 'fa-check'"></i>
+             <div class="p-2 rounded-lg" :class="headerColorClass">
+                 <i class="fas" :class="headerIconClass"></i>
              </div>
              <h3 class="text-xl font-bold text-gray-800 dark:text-white">{{ title }}</h3>
         </div>
@@ -28,7 +28,7 @@
                      <tr>
                          <th class="px-4 py-3 rounded-tl-lg">ID</th>
                          <th class="px-4 py-3">Título</th>
-                         <th class="px-4 py-3">Responsable</th>
+                         <th v-if="showResponsable" class="px-4 py-3">Responsable</th>
                          <th class="px-4 py-3 rounded-tr-lg">Fecha</th>
                      </tr>
                  </thead>
@@ -36,7 +36,7 @@
                      <tr v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                          <td class="px-4 py-3 font-bold text-indigo-600 dark:text-indigo-400">#{{ sol.id }}</td>
                          <td class="px-4 py-3 font-medium text-gray-900 dark:text-white truncate max-w-[250px]" :title="sol.titulo">{{ sol.titulo }}</td>
-                         <td class="px-4 py-3">
+                         <td v-if="showResponsable" class="px-4 py-3">
                             <div class="flex items-center gap-2">
                                 <span class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">
                                     {{ (sol.responsable?.name || '?')[0] }}
@@ -72,14 +72,34 @@ import { computed } from 'vue';
 const props = defineProps({
   isOpen: Boolean,
   title: String,
-  type: String, // 'total' or 'parcial'
+  type: String, // 'total', 'parcial', 'abiertas', 'validacion'
   solicitudes: { type: Array, default: () => [] },
   loading: Boolean
 });
 
 defineEmits(['close']);
 
-const isTotal = computed(() => props.type === 'total');
+const showResponsable = computed(() => !['abiertas', 'validacion'].includes(props.type));
+
+const headerColorClass = computed(() => {
+    switch(props.type) {
+        case 'total': return 'bg-emerald-100 text-emerald-600';
+        case 'parcial': return 'bg-blue-100 text-blue-600';
+        case 'abiertas': return 'bg-indigo-100 text-indigo-600';
+        case 'validacion': return 'bg-amber-100 text-amber-600';
+        default: return 'bg-gray-100 text-gray-600';
+    }
+});
+
+const headerIconClass = computed(() => {
+    switch(props.type) {
+        case 'total': return 'fa-check-double';
+        case 'parcial': return 'fa-check';
+        case 'abiertas': return 'fa-clock';
+        case 'validacion': return 'fa-exclamation-circle'; // changed icon for variety
+        default: return 'fa-list';
+    }
+});
 
 const formatDate = (date) => {
     if(!date) return '';

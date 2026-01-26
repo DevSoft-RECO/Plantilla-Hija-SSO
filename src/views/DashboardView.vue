@@ -356,7 +356,15 @@ const showResolutionModal = ref(false);
 const resolutionType = ref('');
 const resolutionDetails = ref([]);
 const resolutionLoading = ref(false);
-const resolutionTitle = computed(() => resolutionType.value === 'total' ? 'Solicitudes con Solución Total' : 'Solicitudes con Solución Parcial');
+const resolutionTitle = computed(() => {
+    switch(resolutionType.value) {
+        case 'total': return 'Solicitudes con Solución Total';
+        case 'parcial': return 'Solicitudes con Solución Parcial';
+        case 'abiertas': return 'Solicitudes Abiertas';
+        case 'validacion': return 'Solicitudes por Validar';
+        default: return 'Detalle de Solicitudes';
+    }
+});
 
 // Permissions & Scope
 const canViewGeneral = computed(() => {
@@ -455,14 +463,7 @@ const formatStatus = (s) => s.replace('_', ' ');
 
 const navigateTo = (type) => {
     if (!canDrillDown.value) return;
-
-    // Logic to navigate to Bandeja with filters pre-set?
-    // User might strictly want to see the list.
-    // We can assume 'BandejaSolicitudes' listens to query params?
-    // If not, we just go to the list.
-    // For now, let's just log or go to generic list.
-    console.log("Navigate to", type);
-    // router.push({ name: 'bandeja-solicitudes', query: { status: type } });
+    openResolutionModal(type);
 };
 
 // Create Modal Logic
