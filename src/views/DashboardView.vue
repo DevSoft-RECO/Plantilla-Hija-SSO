@@ -185,34 +185,31 @@
               <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-full">
                   <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Volumen por Agencia (Top 10)</h3>
 
-                  <div v-if="metrics.charts?.agencies?.length" class="flex-1 flex items-stretch justify-between gap-2 min-h-[300px] pb-2">
+                  <div v-if="metrics.charts?.agencies?.length" class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-8 min-h-[300px]">
+                       <!-- Pie Chart -->
                        <div
-                        v-for="(item, index) in metrics.charts?.agencies"
-                        :key="index"
-                        class="group relative flex-1 flex flex-col justify-end items-center h-full"
-                      >
-                          <!-- Tooltip -->
-                          <div class="absolute bottom-full mb-2 hidden group-hover:block z-20">
-                              <div class="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
-                                  {{ item.nombre }}: {{ item.count }}
-                              </div>
-                          </div>
+                            class="relative w-56 h-56 rounded-full shadow-lg border-4 border-gray-100 dark:border-gray-700 transition-transform hover:scale-105"
+                            :style="pieChartStyle"
+                       >
+                           <!-- Optional: Tooltip overlay could be tricky with conic, so simple chart for now -->
+                       </div>
 
-                          <!-- Bar -->
-                          <div
-                              class="w-full max-w-[40px] bg-indigo-500 hover:bg-indigo-400 rounded-t-lg transition-all duration-500 relative"
-                              :style="{ height: `${calculateGenericPercentage(item.count, metrics.charts?.agencies[0]?.count)}%` }"
-                          >
-                            <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {{ item.count }}
-                            </span>
-                          </div>
-
-                          <!-- Label -->
-                          <div class="mt-2 text-[10px] text-gray-500 dark:text-gray-400 truncate w-full text-center px-0.5" :title="item.nombre">
-                              {{ item.nombre.length > 8 ? item.nombre.substring(0,8)+'..' : item.nombre }}
-                          </div>
-                      </div>
+                       <!-- Legend -->
+                       <div class="flex-1 w-full xl:w-auto">
+                           <ul class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-2">
+                               <li v-for="(item, index) in metrics.charts?.agencies" :key="index" class="flex items-center justify-between group hover:bg-gray-50 dark:hover:bg-gray-700/50 p-1.5 rounded-lg transition-colors">
+                                   <div class="flex items-center gap-2 truncate">
+                                       <span class="w-3 h-3 rounded-full shrink-0 shadow-sm" :style="{ backgroundColor: pieColors[index % pieColors.length] }"></span>
+                                       <span class="text-gray-600 dark:text-gray-300 truncate w-[140px] xl:w-[180px]" :title="item.nombre">
+                                           {{ item.nombre }}
+                                       </span>
+                                   </div>
+                                   <span class="font-bold text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full text-xs">
+                                       {{ item.count }}
+                                   </span>
+                               </li>
+                           </ul>
+                       </div>
                   </div>
 
                    <!-- Empty State -->
@@ -313,15 +310,38 @@ onMounted(async () => {
 // Helper: Calculate width for bars
 const calculateGenericPercentage = (val, max = null) => {
     if (!max) {
-        // Find max in the current dataset if not provided, or assume a total?
-        // For simplicity, let's use the KPI total or just 100% relative to the biggest item in list?
-        // Using 100% scale relative to total requests might be small.
-        // Let's return a relative percentage to the 'Total' count
         max = metrics.value.kpi?.total || 1;
     }
     if (max === 0) return 0;
     return Math.round((val / max) * 100);
 };
+
+// Pie Chart Logic
+const pieColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6', '#f97316', '#64748b'];
+
+const pieChartStyle = computed(() => {
+    const data = metrics.value.charts?.agencies || [];
+    if (!data.length) return {};
+
+    const total = data.reduce((sum, item) => sum + item.count, 0);
+    let currentDeg = 0;
+    let gradient = [];
+
+    data.forEach((item, index) => {
+        const percent = item.count / total;
+        const deg = percent * 360;
+        const color = pieColors[index % pieColors.length];
+
+        gradient.push(`${color} ${currentDeg}deg ${currentDeg + deg}deg`);
+        currentDeg += deg;
+    });
+
+    return {
+        background: `conic-gradient(${gradient.join(', ')})`,
+        borderRadius: '50%'
+    };
+});
+
 
 const getStatusColorClass = (status) => {
     switch (status) {
