@@ -1,60 +1,216 @@
 <template>
     <div class="space-y-6 animate-fade-in-up">
 
-      <!-- Welcome Card + Create Button -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Header & Filters -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
               <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-                  Hola, <span class="text-emerald-500">{{ authStore.user?.name }}</span>
+                  Dashboard de Gestiones
               </h2>
-              <p class="text-gray-500 dark:text-gray-400 mt-1">
-                  Bienvenido a la App de Gestiones
+              <p class="text-gray-500 dark:text-gray-400 text-sm">
+                  Resumen de operaciones y métricas clave
               </p>
           </div>
-          <div class="flex items-center gap-3">
-              <a @click="returnToPortal" class="cursor-pointer text-sm font-medium text-emerald-600 hover:underline flex items-center gap-1 bg-emerald-50 px-4 py-2 rounded-lg hover:bg-emerald-100 transition">
-                  <i class="fas fa-arrow-left"></i>
-                  Volver al Portal
-              </a>
+
+          <!-- Filters -->
+          <div class="flex flex-col sm:flex-row gap-3">
+              <!-- Category Filter -->
+              <select
+                  v-model="filters.category_id"
+                  @change="fetchMetrics"
+                  class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
+              >
+                  <option :value="null">Todas las Categorías</option>
+                  <option :value="1">Tecnología</option>
+                  <option :value="2">Administración</option>
+              </select>
+
+              <!-- Agency Filter (Admin Only) -->
+              <div v-if="canViewGeneral && !isAgencyUser" class="relative">
+                 <select
+                      v-model="filters.agencia_id"
+                      @change="fetchMetrics"
+                      class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 w-full sm:w-48"
+                  >
+                      <option :value="null">Todas las Agencias</option>
+                      <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
+                          {{ agency.nombre }}
+                      </option>
+                  </select>
+              </div>
+              <div v-else class="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300">
+                  <i class="fas fa-building mr-2"></i> {{ authStore.user?.agencia_id ? 'Mi Agencia' : 'Sin Agencia' }}
+              </div>
           </div>
       </div>
 
-      <!-- Quick Actions Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Create Card -->
-            <!-- Tech Request Card -->
-            <div
-                v-if="canCreateTech"
-                @click="openTechModal"
-                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-emerald-300 dark:hover:border-emerald-700"
-            >
-                <div class="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
-                    </svg>
-                </div>
-                <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Solicitud Tecnológica</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Soporte técnico, equipos, internet, sistemas...</p>
-            </div>
-
-            <!-- Admin Request Card -->
-            <div
-                v-if="canCreateAdmin"
-                @click="openAdminModal"
-                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 cursor-pointer group hover:shadow-md transition-all hover:border-blue-300 dark:hover:border-blue-700"
-            >
-                <div class="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                </div>
-                <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Solicitud Administrativa</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Recursos humanos, insumos, permisos, otros...</p>
-            </div>
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
       </div>
 
-      <!-- Modal Crear Solicitud -->
-      <CrearSolicitudModal
+      <div v-else class="space-y-6">
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Total -->
+              <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <div>
+                      <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Solicitudes</p>
+                      <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-1">{{ metrics.kpi?.total || 0 }}</h3>
+                  </div>
+                  <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                      <i class="fas fa-clipboard-list text-xl"></i>
+                  </div>
+              </div>
+
+              <!-- Open -->
+              <div
+                @click="canDrillDown ? navigateTo('abiertas') : null"
+                :class="{'cursor-pointer hover:border-emerald-400 transition-colors': canDrillDown}"
+                class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+              >
+                  <div>
+                      <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Abiertas</p>
+                      <h3 class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ metrics.kpi?.open || 0 }}</h3>
+                  </div>
+                  <div class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
+                      <i class="fas fa-clock text-xl"></i>
+                  </div>
+              </div>
+
+               <!-- Pending Validation -->
+               <div
+                 @click="canDrillDown ? navigateTo('validacion') : null"
+                 :class="{'cursor-pointer hover:border-amber-400 transition-colors': canDrillDown}"
+                 class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+               >
+                  <div>
+                      <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Por Validar</p>
+                      <h3 class="text-3xl font-bold text-amber-500 dark:text-amber-400 mt-1">{{ metrics.kpi?.validation || 0 }}</h3>
+                  </div>
+                  <div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-500 dark:text-amber-400">
+                      <i class="fas fa-check-circle text-xl"></i>
+                  </div>
+              </div>
+
+               <!-- Closed -->
+               <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <div>
+                      <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Cerradas</p>
+                      <h3 class="text-3xl font-bold text-gray-400 dark:text-gray-500 mt-1">{{ metrics.kpi?.closed || 0 }}</h3>
+                  </div>
+                  <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-gray-400 dark:text-gray-500">
+                      <i class="fas fa-archive text-xl"></i>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+              <!-- Subcategories Bar Chart -->
+              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Top Subcategorías</h3>
+                  <div class="space-y-4">
+                      <div v-for="(item, index) in metrics.charts?.subcategories" :key="index" class="space-y-1">
+                          <div class="flex justify-between text-sm">
+                              <span class="text-gray-600 dark:text-gray-300">{{ item.nombre }}</span>
+                              <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                          </div>
+                          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                              <div
+                                class="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
+                                :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
+                              ></div>
+                          </div>
+                      </div>
+                      <div v-if="!metrics.charts?.subcategories?.length" class="text-center text-gray-400 py-4">
+                          Sin datos para mostrar
+                      </div>
+                  </div>
+              </div>
+
+               <!-- Status Distribution -->
+               <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Estado de Solicitudes</h3>
+                  <div class="space-y-4">
+                       <div v-for="(item, index) in metrics.charts?.status" :key="index" class="space-y-1">
+                          <div class="flex justify-between text-sm">
+                              <span class="text-gray-600 dark:text-gray-300 capitalize">{{ formatStatus(item.estado) }}</span>
+                              <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                          </div>
+                          <!-- Dynamic Color based on status -->
+                          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                              <div
+                                class="h-2.5 rounded-full transition-all duration-500"
+                                :class="getStatusColorClass(item.estado)"
+                                :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
+                              ></div>
+                          </div>
+                      </div>
+                      <div v-if="!metrics.charts?.status?.length" class="text-center text-gray-400 py-4">
+                          Sin datos para mostrar
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Agency Leaderboard (Only for Admins viewing All) -->
+          <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Volumen por Agencia (Top 10)</h3>
+              <div class="overflow-x-auto">
+                  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                          <tr>
+                              <th scope="col" class="px-4 py-3">Agencia</th>
+                              <th scope="col" class="px-4 py-3 text-right">Solicitudes</th>
+                              <th scope="col" class="px-4 py-3">Barra</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr v-for="(item, index) in metrics.charts?.agencies" :key="index" class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                              <td class="px-4 py-3 font-medium text-gray-900 dark:text-white truncate max-w-xs">{{ item.nombre }}</td>
+                              <td class="px-4 py-3 text-right">{{ item.count }}</td>
+                              <td class="px-4 py-3 w-1/3">
+                                   <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                                      <div
+                                        class="bg-indigo-500 h-1.5 rounded-full"
+                                        :style="{ width: `${calculateGenericPercentage(item.count, metrics.charts?.agencies[0]?.count)}%` }"
+                                      ></div>
+                                  </div>
+                              </td>
+                          </tr>
+                           <tr v-if="!metrics.charts?.agencies?.length">
+                              <td colspan="3" class="px-4 py-6 text-center text-gray-400">Sin datos</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+
+          <!-- Quick Actions Footer -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <button
+                  v-if="canCreateTech"
+                  @click="openTechModal"
+                  class="flex items-center justify-center gap-2 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 transition shadow-sm"
+              >
+                  <i class="fas fa-laptop-medical"></i>
+                  Crear Solicitud Tecnológica
+              </button>
+               <button
+                  v-if="canCreateAdmin"
+                  @click="openAdminModal"
+                  class="flex items-center justify-center gap-2 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition shadow-sm"
+              >
+                  <i class="fas fa-file-signature"></i>
+                  Crear Solicitud Administrativa
+              </button>
+          </div>
+      </div>
+
+       <!-- Modal Crear Solicitud (Reused) -->
+       <CrearSolicitudModal
         :isOpen="showCreateModal"
         :customTitle="createTitle"
         :categoriaGeneralId="createCatId"
@@ -66,49 +222,117 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+// import { useRouter } from 'vue-router'; // Unused
+import DashboardService from '@/services/DashboardService';
 import CrearSolicitudModal from '@/views/solicitudes/components/CrearSolicitudModal.vue';
 
 const authStore = useAuthStore();
+// const router = useRouter(); // Removed as unused for now, navigateTo uses console.log currently
+
+// State
+const loading = ref(true);
+const metrics = ref({});
+const agencies = ref([]);
+const filters = reactive({
+    category_id: null,
+    agencia_id: null
+});
+
+// Create Modal State
 const showCreateModal = ref(false);
-const createTitle = ref(''); // Titulo del modal
-const createCatId = ref(null); // ID Categoria General
+const createTitle = ref('');
+const createCatId = ref(null);
 
-const canCreateTech = computed(() => {
-    return authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-tech');
+// Permissions & Scope
+const canViewGeneral = computed(() => {
+    return authStore.hasRole('Super Admin') || authStore.hasPermission('ver-dashboard-general');
 });
 
-const canCreateAdmin = computed(() => {
-    return authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-admin');
+const isAgencyUser = computed(() => {
+    return authStore.hasPermission('ver-dashboard-agencia') && !canViewGeneral.value;
 });
 
-const openTechModal = () => {
-    createTitle.value = 'Nueva Solicitud Tecnológica';
-    createCatId.value = 1; // 1 = Tecnologica
-    showCreateModal.value = true;
+const canDrillDown = computed(() => {
+    return metrics.value.permissions?.can_drill_down ?? true;
+});
+
+const canCreateTech = computed(() => authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-tech'));
+const canCreateAdmin = computed(() => authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-admin'));
+
+// Methods
+const fetchMetrics = async () => {
+    loading.value = true;
+    try {
+        const params = { ...filters };
+        const response = await DashboardService.getMetrics(params);
+        metrics.value = response.data;
+    } catch (error) {
+        console.error("Error fetching dashboard:", error);
+    } finally {
+        loading.value = false;
+    }
 };
 
-const openAdminModal = () => {
-    createTitle.value = 'Nueva Solicitud Administrativa';
-    createCatId.value = 2; // 2 = Administrativa
-    showCreateModal.value = true;
+const fetchAgencies = async () => {
+    if (!canViewGeneral.value) return;
+    try {
+        const response = await DashboardService.getAgencies();
+        agencies.value = response.data;
+    } catch (error) {
+        console.error("Error fetching agencies:", error);
+    }
 };
 
-const handleSolicitudCreated = () => {
-    // Podríamos recargar una lista de solicitudes recientes aquí si la tuviéramos
-    // O mostrar confirmacion extra
-    console.log("Solicitud creada desde dashboard");
+onMounted(async () => {
+    await fetchAgencies();
+    await fetchMetrics();
+});
+
+// Helper: Calculate width for bars
+const calculateGenericPercentage = (val, max = null) => {
+    if (!max) {
+        // Find max in the current dataset if not provided, or assume a total?
+        // For simplicity, let's use the KPI total or just 100% relative to the biggest item in list?
+        // Using 100% scale relative to total requests might be small.
+        // Let's return a relative percentage to the 'Total' count
+        max = metrics.value.kpi?.total || 1;
+    }
+    if (max === 0) return 0;
+    return Math.round((val / max) * 100);
 };
 
-// === LÓGICA DE RETORNO ===
-const returnToPortal = () => {
-    // Obtenemos la URL de la madre desde el .env
-    const motherAppUrl = import.meta.env.VITE_MOTHER_APP_URL || 'http://localhost:5173';
+const getStatusColorClass = (status) => {
+    switch (status) {
+        case 'reportada': return 'bg-gray-400';
+        case 'asignada': return 'bg-blue-500';
+        case 'en_seguimiento': return 'bg-emerald-500';
+        case 'pendiente_validacion': return 'bg-amber-500';
+        case 'cerrada': return 'bg-gray-800 dark:bg-gray-600';
+        case 'reabierta': return 'bg-red-500';
+        default: return 'bg-gray-300';
+    }
+};
 
-    // Redirigimos al Dashboard de la Madre
-    window.location.href = `${motherAppUrl}/admin/dashboard`;
-}
+const formatStatus = (s) => s.replace('_', ' ');
+
+const navigateTo = (type) => {
+    if (!canDrillDown.value) return;
+
+    // Logic to navigate to Bandeja with filters pre-set?
+    // User might strictly want to see the list.
+    // We can assume 'BandejaSolicitudes' listens to query params?
+    // If not, we just go to the list.
+    // For now, let's just log or go to generic list.
+    console.log("Navigate to", type);
+    // router.push({ name: 'bandeja-solicitudes', query: { status: type } });
+};
+
+// Create Modal Logic
+const openTechModal = () => { createTitle.value = 'Nueva Solicitud Tecnológica'; createCatId.value = 1; showCreateModal.value = true; };
+const openAdminModal = () => { createTitle.value = 'Nueva Solicitud Administrativa'; createCatId.value = 2; showCreateModal.value = true; };
+const handleSolicitudCreated = () => { fetchMetrics(); }; // Refresh data
 
 </script>
 

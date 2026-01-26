@@ -38,7 +38,7 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: DashboardView,
-          meta: { title: 'Gestiones' }
+          meta: { title: 'Gestiones' } // Access logic handled inside component or via more complex guard if needed
         },
         // Solicitudes
         {
