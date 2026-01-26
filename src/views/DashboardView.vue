@@ -12,35 +12,60 @@
               </p>
           </div>
 
-          <!-- Filters -->
-          <div class="flex flex-col sm:flex-row gap-3">
-              <!-- Category Filter -->
-              <select
-                  v-model="filters.category_id"
-                  @change="fetchMetrics"
-                  class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
-              >
-                  <option :value="null">Todas las Categorías</option>
-                  <option :value="1">Tecnología</option>
-                  <option :value="2">Administración</option>
-              </select>
 
-              <!-- Agency Filter (Admin Only) -->
-              <div v-if="canViewGeneral && !isAgencyUser" class="relative">
-                 <select
-                      v-model="filters.agencia_id"
-                      @change="fetchMetrics"
-                      class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 w-full sm:w-48"
+          <!-- Filters & Actions -->
+          <div class="flex flex-col-reverse sm:flex-row gap-3 items-end sm:items-center">
+
+               <!-- Action Buttons (Moved) -->
+               <div class="flex gap-2">
+                   <button
+                      v-if="canCreateTech"
+                      @click="openTechModal"
+                      class="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 transition text-sm font-medium"
+                      title="Crear Solicitud Tecnológica"
                   >
-                      <option :value="null">Todas las Agencias</option>
-                      <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
-                          {{ agency.nombre }}
-                      </option>
+                      <i class="fas fa-plus"></i> <span class="hidden md:inline">Tecnológica</span>
+                  </button>
+                   <button
+                      v-if="canCreateAdmin"
+                      @click="openAdminModal"
+                      class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition text-sm font-medium"
+                      title="Crear Solicitud Administrativa"
+                  >
+                      <i class="fas fa-plus"></i> <span class="hidden md:inline">Administrativa</span>
+                  </button>
+               </div>
+
+               <!-- Existing Filters -->
+               <div class="flex gap-3">
+                  <!-- Category Filter -->
+                  <select
+                      v-model="filters.category_id"
+                      @change="fetchMetrics"
+                      class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
+                  >
+                      <option :value="null">Todas las Categorías</option>
+                      <option :value="1">Tecnología</option>
+                      <option :value="2">Administración</option>
                   </select>
-              </div>
-              <div v-else class="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300">
-                  <i class="fas fa-building mr-2"></i> {{ authStore.user?.agencia_id ? 'Mi Agencia' : 'Sin Agencia' }}
-              </div>
+
+                  <!-- Agency Filter (Admin Only) -->
+                  <div v-if="canViewGeneral && !isAgencyUser" class="relative">
+                    <select
+                          v-model="filters.agencia_id"
+                          @change="fetchMetrics"
+                          class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 w-full sm:w-48"
+                      >
+                          <option :value="null">Todas las Agencias</option>
+                          <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
+                              {{ agency.nombre }}
+                          </option>
+                      </select>
+                  </div>
+                  <div v-else class="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300">
+                      <i class="fas fa-building mr-2"></i> {{ authStore.user?.agencia_id ? 'Mi Agencia' : 'Sin Agencia' }}
+                  </div>
+               </div>
           </div>
       </div>
 
@@ -201,25 +226,7 @@
           </div>
 
 
-          <!-- Quick Actions Footer -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <button
-                  v-if="canCreateTech"
-                  @click="openTechModal"
-                  class="flex items-center justify-center gap-2 p-4 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 transition shadow-sm"
-              >
-                  <i class="fas fa-laptop-medical"></i>
-                  Crear Solicitud Tecnológica
-              </button>
-               <button
-                  v-if="canCreateAdmin"
-                  @click="openAdminModal"
-                  class="flex items-center justify-center gap-2 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition shadow-sm"
-              >
-                  <i class="fas fa-file-signature"></i>
-                  Crear Solicitud Administrativa
-              </button>
-          </div>
+
       </div>
 
        <!-- Modal Crear Solicitud (Reused) -->
