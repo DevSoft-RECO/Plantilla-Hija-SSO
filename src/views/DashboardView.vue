@@ -106,87 +106,100 @@
           </div>
 
           <!-- Charts Section -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
-              <!-- Subcategories Bar Chart -->
-              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Top Subcategorías</h3>
-                  <div class="space-y-4">
-                      <div v-for="(item, index) in metrics.charts?.subcategories" :key="index" class="space-y-1">
-                          <div class="flex justify-between text-sm">
-                              <span class="text-gray-600 dark:text-gray-300">{{ item.nombre }}</span>
-                              <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+               <!-- Left Column: Subcategories & Status -->
+              <div class="space-y-6 flex flex-col">
+                  <!-- Subcategories Bar Chart -->
+                  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
+                      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Top Subcategorías</h3>
+                      <div class="space-y-4">
+                          <div v-for="(item, index) in metrics.charts?.subcategories" :key="index" class="space-y-1">
+                              <div class="flex justify-between text-sm">
+                                  <span class="text-gray-600 dark:text-gray-300">{{ item.nombre }}</span>
+                                  <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                              </div>
+                              <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                                  <div
+                                    class="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
+                                    :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
+                                  ></div>
+                              </div>
                           </div>
-                          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
-                              <div
-                                class="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
-                                :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
-                              ></div>
+                          <div v-if="!metrics.charts?.subcategories?.length" class="text-center text-gray-400 py-4">
+                              Sin datos para mostrar
                           </div>
                       </div>
-                      <div v-if="!metrics.charts?.subcategories?.length" class="text-center text-gray-400 py-4">
-                          Sin datos para mostrar
+                  </div>
+
+                  <!-- Status Distribution -->
+                  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
+                      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Estado de Solicitudes</h3>
+                      <div class="space-y-4">
+                           <div v-for="(item, index) in metrics.charts?.status" :key="index" class="space-y-1">
+                              <div class="flex justify-between text-sm">
+                                  <span class="text-gray-600 dark:text-gray-300 capitalize">{{ formatStatus(item.estado) }}</span>
+                                  <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                              </div>
+                              <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                                  <div
+                                    class="h-2.5 rounded-full transition-all duration-500"
+                                    :class="getStatusColorClass(item.estado)"
+                                    :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
+                                  ></div>
+                              </div>
+                          </div>
+                          <div v-if="!metrics.charts?.status?.length" class="text-center text-gray-400 py-4">
+                              Sin datos para mostrar
+                          </div>
                       </div>
                   </div>
               </div>
 
-               <!-- Status Distribution -->
-               <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Estado de Solicitudes</h3>
-                  <div class="space-y-4">
-                       <div v-for="(item, index) in metrics.charts?.status" :key="index" class="space-y-1">
-                          <div class="flex justify-between text-sm">
-                              <span class="text-gray-600 dark:text-gray-300 capitalize">{{ formatStatus(item.estado) }}</span>
-                              <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+               <!-- Right Column: Agency Volume (Vertical Bar Chart) -->
+              <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-full">
+                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Volumen por Agencia (Top 10)</h3>
+
+                  <div v-if="metrics.charts?.agencies?.length" class="flex-1 flex items-stretch justify-between gap-2 min-h-[300px] pb-2">
+                       <div
+                        v-for="(item, index) in metrics.charts?.agencies"
+                        :key="index"
+                        class="group relative flex-1 flex flex-col justify-end items-center h-full"
+                      >
+                          <!-- Tooltip -->
+                          <div class="absolute bottom-full mb-2 hidden group-hover:block z-20">
+                              <div class="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap shadow-lg">
+                                  {{ item.nombre }}: {{ item.count }}
+                              </div>
                           </div>
-                          <!-- Dynamic Color based on status -->
-                          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
-                              <div
-                                class="h-2.5 rounded-full transition-all duration-500"
-                                :class="getStatusColorClass(item.estado)"
-                                :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
-                              ></div>
+
+                          <!-- Bar -->
+                          <div
+                              class="w-full max-w-[40px] bg-indigo-500 hover:bg-indigo-400 rounded-t-lg transition-all duration-500 relative"
+                              :style="{ height: `${calculateGenericPercentage(item.count, metrics.charts?.agencies[0]?.count)}%` }"
+                          >
+                            <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {{ item.count }}
+                            </span>
                           </div>
-                      </div>
-                      <div v-if="!metrics.charts?.status?.length" class="text-center text-gray-400 py-4">
-                          Sin datos para mostrar
+
+                          <!-- Label -->
+                          <div class="mt-2 text-[10px] text-gray-500 dark:text-gray-400 truncate w-full text-center px-0.5" :title="item.nombre">
+                              {{ item.nombre.length > 8 ? item.nombre.substring(0,8)+'..' : item.nombre }}
+                          </div>
                       </div>
                   </div>
+
+                   <!-- Empty State -->
+                  <div v-else class="flex-1 flex items-center justify-center text-gray-400">
+                      Sin datos para mostrar
+                  </div>
               </div>
+
+              <!-- Placeholder if no agency chart (to keep left col 50% or full width?) -->
+              <!-- If we assume grid-cols-2, this slot is empty. -->
           </div>
 
-          <!-- Agency Leaderboard (Only for Admins viewing All) -->
-          <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Volumen por Agencia (Top 10)</h3>
-              <div class="overflow-x-auto">
-                  <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                          <tr>
-                              <th scope="col" class="px-4 py-3">Agencia</th>
-                              <th scope="col" class="px-4 py-3 text-right">Solicitudes</th>
-                              <th scope="col" class="px-4 py-3">Barra</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr v-for="(item, index) in metrics.charts?.agencies" :key="index" class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                              <td class="px-4 py-3 font-medium text-gray-900 dark:text-white truncate max-w-xs">{{ item.nombre }}</td>
-                              <td class="px-4 py-3 text-right">{{ item.count }}</td>
-                              <td class="px-4 py-3 w-1/3">
-                                   <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                                      <div
-                                        class="bg-indigo-500 h-1.5 rounded-full"
-                                        :style="{ width: `${calculateGenericPercentage(item.count, metrics.charts?.agencies[0]?.count)}%` }"
-                                      ></div>
-                                  </div>
-                              </td>
-                          </tr>
-                           <tr v-if="!metrics.charts?.agencies?.length">
-                              <td colspan="3" class="px-4 py-6 text-center text-gray-400">Sin datos</td>
-                          </tr>
-                      </tbody>
-                  </table>
-              </div>
-          </div>
 
           <!-- Quick Actions Footer -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
