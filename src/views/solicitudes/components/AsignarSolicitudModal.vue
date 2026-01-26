@@ -149,11 +149,11 @@ const submit = async () => {
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tipo de Atención</label>
                         <div class="flex gap-4 mt-2">
-                            <label v-if="!categoriaGeneralId || categoriaGeneralId === 1" class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'interno' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'interno' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
                                 <input type="radio" v-model="form.tipo_atencion" value="interno" class="text-emerald-600 focus:ring-emerald-500">
                                 Interna
                             </label>
-                            <label v-if="!categoriaGeneralId || categoriaGeneralId === 2" class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'externo' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
+                            <label class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-lg border transition" :class="form.tipo_atencion === 'externo' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'border-gray-300 hover:bg-gray-50'">
                                 <input type="radio" v-model="form.tipo_atencion" value="externo" class="text-emerald-600 focus:ring-emerald-500">
                                 Externa
                             </label>
