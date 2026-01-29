@@ -231,7 +231,7 @@ const menuItems = computed(() => {
 
     const solAdminChildren = [
         ...(authStore.hasPermission('asignar_solicitudes-administrativas') || authStore.hasRole('Super Admin') ? [{ label: 'Bandeja Principal', route: '/admin/solicitudes/bandeja-admin' }] : []),
-        ...(authStore.hasPermission('gestionar_solicitudes-administrativas') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones-admin' }] : [])
+        ...(authStore.hasPermission('seguimiento_solicitudes-administrativas') || authStore.hasRole('Super Admin') ? [{ label: 'Mis Asignaciones', route: '/admin/solicitudes/mis-asignaciones-admin' }] : [])
     ];
 
     const misSolicitudesChildren = [
