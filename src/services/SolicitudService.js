@@ -58,4 +58,7 @@ export default {
     getPuestos() {
         return axios.get('/puestos');
     },
+    deleteSolicitud(id) {
+        return axios.delete(`/solicitudes/${id}`);
+    }
 };

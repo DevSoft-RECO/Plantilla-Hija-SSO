@@ -2,8 +2,11 @@
 import { ref, onMounted } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 // Datos
 const solicitudes = ref([]);
@@ -82,6 +85,45 @@ const getEstadoClass = (estado) => {
         case 'pendiente_validacion': return 'bg-purple-100 text-purple-800 border-purple-200';
         case 'cerrada': return 'bg-green-100 text-green-800 border-green-200';
         default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+};
+
+const puedeEliminar = (sol) => {
+    // Super Admin siempre puede
+    if (authStore.hasRole('Super Admin')) return true;
+    // Creador si aun está reportada
+    if (authStore.user?.id === sol.creado_por_id && sol.estado === 'reportada') return true;
+    return false;
+};
+
+const eliminarSolicitud = async (id) => {
+    const { value: confirmacion } = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción eliminará permanentemente la solicitud y todos sus archivos. No se puede deshacer. Escribe 'eliminar' para confirmar.",
+        input: 'text',
+        inputPlaceholder: 'eliminar',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (value !== 'eliminar') {
+                return 'Debes escribir "eliminar" para confirmar.';
+            }
+        }
+    });
+
+    if (confirmacion === 'eliminar') {
+        try {
+            await SolicitudService.deleteSolicitud(id);
+            Swal.fire('Eliminado', 'La solicitud ha sido eliminada.', 'success');
+            cargarSolicitudes(pagination.value.current_page);
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error', 'No se pudo eliminar la solicitud.', 'error');
+        }
     }
 };
 </script>
@@ -163,9 +205,14 @@ const getEstadoClass = (estado) => {
                                 {{ new Date(sol.created_at).toLocaleDateString() }}
                             </td>
                             <td class="p-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
                                 <button @click="verDetalle(sol.id)" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-medium px-3 py-1.5 rounded-lg transition text-xs border border-emerald-200">
                                     Asignar / Ver
                                 </button>
+                                <button v-if="puedeEliminar(sol)" @click="eliminarSolicitud(sol.id)" class="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 font-medium px-2 py-1.5 rounded-lg transition text-xs border border-red-200" title="Eliminar Solicitud">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
