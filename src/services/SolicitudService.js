@@ -13,6 +13,9 @@ export default {
     assignSolicitud(id, data) {
         return axios.put(`/solicitudes/${id}/asignar`, data);
     },
+    updateAgencia(id, agencia_id) {
+        return axios.put(`/solicitudes/${id}/agencia`, { agencia_id });
+    },
     takeSolicitud(id, data = {}) {
         return axios.put(`/solicitudes/${id}/tomar`, data);
     },
@@ -57,6 +60,9 @@ export default {
     },
     getPuestos() {
         return axios.get('/puestos');
+    },
+    getAgencias() {
+        return axios.get('/agencias');
     },
     deleteSolicitud(id) {
         return axios.delete(`/solicitudes/${id}`);

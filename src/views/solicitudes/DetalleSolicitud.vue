@@ -29,6 +29,43 @@ const validarData = ref({
 
 const id = route.params.id;
 
+// Edición de Agencia
+const isEditingAgencia = ref(false);
+const agenciasList = ref([]);
+const selectedAgenciaId = ref(null);
+
+const startEditAgencia = async () => {
+    if (agenciasList.value.length === 0) {
+        try {
+            const { data } = await SolicitudService.getAgencias();
+            agenciasList.value = data;
+        } catch (e) {
+            console.error(e);
+            Swal.fire('Error', 'No se pudieron cargar las agencias', 'error');
+            return;
+        }
+    }
+    selectedAgenciaId.value = solicitud.value.agencia_id;
+    isEditingAgencia.value = true;
+};
+
+const cancelEditAgencia = () => {
+    isEditingAgencia.value = false;
+};
+
+const saveAgencia = async () => {
+    if (!selectedAgenciaId.value) return;
+    try {
+        await SolicitudService.updateAgencia(id, selectedAgenciaId.value);
+        isEditingAgencia.value = false;
+        cargarDetalle(true); // Recargar para ver nombre actualizado y log
+        Swal.fire('Actualizado', 'Agencia reasignada correctamente', 'success');
+    } catch (e) {
+        console.error(e);
+        Swal.fire('Error', 'No se pudo actualizar la agencia', 'error');
+    }
+};
+
 const nuevoSeguimiento = ref({
     comentario: '',
     evidencias: []
@@ -243,9 +280,33 @@ const enviarSeguimiento = async () => {
 
                         <!-- Info Contexto -->
                         <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
-                            <div v-if="solicitud.agencia_id">
-                                <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia?.nombre }}</div>
+                            <div class="relative group">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
+                                    <button
+                                        v-if="solicitud.estado === 'reportada' && !isEditingAgencia"
+                                        @click="startEditAgencia"
+                                        class="text-xs text-blue-600 font-bold hover:underline"
+                                    >
+                                        [Cambiar]
+                                    </button>
+                                </div>
+
+                                <div v-if="!isEditingAgencia" class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    {{ solicitud.agencia?.nombre || 'Sin Agencia Asignada' }}
+                                </div>
+                                <div v-else class="flex flex-col gap-2 mt-1">
+                                    <select v-model="selectedAgenciaId" class="text-sm border rounded p-1.5 w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                        <option :value="null">-- Seleccionar Agencia --</option>
+                                        <option v-for="ag in agenciasList" :key="ag.id" :value="ag.id">
+                                            {{ ag.nombre }}
+                                        </option>
+                                    </select>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="saveAgencia" class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold hover:bg-green-200">Guardar</button>
+                                        <button @click="cancelEditAgencia" class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold hover:bg-red-200">Cancelar</button>
+                                    </div>
+                                </div>
                             </div>
                             <div v-if="solicitud.area">
                                 <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
