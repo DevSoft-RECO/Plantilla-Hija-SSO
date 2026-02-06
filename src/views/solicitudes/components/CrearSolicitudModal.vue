@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 
@@ -17,6 +17,33 @@ const area = ref(''); // Nuevo campo
 const files = ref([]);
 const isSubmitting = ref(false);
 const fileInput = ref(null);
+
+// Estilos dinámicos
+const headerGradient = computed(() => {
+   return props.categoriaGeneralId === 2
+    ? 'from-blue-600 to-cyan-500' // Administrativa
+    : 'from-emerald-500 to-teal-500'; // Tecnologica
+});
+
+const subTextColor = computed(() => {
+    return props.categoriaGeneralId === 2 ? 'text-blue-100' : 'text-emerald-100';
+});
+
+const ringColor = computed(() => {
+    return props.categoriaGeneralId === 2 ? 'focus:ring-blue-500' : 'focus:ring-emerald-500';
+});
+
+const iconColor = computed(() => {
+    return props.categoriaGeneralId === 2 ? 'text-blue-500' : 'text-emerald-500';
+});
+
+const hoverBorderColor = computed(() => {
+    return props.categoriaGeneralId === 2 ? 'hover:border-blue-400' : 'hover:border-emerald-400';
+});
+
+const hoverTextColor = computed(() => {
+    return props.categoriaGeneralId === 2 ? 'group-hover:text-blue-500' : 'group-hover:text-emerald-500';
+});
 
 const handleFileUpload = (event) => {
     const selectedFiles = Array.from(event.target.files);
@@ -87,12 +114,12 @@ const submit = async () => {
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 ring-1 ring-gray-200 dark:ring-gray-700">
 
             <!-- Header -->
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 text-white flex justify-between items-start">
+            <div :class="`bg-gradient-to-r ${headerGradient} p-6 text-white flex justify-between items-start`">
                 <div>
                     <h3 class="text-xl font-bold flex items-center gap-2">
                         <i class="fas fa-plus-circle"></i> {{ customTitle || 'Nueva Solicitud' }}
                     </h3>
-                    <p class="text-emerald-100 text-sm mt-1">Describe tu problema o requerimiento</p>
+                    <p :class="`${subTextColor} text-sm mt-1`">Describe tu problema o requerimiento</p>
                 </div>
                 <button @click="closeModal" class="text-white/80 hover:text-white transition cursor-pointer p-1">
                     <i class="fas fa-times text-xl"></i>
@@ -107,7 +134,7 @@ const submit = async () => {
                     <input
                         v-model="titulo"
                         type="text"
-                        class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400"
+                        :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400`"
                         placeholder="Ej: Error en impresora de recepción"
                     />
                 </div>
@@ -118,7 +145,7 @@ const submit = async () => {
                     <input
                         v-model="area"
                         type="text"
-                        class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400"
+                        :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400`"
                         placeholder="Ej: Recursos Humanos, Bodega..."
                     />
                 </div>
@@ -129,7 +156,7 @@ const submit = async () => {
                     <textarea
                         v-model="descripcion"
                         rows="4"
-                        class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400 resize-none"
+                        :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400 resize-none`"
                         placeholder="Describe detalladamente qué sucede..."
                     ></textarea>
                 </div>
@@ -140,12 +167,12 @@ const submit = async () => {
 
                     <!-- Dropzone visual -->
                     <div
-                        class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-5 text-center hover:bg-emerald-50 dark:hover:bg-gray-700/50 hover:border-emerald-400 transition cursor-pointer group"
+                        :class="`border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-5 text-center hover:bg-emerald-50 dark:hover:bg-gray-700/50 ${hoverBorderColor} transition cursor-pointer group`"
                         @click="$refs.fileInput.click()"
                     >
                         <input ref="fileInput" type="file" multiple class="hidden" @change="handleFileUpload" accept="image/*,.pdf" />
 
-                        <div v-if="files.length === 0" class="text-gray-400 group-hover:text-emerald-500 transition">
+                        <div v-if="files.length === 0" :class="`text-gray-400 ${hoverTextColor} transition`">
                             <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
                             <p class="text-sm">Click para subir Fotos o PDF</p>
                         </div>
@@ -154,7 +181,7 @@ const submit = async () => {
                         <div v-else class="text-left space-y-2">
                             <div v-for="(file, index) in files" :key="index" class="flex justify-between items-center bg-white dark:bg-gray-600 p-2 rounded border border-gray-200 dark:border-gray-500 shadow-sm text-sm">
                                 <span class="truncate max-w-[80%] text-gray-700 dark:text-gray-200">
-                                    <i class="far fa-file mr-1 text-emerald-500"></i> {{ file.name }}
+                                    <i :class="`far fa-file mr-1 ${iconColor}`"></i> {{ file.name }}
                                 </span>
                                 <button @click.stop="removeFile(index)" class="text-red-400 hover:text-red-600 transition p-1">
                                     <i class="fas fa-times"></i>
@@ -179,7 +206,7 @@ const submit = async () => {
                 <button
                     @click="submit"
                     :disabled="isSubmitting"
-                    class="px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold hover:shadow-lg hover:from-emerald-600 hover:to-teal-600 transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                    :class="`px-5 py-2.5 rounded-lg bg-gradient-to-r ${headerGradient} text-white font-semibold hover:shadow-lg transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2`"
                 >
                     <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
                     {{ isSubmitting ? 'Enviando...' : 'Crear Solicitud' }}
