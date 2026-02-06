@@ -116,7 +116,7 @@ const getStatusClass = (status) => {
                     </tr>
                     <tr v-else v-for="req in requests" :key="req.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                         <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ req.id }}</td>
-                        <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ req.agencia_id || 'N/A' }}</td>
+                        <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ req.agencia?.agencia_madre_id || 'N/A' }}</td>
                         <td class="p-4 font-medium text-gray-900 dark:text-white">{{ req.titulo }}</td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getStatusClass(req.estado)">

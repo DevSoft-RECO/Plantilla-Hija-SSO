@@ -139,7 +139,7 @@ const getEstadoClass = (estado) => {
                         </tr>
                         <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                             <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
-                            <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ sol.agencia_id || 'N/A' }}</td>
+                            <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ sol.agencia?.agencia_madre_id || 'N/A' }}</td>
                             <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
                             <td class="p-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getEstadoClass(sol.estado)">
