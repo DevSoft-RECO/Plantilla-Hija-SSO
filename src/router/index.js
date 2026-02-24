@@ -51,7 +51,7 @@ const router = createRouter({
           path: 'solicitudes/bandeja-admin',
           name: 'bandeja-solicitudes-admin',
           component: () => import('@/views/solicitudes/BandejaSolicitudesAdmin.vue'),
-          meta: { title: 'Bandeja de Solicitudes (Admin)', role: 'Super Admin', permission: 'crear-solicitudes-admin' }
+          meta: { title: 'Bandeja de Solicitudes (Admin)', role: 'Super Admin', permission: 'asignar_solicitudes-administrativas' }
         },
         {
           path: 'solicitudes/:id',
