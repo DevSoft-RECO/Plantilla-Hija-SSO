@@ -28,7 +28,7 @@
               <div class="flex flex-col-reverse sm:flex-row gap-3 items-end sm:items-center">
 
                    <!-- Action Buttons (Conditional on Permissions) -->
-                   <div class="flex gap-2" v-if="canInteract">
+                   <div class="flex gap-2" v-if="canCreateTech || canCreateAdmin">
                        <button
                           v-if="canCreateTech"
                           @click="openTechModal"
@@ -401,9 +401,8 @@ const canInteract = computed(() => {
 const canDrillDown = computed(() => {
     return canInteract.value && (metrics.value.permissions?.can_drill_down ?? true);
 });
-
-const canCreateTech = computed(() => canInteract.value && (authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-tech')));
-const canCreateAdmin = computed(() => canInteract.value && (authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-admin')));
+const canCreateTech = computed(() => authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-tech'));
+const canCreateAdmin = computed(() => authStore.hasRole('Super Admin') || authStore.hasPermission('crear-solicitudes-admin'));
 
 // Methods
 const fetchMetrics = async () => {
