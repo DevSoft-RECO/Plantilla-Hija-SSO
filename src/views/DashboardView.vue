@@ -28,7 +28,7 @@
               <div class="flex flex-col-reverse sm:flex-row gap-3 items-end sm:items-center">
 
                    <!-- Action Buttons (Conditional on Permissions) -->
-                   <div class="flex gap-2" v-if="canCreateTech || canCreateAdmin">
+                   <div class="flex gap-2">
                        <button
                           v-if="canCreateTech"
                           @click="openTechModal"
