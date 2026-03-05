@@ -135,8 +135,8 @@ const verBackToList = () => {
 </script>
 
 <template>
-    <div class="p-4 h-[calc(100vh-80px)] overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl relative">
-        <div class="h-full w-full custom-grid gap-4 overflow-hidden">
+    <div class="p-4 h-[calc(100vh-80px)] overflow-hidden bg-[#EDEDED] dark:bg-gray-900 border-none rounded-2xl relative">
+        <div class="h-full w-full custom-grid overflow-hidden">
 
             <AuditFilters
                 v-model:filtros="filtros"
@@ -185,6 +185,7 @@ const verBackToList = () => {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: 60px 1fr 1fr 1fr 200px;
+    gap: 1.5rem; /* Explicit gap to prevent glued cards */
 }
 
 .div1 { grid-area: 1 / 1 / 2 / 4; }

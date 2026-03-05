@@ -19,28 +19,55 @@ const localFiltros = computed({
 </script>
 
 <template>
-    <div class="div1 border dark:border-gray-700 p-4 shrink-0 bg-white dark:bg-gray-800 flex items-center gap-4 overflow-x-auto custom-scrollbar rounded-xl shadow-sm">
-        <div class="font-bold text-gray-700 dark:text-gray-200 shrink-0 text-sm">
-            <i class="fas fa-filter mr-2"></i>Filtros:
+    <div class="div1 p-5 shrink-0 bg-white dark:bg-gray-800 flex items-center gap-5 overflow-x-auto custom-scrollbar rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
+        <!-- Institutional Thick Accent Line -->
+        <div class="absolute left-0 top-0 bottom-0 w-2" style="background-color: var(--color-azul-cope)"></div>
+
+        <div class="font-bold text-gray-700 dark:text-gray-200 shrink-0 text-sm pl-2 flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500">
+                <i class="fas fa-filter"></i>
+            </div>
+            Filtros
         </div>
 
-        <div class="flex-1 flex gap-3 min-w-0">
-            <select v-model="localFiltros.tipo" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-verde-cope focus:border-verde-cope py-1.5 px-3">
-                <option v-for="t in tipos" :key="t.value" :value="t.value">{{ t.label }}</option>
-            </select>
+        <div class="flex-1 flex gap-4 min-w-0 md:justify-end">
 
-            <select v-model="localFiltros.estado" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-verde-cope focus:border-verde-cope py-1.5 px-3">
-                <option v-for="est in estados" :key="est.value" :value="est.value">{{ est.label }}</option>
-            </select>
+            <!-- Tipo Toggle (Icons instead of select) -->
+            <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-xl shadow-inner">
+                <button v-for="t in tipos" :key="t.value"
+                        @click="localFiltros.tipo = t.value"
+                        :class="['px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-2',
+                                localFiltros.tipo == t.value ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700']">
+                    <i class="fas fa-desktop" v-if="t.value == '1'"></i>
+                    <i class="fas fa-file-invoice" v-else-if="t.value == '2'"></i>
+                    <i class="fas fa-layer-group" v-else></i>
+                    {{ t.label }}
+                </button>
+            </div>
 
-            <select v-model="localFiltros.agencia_id" class="text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-verde-cope focus:border-verde-cope py-1.5 px-3 flex-1 min-w-[150px] max-w-xs">
-                <option value="">Todas las Agencias</option>
-                <option v-for="ag in agencias" :key="ag.id" :value="ag.id">{{ ag.nombre }}</option>
-            </select>
+            <!-- Selectores con Iconos -->
+            <div class="relative min-w-[160px]">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <select v-model="localFiltros.estado" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
+                    <option v-for="est in estados" :key="est.value" :value="est.value">{{ est.label }}</option>
+                </select>
+            </div>
+
+            <div class="relative flex-1 min-w-[200px] max-w-xs">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-building"></i>
+                </div>
+                <select v-model="localFiltros.agencia_id" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
+                    <option value="">Todas las Agencias</option>
+                    <option v-for="ag in agencias" :key="ag.id" :value="ag.id">{{ ag.nombre }}</option>
+                </select>
+            </div>
         </div>
 
-        <button @click="$emit('limpiar')" class="shrink-0 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm font-medium transition flex items-center gap-2">
-            <i class="fas fa-sync-alt"></i> Limpiar Filtros
+        <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95" style="background-color: var(--color-azul-cope)">
+            <i class="fas fa-sync-alt"></i> Limpiar
         </button>
     </div>
 </template>
