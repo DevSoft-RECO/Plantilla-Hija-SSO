@@ -21,7 +21,7 @@ const localFiltros = computed({
 <template>
     <div class="div1 px-0 py-0 shrink-0 bg-white dark:bg-gray-800 flex flex-col md:flex-row md:items-center rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
         <!-- Institutional Header Block -->
-        <div class="font-bold text-white shrink-0 text-sm flex items-center gap-2 px-6 shadow-[2px_0_8px_rgba(0,0,0,0.1)] z-10 self-stretch" style="background-color: var(--color-azul-cope)">
+        <div class="font-bold text-white shrink-0 text-sm flex items-center justify-center gap-2 px-6 shadow-[2px_0_8px_rgba(0,0,0,0.1)] z-10 self-stretch rounded-t-2xl md:rounded-t-none md:rounded-l-2xl" style="background-color: var(--color-azul-cope)">
             <i class="fas fa-filter text-white/80"></i>
         </div>
         <!-- Filter Controls Container -->
@@ -60,7 +60,7 @@ const localFiltros = computed({
 
         <div class="px-5 py-3 md:py-0 shrink-0 self-stretch flex items-center border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700/50 justify-end">
             <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95 w-full md:w-auto justify-center" style="background-color: var(--color-azul-cope)">
-                <i class="fas fa-sync-alt"></i>
+                <i class="fas fa-eraser"></i>Borrar
             </button>
         </div>
     </div>
