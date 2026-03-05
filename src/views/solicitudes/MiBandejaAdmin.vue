@@ -22,16 +22,12 @@ onMounted(async () => {
 const loadMyRequests = async () => {
     loading.value = true;
     try {
-        // Enviar parametro mis_asignaciones=true para filtrar en backend
-        const params = {
-            mis_asignaciones: 'true',
-            categoria_general_id: 2 // Solo Administrativas
-        };
+        const params = {};
         if (filtroEstado.value) {
             params.estado = filtroEstado.value;
         }
 
-        const response = await SolicitudService.getSolicitudes(params);
+        const response = await SolicitudService.getMiBandejaAdmin(params);
         requests.value = response.data.data;
     } catch (error) {
         console.error("Error cargando mis solicitudes", error);

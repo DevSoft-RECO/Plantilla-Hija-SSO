@@ -7,6 +7,12 @@ export default {
     getMisSolicitudes(params) {
         return axios.get('/solicitudes/mis-solicitudes', { params });
     },
+    getBandejaAdmin(params) {
+        return axios.get('/solicitudes/bandeja-admin', { params });
+    },
+    getMiBandejaAdmin(params) {
+        return axios.get('/solicitudes/bandeja-admin/mis-asignaciones', { params });
+    },
     getSolicitud(id) {
         return axios.get(`/solicitudes/${id}`);
     },

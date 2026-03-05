@@ -42,7 +42,7 @@ const cargarSolicitudes = async (page = 1) => {
             categoria_general_id: 2 // Solo mostrar solicitudes Administrativas
         };
 
-        const response = await SolicitudService.getSolicitudes(params);
+        const response = await SolicitudService.getBandejaAdmin(params);
 
         // Laravel paginate response mapping
         solicitudes.value = response.data.data;
