@@ -19,31 +19,26 @@ const localFiltros = computed({
 </script>
 
 <template>
-    <div class="div1 px-0 py-0 shrink-0 bg-white dark:bg-gray-800 flex items-center overflow-x-auto custom-scrollbar rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
-
+    <div class="div1 px-0 py-0 shrink-0 bg-white dark:bg-gray-800 flex flex-col md:flex-row md:items-center rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
         <!-- Institutional Header Block -->
         <div class="font-bold text-white shrink-0 text-sm flex items-center gap-2 px-6 shadow-[2px_0_8px_rgba(0,0,0,0.1)] z-10 self-stretch" style="background-color: var(--color-azul-cope)">
             <i class="fas fa-filter text-white/80"></i>
-            Filtros
         </div>
+        <!-- Filter Controls Container -->
+        <div class="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 min-w-0 py-3 px-5 overflow-x-auto custom-scrollbar md:items-center">
 
-        <div class="flex-1 flex gap-4 min-w-0 py-3 px-5 md:justify-end">
-
-            <!-- Tipo Toggle (Icons instead of select) -->
-            <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-xl shadow-inner">
-                <button v-for="t in tipos" :key="t.value"
-                        @click="localFiltros.tipo = t.value"
-                        :class="['px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-2',
-                                localFiltros.tipo == t.value ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-800 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700']">
-                    <i class="fas fa-desktop" v-if="t.value == '1'"></i>
-                    <i class="fas fa-file-invoice" v-else-if="t.value == '2'"></i>
-                    <i class="fas fa-layer-group" v-else></i>
-                    {{ t.label }}
-                </button>
+            <!-- Tipo Selector (Dropdown) -->
+            <div class="relative shrink-0 min-w-[160px]">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <select v-model="localFiltros.tipo" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
+                    <option v-for="t in tipos" :key="t.value" :value="t.value" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ t.label }}</option>
+                </select>
             </div>
 
             <!-- Selectores con Iconos -->
-            <div class="relative min-w-[160px]">
+            <div class="relative shrink-0 min-w-[160px]">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-tasks"></i>
                 </div>
@@ -52,7 +47,7 @@ const localFiltros = computed({
                 </select>
             </div>
 
-            <div class="relative flex-1 min-w-[200px] max-w-xs">
+            <div class="relative flex-1 shrink-0 min-w-[200px] max-w-xs">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-building"></i>
                 </div>
@@ -63,9 +58,9 @@ const localFiltros = computed({
             </div>
         </div>
 
-        <div class="px-5 shrink-0 self-stretch flex items-center border-l border-gray-100 dark:border-gray-700/50">
-            <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95" style="background-color: var(--color-azul-cope)">
-                <i class="fas fa-sync-alt"></i> Limpiar
+        <div class="px-5 py-3 md:py-0 shrink-0 self-stretch flex items-center border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700/50 justify-end">
+            <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95 w-full md:w-auto justify-center" style="background-color: var(--color-azul-cope)">
+                <i class="fas fa-sync-alt"></i>
             </button>
         </div>
     </div>
