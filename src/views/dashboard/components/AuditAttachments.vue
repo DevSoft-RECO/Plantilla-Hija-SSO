@@ -95,7 +95,7 @@ const allFiles = computed(() => {
 
                     <!-- Generic File Icon -->
                     <div v-if="!isImage(file.name)" class="w-full h-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center transition-transform group-hover:scale-105" style="color: var(--color-azul-cope)">
-                        <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100">
+                        <div class="w-14 h-14 rounded-full bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center border border-gray-100 dark:border-gray-700">
                              <i class="fas fa-file-alt text-3xl"></i>
                         </div>
                     </div>

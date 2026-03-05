@@ -135,7 +135,7 @@ const verBackToList = () => {
 </script>
 
 <template>
-    <div class="p-4 h-[calc(100vh-80px)] overflow-hidden dark:bg-gray-900 border-none rounded-2xl relative" style="background-color: #f0f4f8;">
+    <div class="p-4 h-[calc(100vh-80px)] overflow-hidden bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative">
         <div class="h-full w-full custom-grid overflow-hidden">
 
             <AuditFilters

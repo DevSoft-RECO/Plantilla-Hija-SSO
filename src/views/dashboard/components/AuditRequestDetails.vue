@@ -43,7 +43,7 @@ const getEstadoIcon = (estado) => {
                 <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
                     <i class="fas fa-list-ul text-white/80"></i> Lista de Solicitudes
                 </h2>
-                <span class="text-xs font-bold text-blue-900 bg-white px-3 py-1 rounded-full shadow-sm">
+                <span class="text-xs font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-3 py-1 rounded-full shadow-sm">
                     {{ pagination.total }} solicitudes
                 </span>
             </div>
@@ -118,7 +118,7 @@ const getEstadoIcon = (estado) => {
         <!-- VISTA DE DETALLE -->
         <div v-else class="flex flex-col h-full overflow-hidden bg-white dark:bg-gray-800 relative z-10 w-full">
              <div class="p-4 shrink-0 flex items-center justify-between z-10 shadow-sm" style="background-color: var(--color-azul-cope)">
-                <button @click="$emit('verBackToList')" class="text-blue-900 hover:text-blue-950 bg-white hover:bg-gray-100 transition px-3 py-1.5 text-xs flex items-center gap-2 font-bold rounded-lg shadow-sm">
+                <button @click="$emit('verBackToList')" class="text-blue-900 dark:text-blue-100 hover:text-blue-950 dark:hover:text-white bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition px-3 py-1.5 text-xs flex items-center gap-2 font-bold rounded-lg shadow-sm">
                     <i class="fas fa-arrow-left"></i> Volver a la Lista
                 </button>
                 <div class="flex items-center gap-3">
