@@ -1,10 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
-import { useAuthStore } from '@/stores/auth';
 import Swal from 'sweetalert2';
-
-const authStore = useAuthStore();
 
 // UI State
 const loadingList = ref(false);
@@ -196,10 +193,10 @@ const allFiles = computed(() => {
 
 <template>
     <div class="p-4 h-[calc(100vh-80px)] overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl relative">
-        <div class="h-full w-full custom-grid overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div class="h-full w-full custom-grid gap-4 overflow-hidden">
 
             <!-- DIV 1: Filtros -->
-            <div class="div1 border-b border-r dark:border-gray-700 p-4 shrink-0 bg-gray-50 dark:bg-gray-800 flex items-center gap-4 overflow-x-auto custom-scrollbar">
+            <div class="div1 border dark:border-gray-700 p-4 shrink-0 bg-white dark:bg-gray-800 flex items-center gap-4 overflow-x-auto custom-scrollbar rounded-xl shadow-sm">
                 <div class="font-bold text-gray-700 dark:text-gray-200 shrink-0 text-sm">
                     <i class="fas fa-filter mr-2"></i>Filtros:
                 </div>
@@ -225,7 +222,7 @@ const allFiles = computed(() => {
             </div>
 
             <!-- DIV 2: Lista / Detalle -->
-            <div class="div2 border-r dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden">
+            <div class="div2 border dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden rounded-xl shadow-sm">
                 <!-- VISTA DE LISTA -->
                 <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden">
                     <div class="p-3 border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800 shrink-0 flex justify-between items-center">
@@ -336,7 +333,7 @@ const allFiles = computed(() => {
             </div>
 
             <!-- DIV 3: Historial de Conversaciones -->
-            <div class="div3 border-b dark:border-gray-700 bg-gray-50/30 dark:bg-gray-900 flex flex-col overflow-hidden">
+            <div class="div3 border dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col overflow-hidden rounded-xl shadow-sm">
                 <div class="p-3 border-b dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shrink-0 flex items-center justify-between">
                     <h2 class="text-sm font-bold text-gray-700 dark:text-gray-200"><i class="fas fa-history mr-2 text-gray-400"></i>Historial de Eventos</h2>
                 </div>
@@ -384,7 +381,7 @@ const allFiles = computed(() => {
             </div>
 
             <!-- DIV 4: Archivos Adjuntos -->
-            <div class="div4 bg-gray-50/50 dark:bg-gray-900 flex flex-col overflow-hidden">
+            <div class="div4 border dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col overflow-hidden rounded-xl shadow-sm">
                 <div class="p-3 border-b dark:border-gray-700 bg-gray-100 dark:bg-gray-800 shrink-0 flex items-center justify-between">
                     <h2 class="text-sm font-bold text-gray-700 dark:text-gray-200"><i class="fas fa-paperclip mr-2 text-gray-400"></i>Archivos Adjuntos</h2>
                 </div>
@@ -448,8 +445,6 @@ const allFiles = computed(() => {
     .div1, .div2, .div3, .div4 {
         height: auto;
         flex: none;
-        border-right: none;
-        border-bottom: 1px solid #e5e7eb;
     }
     .div2 {
         height: 600px; /* fixed height for list/detail on mobile before scroll */
