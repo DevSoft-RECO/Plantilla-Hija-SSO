@@ -11,6 +11,8 @@ const solicitudes = ref([]);
 const loading = ref(true);
 const router = useRouter();
 const filtroEstado = ref('');
+const currentPage = ref(1);
+const lastPage = ref(1);
 
 const pageTitle = computed(() => {
     if (props.categoriaGeneralId === 1) return 'Mis Solicitudes Tecnológicas';
@@ -18,15 +20,17 @@ const pageTitle = computed(() => {
     return 'Mis Solicitudes';
 });
 
-const cargarSolicitudes = async () => {
+const cargarSolicitudes = async (page = 1) => {
     loading.value = true;
     try {
-        const params = {};
+        const params = { page };
         if (filtroEstado.value) params.estado = filtroEstado.value;
         if (props.categoriaGeneralId) params.categoria_general_id = props.categoriaGeneralId;
 
         const response = await SolicitudService.getMisSolicitudes(params);
         solicitudes.value = response.data.data;
+        currentPage.value = response.data.current_page;
+        lastPage.value = response.data.last_page;
     } catch (e) {
         console.error("Error cargando mis solicitudes", e);
     } finally {
@@ -53,7 +57,13 @@ watch(() => props.categoriaGeneralId, () => {
 
 const setFiltro = (estado) => {
     filtroEstado.value = estado;
-    cargarSolicitudes();
+    cargarSolicitudes(1);
+};
+
+const cambiarPagina = (page) => {
+    if (page >= 1 && page <= lastPage.value) {
+        cargarSolicitudes(page);
+    }
 };
 
 const getEstadoClass = (estado) => {
@@ -158,6 +168,31 @@ const getEstadoClass = (estado) => {
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="lastPage > 1" class="flex justify-between items-center mt-6">
+            <span class="text-sm text-gray-600 dark:text-gray-400">
+                Página <span class="font-bold text-gray-900 dark:text-white">{{ currentPage }}</span> de <span class="font-bold text-gray-900 dark:text-white">{{ lastPage }}</span>
+            </span>
+            <div class="flex gap-2">
+                <button
+                    @click="cambiarPagina(currentPage - 1)"
+                    :disabled="currentPage === 1"
+                    class="px-4 py-2 border rounded-lg text-sm font-medium transition"
+                    :class="currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600 dark:border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 dark:border-gray-600'"
+                >
+                    <i class="fas fa-chevron-left mr-1"></i> Anterior
+                </button>
+                <button
+                    @click="cambiarPagina(currentPage + 1)"
+                    :disabled="currentPage === lastPage"
+                    class="px-4 py-2 border rounded-lg text-sm font-medium transition"
+                    :class="currentPage === lastPage ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600 dark:border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 dark:border-gray-600'"
+                >
+                    Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                </button>
+            </div>
         </div>
     </div>
 </template>
