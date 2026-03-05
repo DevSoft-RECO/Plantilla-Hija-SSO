@@ -36,7 +36,7 @@ defineProps({
                 </div>
             </div>
             <div v-else-if="solicitudDetalle?.seguimientos?.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
-                No hay eventos registrados
+                Sin seguimiento del caso
             </div>
             <div v-else class="flex flex-col pt-2 pb-4 space-y-6">
 

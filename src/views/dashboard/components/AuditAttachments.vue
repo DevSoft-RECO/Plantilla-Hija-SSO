@@ -83,10 +83,10 @@ const allFiles = computed(() => {
             <div v-else-if="allFiles.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
                 No hay archivos adjuntos
             </div>
-            <div v-else class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div v-else class="flex flex-row overflow-x-auto custom-scrollbar gap-4 pb-2 pt-1 px-1">
                 <div v-for="(file, idx) in allFiles" :key="idx"
                      @click="openFileUrl(file.url)"
-                     class="bg-white dark:bg-gray-800 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group h-28 relative overflow-hidden border border-gray-100 dark:border-gray-700">
+                     class="shrink-0 w-32 bg-white dark:bg-gray-800 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group h-28 relative overflow-hidden border border-gray-100 dark:border-gray-700">
 
                     <!-- Top Label: Group name shown on hover -->
                     <div class="absolute top-0 left-0 w-full z-20 text-[9px] font-bold text-white py-1.5 px-1 uppercase tracking-wider truncate opacity-0 group-hover:opacity-100 transition-opacity bg-opacity-90 backdrop-blur-sm shadow-sm" style="background-color: var(--color-verde-cope)">
