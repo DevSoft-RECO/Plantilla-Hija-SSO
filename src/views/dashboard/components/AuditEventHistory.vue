@@ -38,47 +38,42 @@ defineProps({
             <div v-else-if="solicitudDetalle?.seguimientos?.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
                 No hay eventos registrados
             </div>
-            <div v-else class="space-y-6 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:rounded-full before:bg-gray-200 dark:before:bg-gray-700 pt-2">
+            <div v-else class="flex flex-col pt-2 pb-4 space-y-6">
 
                 <div v-for="seg in solicitudDetalle.seguimientos" :key="seg.id"
-                     class="relative flex items-center justify-between md:justify-normal group is-active mb-8"
-                     :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'md:flex-row' : 'md:flex-row-reverse'">
+                     class="flex items-end gap-2 w-full max-w-[95%] md:max-w-[85%]"
+                     :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'self-start' : 'self-end flex-row-reverse'">
 
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white dark:border-gray-800 bg-gray-50 dark:bg-gray-700 shadow-md shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-xs transition-transform group-hover:scale-110"
-                         :style="{ color: seg.seguimiento_por_id === solicitudDetalle.user_id ? 'var(--color-azul-cope)' : 'var(--color-verde-cope)' }">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-full shadow-sm shrink-0 z-10 text-[10px] text-white"
+                         :style="{ backgroundColor: seg.seguimiento_por_id === solicitudDetalle.user_id ? 'var(--color-azul-cope)' : 'var(--color-verde-cope)' }">
                         <i v-if="seg.tipo_accion === 'visita'" class="fas fa-walking"></i>
                         <i v-else-if="seg.tipo_accion === 'evidencia'" class="fas fa-paperclip"></i>
-                        <i v-else-if="seg.tipo_accion === 'validacion'" class="fas fa-check-circle" style="color: var(--color-verde-cope)"></i>
+                        <i v-else-if="seg.tipo_accion === 'validacion'" class="fas fa-check-circle"></i>
                         <i v-else-if="seg.tipo_accion === 'reapertura'" class="fas fa-undo"></i>
                         <i v-else class="fas fa-comment"></i>
                     </div>
 
-                    <div class="w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] bg-white dark:bg-gray-800 border p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative"
-                         :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'border-blue-100 dark:border-blue-900/50' : 'border-green-100 dark:border-green-900/50'">
+                    <div class="flex flex-col w-full min-w-0 font-sans" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'items-start' : 'items-end'">
 
-                        <div class="flex items-center justify-between mb-2 pb-2 border-b"
-                             :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'border-blue-50 dark:border-gray-700/50' : 'border-green-50 dark:border-gray-700/50'">
-
-                            <div class="flex flex-col gap-0.5">
-                                <div class="font-bold text-white px-2 py-0.5 rounded-md text-[10px] shadow-sm tracking-wider w-fit"
-                                     :style="{ backgroundColor: seg.seguimiento_por_id === solicitudDetalle.user_id ? 'var(--color-azul-cope)' : 'var(--color-verde-cope)' }">
-                                    <i class="fas fa-user mr-1 text-white/80"></i>
-                                    {{ seg.seguimiento_por_nombre.split(' ').slice(0, 2).join(' ') }}
-                                </div>
-                                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1 pl-0.5">
-                                    <i class="fas fa-id-badge text-[8px]"></i>
-                                    {{ seg.seguimiento_por_cargo || 'Usuario' }}
-                                </div>
-                            </div>
-
-                            <time class="text-[10px] text-gray-400 font-bold tracking-widest flex items-center gap-1 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md shrink-0">
-                                <i class="far fa-clock"></i> {{ new Date(seg.created_at).toLocaleString() }}
-                            </time>
+                        <div class="flex items-baseline gap-2 mb-1 px-1" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'flex-row' : 'flex-row-reverse'">
+                            <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">
+                                {{ seg.seguimiento_por_nombre.split(' ').slice(0, 2).join(' ') }}
+                            </span>
+                            <span class="text-[9px] text-gray-400 font-medium tracking-wide">
+                                {{ seg.seguimiento_por_cargo || 'Usuario' }}
+                            </span>
                         </div>
 
-                        <div class="text-[13px] text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed p-3 rounded-xl shadow-inner border"
-                             :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'bg-blue-50/30 border-blue-50 dark:bg-gray-700/30 dark:border-gray-600/50' : 'bg-green-50/30 border-green-50 dark:bg-gray-700/30 dark:border-gray-600/50'"
-                             v-html="seg.comentario">
+                        <div class="p-3 shadow-sm border text-[13px] text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed relative"
+                             :class="seg.seguimiento_por_id === solicitudDetalle.user_id
+                                ? 'bg-white dark:bg-gray-800 border-blue-100 dark:border-blue-900/50 rounded-2xl rounded-bl-sm'
+                                : 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800/50 rounded-2xl rounded-br-sm'">
+                            <div v-html="seg.comentario"></div>
+
+                            <div class="mt-2 text-[10px] text-gray-400 font-bold tracking-widest flex items-center gap-1 opacity-80"
+                                 :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'justify-end' : 'justify-start'">
+                                <i class="far fa-clock"></i> {{ new Date(seg.created_at).toLocaleString([], { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit' }) }}
+                            </div>
                         </div>
                     </div>
                 </div>
