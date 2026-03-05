@@ -21,6 +21,17 @@ const getEstadoClass = (estado) => {
     }
 };
 
+const getEstadoIcon = (estado) => {
+    switch (estado) {
+        case 'reportada': return 'fas fa-exclamation-circle';
+        case 'asignada': return 'fas fa-user-check';
+        case 'en_seguimiento': return 'fas fa-sync fa-spin';
+        case 'pendiente_validacion': return 'fas fa-clipboard-check';
+        case 'cerrada': return 'fas fa-lock';
+        default: return 'fas fa-info-circle';
+    }
+};
+
 </script>
 
 <template>
@@ -55,44 +66,33 @@ const getEstadoClass = (estado) => {
                     <i class="fas fa-inbox text-3xl mb-2 text-gray-300"></i><br>
                     No hay resultados con estos filtros
                 </div>
-                <div v-else class="space-y-4 px-1 py-1">
+                <div v-else class="space-y-2 px-1 py-1">
                     <div v-for="sol in solicitudes" :key="sol.id"
                          @click="$emit('seleccionar', sol)"
-                         class="bg-white dark:bg-gray-800 rounded-xl p-4 cursor-pointer shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-300 group relative overflow-hidden flex flex-col gap-3">
+                         class="bg-white dark:bg-gray-800 rounded-xl p-3 cursor-pointer shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-300 group relative overflow-hidden flex flex-col gap-1.5">
 
                         <!-- Hover left border indicator -->
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 opacity-0 group-hover:opacity-100 transition-opacity" style="background-color: var(--color-verde-cope)"></div>
 
-                        <!-- Header Row: ID + Status Pill -->
-                        <div class="flex justify-between items-center pl-2">
-                            <div class="flex items-center gap-2">
-                                <div class="w-7 h-7 rounded-lg bg-gray-50 dark:bg-gray-700 flex items-center justify-center border border-gray-200 dark:border-gray-600">
-                                    <i class="fas fa-hashtag text-[10px] text-gray-400"></i>
-                                </div>
-                                <span class="font-bold text-xs text-gray-600 dark:text-gray-300 tracking-wider">{{ sol.id }}</span>
-                            </div>
-                            <span class="px-3 py-1 rounded-full text-[10px] font-bold border-none uppercase flex items-center gap-1.5 shadow-sm" :class="getEstadoClass(sol.estado)">
-                                <i class="fas fa-circle text-[6px]"></i>
-                                {{ sol.estado?.replace('_', ' ') }}
+                        <!-- Header Line: Title & ID -->
+                        <div class="flex justify-between items-start pl-2">
+                            <h3 class="font-bold text-sm text-gray-800 dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 pr-2" style="color: var(--color-azul-cope);">
+                                <span class="text-xs text-gray-400 font-normal mr-1">#{{ sol.id }}</span>
+                                {{ sol.titulo }}
+                            </h3>
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase flex items-center gap-1 shrink-0 shadow-sm" :class="getEstadoClass(sol.estado)">
+                                <i :class="getEstadoIcon(sol.estado)" class="text-[10px]"></i>
+                                <span class="hidden sm:inline-block">{{ sol.estado?.replace('_', ' ') }}</span>
                             </span>
                         </div>
 
-                        <!-- Title -->
-                        <div class="pl-2">
-                            <h3 class="font-bold text-[15px] text-gray-800 dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-2" style="--tw-text-opacity: 1; color: var(--color-azul-cope);">
-                                {{ sol.titulo }}
-                            </h3>
-                        </div>
-
                         <!-- Footer Info Row -->
-                        <div class="flex justify-between items-center pt-2 mt-auto border-t border-gray-50 dark:border-gray-700/50 pl-2">
-                            <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 max-w-[60%] truncate" title="Agencia">
-                                <div class="w-5 h-5 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
-                                    <i class="fas fa-building text-[9px] text-gray-400"></i>
-                                </div>
+                        <div class="flex justify-between items-center pl-2 mt-1">
+                            <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 max-w-[65%] truncate" title="Agencia">
+                                <i class="fas fa-building text-gray-400 text-[10px]"></i>
                                 <span class="truncate font-medium">{{ sol.agencia?.nombre || 'Sin Agencia' }}</span>
                             </div>
-                            <div class="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded-lg shrink-0">
+                            <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium shrink-0">
                                 <i class="far fa-calendar-alt"></i>
                                 {{ new Date(sol.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) }}
                             </div>
@@ -124,7 +124,7 @@ const getEstadoClass = (estado) => {
                 <div class="flex items-center gap-3">
                     <span class="text-[10px] text-white/80 font-bold uppercase tracking-widest">ID: {{ selectedSolicitud.id }}</span>
                     <span class="px-3 py-1 rounded-full text-[10px] font-bold border border-white/30 text-white uppercase flex items-center gap-1.5 shadow-sm backdrop-blur-sm bg-white/10">
-                        <i class="fas fa-circle text-[6px] text-white/70"></i>
+                        <i :class="getEstadoIcon(selectedSolicitud.estado)" class="text-[10px] text-white/90"></i>
                         {{ selectedSolicitud.estado?.replace('_', ' ') }}
                     </span>
                 </div>
