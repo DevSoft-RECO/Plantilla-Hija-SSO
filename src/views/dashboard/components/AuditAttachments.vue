@@ -86,25 +86,29 @@ const allFiles = computed(() => {
             <div v-else class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <div v-for="(file, idx) in allFiles" :key="idx"
                      @click="openFileUrl(file.url)"
-                     class="bg-white dark:bg-gray-800 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group h-28 relative overflow-hidden border border-gray-100 dark:border-gray-700">
+                     class="bg-white dark:bg-gray-800 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group h-28 relative overflow-hidden border border-gray-100 dark:border-gray-700">
 
-                    <div class="absolute top-0 left-0 w-full text-[9px] font-bold text-white py-1.5 px-1 uppercase tracking-wider truncate opacity-0 group-hover:opacity-100 transition-opacity bg-opacity-90 backdrop-blur-sm" style="background-color: var(--color-verde-cope)">
+                    <!-- Top Label: Group name shown on hover -->
+                    <div class="absolute top-0 left-0 w-full z-20 text-[9px] font-bold text-white py-1.5 px-1 uppercase tracking-wider truncate opacity-0 group-hover:opacity-100 transition-opacity bg-opacity-90 backdrop-blur-sm shadow-sm" style="background-color: var(--color-verde-cope)">
                         {{ file.group }}
                     </div>
 
                     <!-- Generic File Icon -->
-                    <div v-if="!isImage(file.name)" class="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-inner border border-gray-100 dark:border-gray-600" style="color: var(--color-azul-cope)">
-                        <i class="fas fa-file-alt text-2xl"></i>
+                    <div v-if="!isImage(file.name)" class="w-full h-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center transition-transform group-hover:scale-105" style="color: var(--color-azul-cope)">
+                        <div class="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center border border-gray-100">
+                             <i class="fas fa-file-alt text-3xl"></i>
+                        </div>
                     </div>
 
                     <!-- Image Thumbnail -->
-                    <div v-else class="w-14 h-14 rounded-lg overflow-hidden mb-2 group-hover:scale-110 transition-transform shadow-sm border border-gray-100 dark:border-gray-600">
+                    <div v-else class="w-full h-full bg-gray-100 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-110">
                         <img :src="file.url" alt="Thumbnail" class="w-full h-full object-cover">
                     </div>
 
-                    <span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 truncate w-full px-1" :title="file.name">
+                    <!-- Bottom Label: File name shown on hover -->
+                    <div class="absolute bottom-0 left-0 w-full z-20 text-[10px] font-bold text-white py-2 px-2 truncate opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md bg-black/60 shadow-inner">
                         {{ file.name }}
-                    </span>
+                    </div>
                 </div>
             </div>
         </div>
