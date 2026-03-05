@@ -29,7 +29,7 @@ const pagination = ref({
 
 // Filters
 const filtros = ref({
-    tipo: '2', // Default to Administrativo (2)
+    tipo: '', // Default to Ambos ('')
     estado: 'reportada', // Default
     agencia_id: ''
 });
