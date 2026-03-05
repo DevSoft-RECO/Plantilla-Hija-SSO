@@ -121,6 +121,12 @@ export const useAuthStore = defineStore('auth', () => {
    */
   function hasRole(role) {
     if (!user.value) return false
+
+    // Check if role is an array (multiple allowed roles)
+    if (Array.isArray(role)) {
+      return role.some(r => user.value.roles && user.value.roles.includes(r))
+    }
+
     return user.value.roles && user.value.roles.includes(role)
   }
 

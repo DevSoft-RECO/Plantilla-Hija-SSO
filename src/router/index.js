@@ -109,7 +109,7 @@ const router = createRouter({
           path: 'audit-dashboard',
           name: 'audit-dashboard',
           component: () => import('@/views/dashboard/AuditDashboardView.vue'),
-          meta: { title: 'Dashboard de Auditoría', role: 'Super Admin' }
+          meta: { title: 'Dashboard de Auditoría', permission: 'auditoria' }
         },
         // Configuración Global
         {
