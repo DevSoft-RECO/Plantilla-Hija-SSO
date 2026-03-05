@@ -24,16 +24,15 @@ const getEstadoClass = (estado) => {
 </script>
 
 <template>
-    <div class="div2 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg">
-        <div class="absolute top-0 left-0 w-full h-1.5 z-20" style="background-color: var(--color-azul-cope)"></div>
+    <div class="div2 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg border border-gray-100 dark:border-gray-700">
 
         <!-- VISTA DE LISTA -->
-        <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden mt-1.5">
-            <div class="p-4 shrink-0 flex justify-between items-center bg-white dark:bg-gray-800 z-10 border-b border-gray-100 dark:border-gray-700">
-                <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 tracking-wide flex items-center gap-2">
-                    <i class="fas fa-list-ul text-gray-400"></i> Lista de Solicitudes
+        <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden">
+            <div class="p-4 shrink-0 flex justify-between items-center z-10 shadow-sm" style="background-color: var(--color-azul-cope)">
+                <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+                    <i class="fas fa-list-ul text-white/80"></i> Lista de Solicitudes
                 </h2>
-                <span class="text-xs font-bold text-white px-3 py-1 rounded-full shadow-sm" style="background-color: var(--color-azul-cope)">
+                <span class="text-xs font-bold text-blue-900 bg-white px-3 py-1 rounded-full shadow-sm">
                     {{ pagination.total }} solicitudes
                 </span>
             </div>
@@ -117,15 +116,15 @@ const getEstadoClass = (estado) => {
         </div>
 
         <!-- VISTA DE DETALLE -->
-        <div v-else class="flex flex-col h-full overflow-hidden bg-white dark:bg-gray-800 relative z-10 w-full mt-1.5">
-             <div class="p-4 shrink-0 flex items-center justify-between bg-white dark:bg-gray-800 z-10 border-b border-gray-100 dark:border-gray-700">
-                <button @click="$emit('verBackToList')" class="text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-400 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition px-3 py-1.5 text-xs flex items-center gap-2 font-bold rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
+        <div v-else class="flex flex-col h-full overflow-hidden bg-white dark:bg-gray-800 relative z-10 w-full">
+             <div class="p-4 shrink-0 flex items-center justify-between z-10 shadow-sm" style="background-color: var(--color-azul-cope)">
+                <button @click="$emit('verBackToList')" class="text-blue-900 hover:text-blue-950 bg-white hover:bg-gray-100 transition px-3 py-1.5 text-xs flex items-center gap-2 font-bold rounded-lg shadow-sm">
                     <i class="fas fa-arrow-left"></i> Volver a la Lista
                 </button>
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">ID: {{ selectedSolicitud.id }}</span>
-                    <span class="px-3 py-1 rounded-full text-[10px] font-bold border-none uppercase flex items-center gap-1.5 shadow-sm" :class="getEstadoClass(selectedSolicitud.estado)">
-                        <i class="fas fa-circle text-[6px]"></i>
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] text-white/80 font-bold uppercase tracking-widest">ID: {{ selectedSolicitud.id }}</span>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold border border-white/30 text-white uppercase flex items-center gap-1.5 shadow-sm backdrop-blur-sm bg-white/10">
+                        <i class="fas fa-circle text-[6px] text-white/70"></i>
                         {{ selectedSolicitud.estado?.replace('_', ' ') }}
                     </span>
                 </div>

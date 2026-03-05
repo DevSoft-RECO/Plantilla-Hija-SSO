@@ -19,18 +19,15 @@ const localFiltros = computed({
 </script>
 
 <template>
-    <div class="div1 p-5 shrink-0 bg-white dark:bg-gray-800 flex items-center gap-5 overflow-x-auto custom-scrollbar rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
-        <!-- Institutional Thick Accent Line -->
-        <div class="absolute left-0 top-0 bottom-0 w-2" style="background-color: var(--color-azul-cope)"></div>
+    <div class="div1 px-0 py-0 shrink-0 bg-white dark:bg-gray-800 flex items-center overflow-x-auto custom-scrollbar rounded-2xl shadow-sm relative transition-shadow hover:shadow-md border border-gray-100 dark:border-gray-700">
 
-        <div class="font-bold text-gray-700 dark:text-gray-200 shrink-0 text-sm pl-2 flex items-center gap-2">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-500">
-                <i class="fas fa-filter"></i>
-            </div>
+        <!-- Institutional Header Block -->
+        <div class="font-bold text-white shrink-0 text-sm flex items-center gap-2 px-6 shadow-[2px_0_8px_rgba(0,0,0,0.1)] z-10 self-stretch" style="background-color: var(--color-azul-cope)">
+            <i class="fas fa-filter text-white/80"></i>
             Filtros
         </div>
 
-        <div class="flex-1 flex gap-4 min-w-0 md:justify-end">
+        <div class="flex-1 flex gap-4 min-w-0 py-3 px-5 md:justify-end">
 
             <!-- Tipo Toggle (Icons instead of select) -->
             <div class="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-xl shadow-inner">
@@ -66,8 +63,10 @@ const localFiltros = computed({
             </div>
         </div>
 
-        <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95" style="background-color: var(--color-azul-cope)">
-            <i class="fas fa-sync-alt"></i> Limpiar
-        </button>
+        <div class="px-5 shrink-0 self-stretch flex items-center border-l border-gray-100 dark:border-gray-700/50">
+            <button @click="$emit('limpiar')" class="shrink-0 text-white rounded-xl px-4 py-2 text-sm font-bold shadow-sm transition flex items-center gap-2 hover:opacity-90 active:scale-95" style="background-color: var(--color-azul-cope)">
+                <i class="fas fa-sync-alt"></i> Limpiar
+            </button>
+        </div>
     </div>
 </template>

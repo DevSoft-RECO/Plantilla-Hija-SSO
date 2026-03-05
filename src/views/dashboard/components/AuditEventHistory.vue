@@ -7,11 +7,10 @@ defineProps({
 </script>
 
 <template>
-    <div class="div3 bg-white dark:bg-gray-800 flex flex-col overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg">
-        <div class="absolute top-0 left-0 w-full h-1.5 z-20" style="background-color: var(--color-verde-cope)"></div>
-        <div class="p-4 shrink-0 flex items-center justify-between mt-1.5 border-b border-gray-100 dark:border-gray-700">
-            <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 tracking-wide flex items-center gap-2">
-                <i class="fas fa-history text-gray-400"></i>Historial de Eventos
+    <div class="div3 bg-white dark:bg-gray-800 flex flex-col overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg border border-gray-100 dark:border-gray-700">
+        <div class="p-4 shrink-0 flex items-center justify-between shadow-sm z-10" style="background-color: var(--color-verde-cope)">
+            <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+                <i class="fas fa-history text-white/80"></i>Historial de Eventos
             </h2>
         </div>
 
