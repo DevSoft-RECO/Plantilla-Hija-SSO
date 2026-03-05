@@ -13,6 +13,12 @@ const openFileUrl = async (url) => {
    }
 };
 
+const isImage = (filename) => {
+    if (!filename) return false;
+    const ext = filename.split('.').pop().toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(ext);
+};
+
 const allFiles = computed(() => {
     if (!props.solicitudDetalle) return [];
 
@@ -86,8 +92,14 @@ const allFiles = computed(() => {
                         {{ file.group }}
                     </div>
 
-                    <div class="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-inner border border-gray-100 dark:border-gray-600" style="color: var(--color-azul-cope)">
+                    <!-- Generic File Icon -->
+                    <div v-if="!isImage(file.name)" class="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-inner border border-gray-100 dark:border-gray-600" style="color: var(--color-azul-cope)">
                         <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+
+                    <!-- Image Thumbnail -->
+                    <div v-else class="w-14 h-14 rounded-lg overflow-hidden mb-2 group-hover:scale-110 transition-transform shadow-sm border border-gray-100 dark:border-gray-600">
+                        <img :src="file.url" alt="Thumbnail" class="w-full h-full object-cover">
                     </div>
 
                     <span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 truncate w-full px-1" :title="file.name">
