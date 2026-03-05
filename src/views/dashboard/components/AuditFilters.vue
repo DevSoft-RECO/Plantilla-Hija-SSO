@@ -47,8 +47,8 @@ const localFiltros = computed({
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-tasks"></i>
                 </div>
-                <select v-model="localFiltros.estado" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
-                    <option v-for="est in estados" :key="est.value" :value="est.value">{{ est.label }}</option>
+                <select v-model="localFiltros.estado" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
+                    <option v-for="est in estados" :key="est.value" :value="est.value" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ est.label }}</option>
                 </select>
             </div>
 
@@ -56,9 +56,9 @@ const localFiltros = computed({
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i class="fas fa-building"></i>
                 </div>
-                <select v-model="localFiltros.agencia_id" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
-                    <option value="">Todas las Agencias</option>
-                    <option v-for="ag in agencias" :key="ag.id" :value="ag.id">{{ ag.nombre }}</option>
+                <select v-model="localFiltros.agencia_id" class="w-full text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-white rounded-xl focus:ring-2 focus:outline-none pl-9 py-2 pr-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer" style="--tw-ring-color: var(--color-azul-cope)">
+                    <option value="" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">Todas las Agencias</option>
+                    <option v-for="ag in agencias" :key="ag.id" :value="ag.id" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ ag.nombre }}</option>
                 </select>
             </div>
         </div>

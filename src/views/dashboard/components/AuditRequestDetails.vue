@@ -76,7 +76,7 @@ const getEstadoIcon = (estado) => {
 
                         <!-- Header Line: Title & ID -->
                         <div class="flex justify-between items-start pl-2">
-                            <h3 class="font-bold text-sm text-gray-800 dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 pr-2" style="color: var(--color-azul-cope);">
+                            <h3 class="font-bold text-sm text-[var(--color-azul-cope)] dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 pr-2">
                                 <span class="text-xs text-gray-400 font-normal mr-1">#{{ sol.id }}</span>
                                 {{ sol.titulo }}
                             </h3>
