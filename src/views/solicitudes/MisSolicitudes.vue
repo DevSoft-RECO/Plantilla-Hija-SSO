@@ -25,7 +25,7 @@ const cargarSolicitudes = async () => {
         if (filtroEstado.value) params.estado = filtroEstado.value;
         if (props.categoriaGeneralId) params.categoria_general_id = props.categoriaGeneralId;
 
-        const response = await SolicitudService.getSolicitudes(params);
+        const response = await SolicitudService.getMisSolicitudes(params);
         solicitudes.value = response.data.data;
     } catch (e) {
         console.error("Error cargando mis solicitudes", e);
@@ -73,7 +73,7 @@ const getEstadoClass = (estado) => {
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ pageTitle }}</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Solicitudes realizadas por mi agencia</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Solicitudes reportadas por mí</p>
             </div>
             <!-- Botón opcional para recargar -->
             <button @click="cargarSolicitudes" class="text-blue-600 hover:text-blue-800 transition">
@@ -117,7 +117,7 @@ const getEstadoClass = (estado) => {
                     <tr v-else-if="solicitudes.length === 0">
                         <td colspan="6" class="p-8 text-center text-gray-500">
                             <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
-                            <p>No hay solicitudes registradas por tu agencia.</p>
+                            <p>No has registrado ninguna solicitud aún.</p>
                         </td>
                     </tr>
                     <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">

@@ -4,6 +4,9 @@ export default {
     getSolicitudes(params) {
         return axios.get('/solicitudes', { params });
     },
+    getMisSolicitudes(params) {
+        return axios.get('/solicitudes/mis-solicitudes', { params });
+    },
     getSolicitud(id) {
         return axios.get(`/solicitudes/${id}`);
     },
