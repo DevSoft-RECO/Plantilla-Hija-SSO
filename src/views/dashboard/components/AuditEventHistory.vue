@@ -42,10 +42,10 @@ defineProps({
 
                 <div v-for="seg in solicitudDetalle.seguimientos" :key="seg.id"
                      class="flex items-end gap-2 w-full max-w-[95%] md:max-w-[85%]"
-                     :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'self-start' : 'self-end flex-row-reverse'">
+                     :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'self-end flex-row-reverse' : 'self-start'">
 
                     <div class="flex items-center justify-center w-8 h-8 rounded-full shadow-sm shrink-0 z-10 text-[10px] text-white"
-                         :style="{ backgroundColor: seg.seguimiento_por_id === solicitudDetalle.user_id ? 'var(--color-azul-cope)' : 'var(--color-verde-cope)' }">
+                         :style="{ backgroundColor: seg.seguimiento_por_id === solicitudDetalle.user_id ? 'var(--color-azul-cope)' : '#f97316' }">
                         <i v-if="seg.tipo_accion === 'visita'" class="fas fa-walking"></i>
                         <i v-else-if="seg.tipo_accion === 'evidencia'" class="fas fa-paperclip"></i>
                         <i v-else-if="seg.tipo_accion === 'validacion'" class="fas fa-check-circle"></i>
@@ -53,9 +53,9 @@ defineProps({
                         <i v-else class="fas fa-comment"></i>
                     </div>
 
-                    <div class="flex flex-col w-full min-w-0 font-sans" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'items-start' : 'items-end'">
+                    <div class="flex flex-col w-full min-w-0 font-sans" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'items-end' : 'items-start'">
 
-                        <div class="flex items-baseline gap-2 mb-1 px-1" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'flex-row' : 'flex-row-reverse'">
+                        <div class="flex items-baseline gap-2 mb-1 px-1" :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'flex-row-reverse' : 'flex-row'">
                             <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">
                                 {{ seg.seguimiento_por_nombre.split(' ').slice(0, 2).join(' ') }}
                             </span>
@@ -66,12 +66,11 @@ defineProps({
 
                         <div class="p-3 shadow-sm border text-[13px] text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed relative"
                              :class="seg.seguimiento_por_id === solicitudDetalle.user_id
-                                ? 'bg-white dark:bg-gray-800 border-blue-100 dark:border-blue-900/50 rounded-2xl rounded-bl-sm'
-                                : 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800/50 rounded-2xl rounded-br-sm'">
+                                ? 'bg-white dark:bg-gray-800 border-blue-100 dark:border-blue-900/50 rounded-2xl rounded-br-sm'
+                                : 'bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800/50 rounded-2xl rounded-bl-sm'">
                             <div v-html="seg.comentario"></div>
 
-                            <div class="mt-2 text-[10px] text-gray-400 font-bold tracking-widest flex items-center gap-1 opacity-80"
-                                 :class="seg.seguimiento_por_id === solicitudDetalle.user_id ? 'justify-end' : 'justify-start'">
+                            <div class="mt-2 text-[10px] text-gray-400 font-bold tracking-widest flex items-center gap-1 opacity-80 justify-end">
                                 <i class="far fa-clock"></i> {{ new Date(seg.created_at).toLocaleString([], { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit' }) }}
                             </div>
                         </div>
