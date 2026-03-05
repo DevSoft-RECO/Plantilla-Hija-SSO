@@ -102,6 +102,8 @@ const getEstadoClass = (estado) => {
                     <tr>
                         <th class="p-4 border-b dark:border-gray-700">ID</th>
                         <th class="p-4 border-b dark:border-gray-700">Título</th>
+                        <th class="p-4 border-b dark:border-gray-700">Agencia</th>
+                        <th class="p-4 border-b dark:border-gray-700">Solicitante</th>
                         <th class="p-4 border-b dark:border-gray-700">Estado</th>
                         <th class="p-4 border-b dark:border-gray-700">Asignado A</th>
                         <th class="p-4 border-b dark:border-gray-700">Fecha Creación</th>
@@ -110,12 +112,12 @@ const getEstadoClass = (estado) => {
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                     <tr v-if="loading">
-                        <td colspan="6" class="p-8 text-center text-gray-500">
+                        <td colspan="8" class="p-8 text-center text-gray-500">
                             <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando solicitudes...
                         </td>
                     </tr>
                     <tr v-else-if="solicitudes.length === 0">
-                        <td colspan="6" class="p-8 text-center text-gray-500">
+                        <td colspan="8" class="p-8 text-center text-gray-500">
                             <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
                             <p>No has registrado ninguna solicitud aún.</p>
                         </td>
@@ -123,6 +125,13 @@ const getEstadoClass = (estado) => {
                     <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                         <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
                         <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
+                        <td class="p-4 text-gray-600 dark:text-gray-300">{{ sol.agencia?.nombre || 'N/A' }}</td>
+                        <td class="p-4 text-gray-600 dark:text-gray-300">
+                            <div v-if="sol.creado_por" class="flex items-center gap-2">
+                                <span class="font-medium">{{ sol.creado_por.name }}</span>
+                            </div>
+                            <span v-else class="text-gray-400 italic">Desconocido</span>
+                        </td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getEstadoClass(sol.estado)">
                                 {{ sol.estado?.replace('_', ' ') }}
