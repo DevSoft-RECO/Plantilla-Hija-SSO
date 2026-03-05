@@ -13,6 +13,13 @@ export default {
     getMiBandejaAdmin(params) {
         return axios.get('/solicitudes/bandeja-admin/mis-asignaciones', { params });
     },
+    // Auditoría
+    getAuditSolicitudes(params) {
+        return axios.get('/audit/solicitudes', { params });
+    },
+    getAuditSolicitud(id) {
+        return axios.get(`/audit/solicitudes/${id}`);
+    },
     getSolicitud(id) {
         return axios.get(`/solicitudes/${id}`);
     },

@@ -104,6 +104,13 @@ const router = createRouter({
           component: () => import('@/views/solicitudes/TrabajarSolicitud.vue'),
           meta: { title: 'Trabajar Solicitud' }
         },
+        // Dashboard de Auditoría
+        {
+          path: 'audit-dashboard',
+          name: 'audit-dashboard',
+          component: () => import('@/views/dashboard/AuditDashboardView.vue'),
+          meta: { title: 'Dashboard de Auditoría', role: 'Super Admin' }
+        },
         // Configuración Global
         {
           path: 'config/sincronizacion',

@@ -262,6 +262,14 @@ const menuItems = computed(() => {
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2v10a1 1 0 01-1 1h-3m-4 0h4" />',
             show: authStore.hasRole('Super Admin') || authStore.hasPermission('ver-dashboard-general') || authStore.hasPermission('ver-dashboard-agencia') || authStore.hasPermission('dashboard-solo-lectura')
         },
+        // Auditoría
+        {
+            id: 'auditoria',
+            label: 'Auditoría',
+            route: '/admin/audit-dashboard',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />',
+            show: authStore.hasRole('Super Admin')
+        },
         // Solicitudes Tecnologicas
         {
             id: 'solicitudes',
