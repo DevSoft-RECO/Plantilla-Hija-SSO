@@ -231,8 +231,18 @@ const allFiles = computed(() => {
                     </div>
 
                     <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
-                        <div v-if="loadingList" class="flex justify-center items-center h-32">
-                            <i class="fas fa-spinner fa-spin text-2xl text-verde-cope"></i>
+                        <div v-if="loadingList" class="space-y-3 p-2">
+                            <div v-for="i in 5" :key="i" class="p-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 animate-pulse">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-20"></div>
+                                </div>
+                                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+                                <div class="flex justify-between items-end mt-2">
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                                </div>
+                            </div>
                         </div>
                         <div v-else-if="solicitudes.length === 0" class="text-center p-8 text-gray-500 text-sm">
                             <i class="fas fa-inbox text-3xl mb-2 text-gray-300"></i><br>
@@ -282,8 +292,25 @@ const allFiles = computed(() => {
                         </span>
                     </div>
                     <div class="flex-1 overflow-y-auto p-5 custom-scrollbar relative">
-                        <div v-if="loadingDetail" class="absolute inset-0 bg-white/80 dark:bg-gray-800/80 flex justify-center items-center z-20 backdrop-blur-sm">
-                            <i class="fas fa-spinner fa-spin text-3xl text-verde-cope"></i>
+                        <div v-if="loadingDetail" class="space-y-6 animate-pulse p-2">
+                            <div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
+                                <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div v-for="i in 6" :key="i">
+                                    <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-3"></div>
+                                <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800 space-y-2">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6"></div>
+                                </div>
+                            </div>
                         </div>
                         <template v-else-if="solicitudDetalle">
                             <div class="space-y-6">
@@ -343,8 +370,21 @@ const allFiles = computed(() => {
                         <i class="fas fa-mouse-pointer text-4xl mb-3 opacity-50"></i>
                         <p class="text-sm font-medium">Seleccione una solicitud para ver su historial</p>
                     </div>
-                    <div v-else-if="loadingDetail" class="flex justify-center items-center h-full">
-                        <i class="fas fa-spinner fa-spin text-verde-cope text-2xl"></i>
+                    <div v-else-if="loadingDetail" class="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gray-200 dark:before:bg-gray-700">
+                        <div v-for="i in 3" :key="i" class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group animate-pulse">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10"></div>
+                            <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm relative">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                                </div>
+                                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-3"></div>
+                                <div class="space-y-2 mt-2">
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                                    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div v-else-if="solicitudDetalle?.seguimientos?.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
                         No hay eventos registrados
@@ -391,8 +431,11 @@ const allFiles = computed(() => {
                         <i class="fas fa-folder-open text-3xl mb-2 opacity-50"></i>
                         <p class="text-xs font-medium">Archivos aparecerán aquí</p>
                     </div>
-                    <div v-else-if="loadingDetail" class="flex justify-center items-center h-full">
-                        <i class="fas fa-spinner fa-spin text-verde-cope text-xl"></i>
+                    <div v-else-if="loadingDetail" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                        <div v-for="i in 4" :key="i" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 flex flex-col items-center justify-center animate-pulse h-24">
+                            <div class="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                            <div class="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        </div>
                     </div>
                     <div v-else-if="allFiles.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
                         No hay archivos adjuntos
