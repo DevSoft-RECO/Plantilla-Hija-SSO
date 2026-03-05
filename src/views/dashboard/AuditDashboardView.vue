@@ -135,8 +135,9 @@ const verBackToList = () => {
 </script>
 
 <template>
-    <div class="p-4 h-[calc(100vh-80px)] overflow-hidden bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative">
-        <div class="h-full w-full custom-grid overflow-hidden">
+    <!-- 120px calculation accounts for: AdminHeader (approx 64px) + Parent main p-6 (48px) + safety buffer -->
+    <div class="p-4 h-[calc(100vh-120px)] min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
+        <div class="w-full flex-1 custom-grid overflow-hidden">
 
             <AuditFilters
                 v-model:filtros="filtros"
@@ -183,15 +184,15 @@ const verBackToList = () => {
 
 .custom-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: 60px 1fr 1fr 1fr 200px;
-    gap: 1.5rem; /* Explicit gap to prevent glued cards */
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 1.25rem;
 }
 
 .div1 { grid-area: 1 / 1 / 2 / 4; }
-.div2 { grid-area: 2 / 1 / 6 / 4; }
-.div3 { grid-area: 1 / 4 / 5 / 6; }
-.div4 { grid-area: 5 / 4 / 6 / 6; }
+.div2 { grid-area: 2 / 1 / 5 / 4; }
+.div3 { grid-area: 1 / 4 / 4 / 6; }
+.div4 { grid-area: 4 / 4 / 5 / 6; }
 
 @media (max-width: 1024px) {
     .custom-grid {
