@@ -136,7 +136,7 @@ const verBackToList = () => {
 
 <template>
     <!-- 120px calculation accounts for: AdminHeader (approx 64px) + Parent main p-6 (48px) + safety buffer -->
-    <div class="p-4 h-[calc(100vh-120px)] min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
+    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100vh-120px)] min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
         <div class="w-full flex-1 custom-grid overflow-hidden">
 
             <AuditFilters
@@ -186,7 +186,7 @@ const verBackToList = () => {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .div1 { grid-area: 1 / 1 / 2 / 4; }
