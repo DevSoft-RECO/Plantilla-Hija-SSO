@@ -47,6 +47,22 @@ const hoverTextColor = computed(() => {
 
 const handleFileUpload = (event) => {
     const selectedFiles = Array.from(event.target.files);
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    const tooLargeFiles = selectedFiles.filter(file => file.size > maxSize);
+
+    if (tooLargeFiles.length > 0) {
+        Swal.fire({
+            title: 'Archivo demasiado grande',
+            text: `El archivo "${tooLargeFiles[0].name}" supera el límite de 5MB.`,
+            icon: 'error',
+            confirmButtonColor: '#EF4444'
+        });
+        // Clear input so user can try again
+        if (fileInput.value) fileInput.value.value = '';
+        return;
+    }
+
     files.value = [...files.value, ...selectedFiles];
 };
 
@@ -134,6 +150,7 @@ const submit = async () => {
                     <input
                         v-model="titulo"
                         type="text"
+                        maxlength="255"
                         :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400`"
                         placeholder="Ej: Error en impresora de recepción"
                     />
@@ -145,6 +162,7 @@ const submit = async () => {
                     <input
                         v-model="area"
                         type="text"
+                        maxlength="500"
                         :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400`"
                         placeholder="Ej: Recursos Humanos, Bodega..."
                     />
@@ -156,6 +174,7 @@ const submit = async () => {
                     <textarea
                         v-model="descripcion"
                         rows="4"
+                        maxlength="500"
                         :class="`w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:ring-2 ${ringColor} focus:border-transparent outline-none transition text-gray-800 dark:text-gray-100 placeholder-gray-400 resize-none`"
                         placeholder="Describe detalladamente qué sucede..."
                     ></textarea>
