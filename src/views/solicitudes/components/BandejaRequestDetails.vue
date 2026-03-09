@@ -9,11 +9,10 @@ const props = defineProps({
     loadingDetail: Boolean,
     pagination: Object,
     canFinalize: Boolean,
-    canValidate: Boolean,
     filtros: Object
 });
 
-const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'confirmar-validacion', 'update-filtros']);
+const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'update-filtros']);
 
 const statusTabs = [
     { label: 'Todas', value: '' },
@@ -66,18 +65,7 @@ const submitCierre = () => {
     cierreData.value = { comentario: '', evidencias: [] };
 };
 
-// Validar Modal State
-const showValidarModal = ref(false);
-const validarData = ref({
-    accion: 'cerrar',
-    tipo_solucion: 'total',
-    comentario: ''
-});
 
-const submitValidacion = () => {
-    emit('confirmar-validacion', { ...validarData.value });
-    showValidarModal.value = false;
-};
 
 </script>
 
@@ -189,10 +177,7 @@ const submitValidacion = () => {
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg shadow-sm transition text-xs font-bold flex items-center gap-2">
                         <i class="fas fa-check-circle"></i> FINALIZAR CASO
                     </button>
-                    <button v-if="canValidate" @click="showValidarModal = true"
-                            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg shadow-sm transition text-xs font-bold flex items-center gap-2">
-                        <i class="fas fa-clipboard-check"></i> VALIDAR SOLUCIÓN
-                    </button>
+
                     <span class="text-[10px] text-white/80 font-bold uppercase tracking-widest leading-none">ID: {{ selectedSolicitud.id }}</span>
                 </div>
             </div>
@@ -285,42 +270,6 @@ const submitValidacion = () => {
             </div>
         </div>
 
-        <!-- Validar Solución -->
-        <div v-if="showValidarModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i> Validar Solución</h3>
-                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Acción</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button @click="validarData.accion = 'cerrar'" :class="validarData.accion === 'cerrar' ? 'bg-purple-100 border-purple-500 text-purple-700' : 'bg-gray-50 border-gray-200 text-gray-600'" class="p-3 border-2 rounded-xl text-xs font-bold transition flex flex-col items-center gap-1">
-                                <i class="fas fa-check-double text-lg"></i> Aceptar y Cerrar
-                            </button>
-                            <button @click="validarData.accion = 'reabrir'" :class="validarData.accion === 'reabrir' ? 'bg-red-100 border-red-500 text-red-700' : 'bg-gray-50 border-gray-200 text-gray-600'" class="p-3 border-2 rounded-xl text-xs font-bold transition flex flex-col items-center gap-1">
-                                <i class="fas fa-undo text-lg"></i> Reabrir (No resuelto)
-                            </button>
-                        </div>
-                    </div>
-                    <div v-if="validarData.accion === 'cerrar'">
-                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo de Solución</label>
-                         <select v-model="validarData.tipo_solucion" class="w-full border rounded-lg p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                             <option value="total">Solución Total</option>
-                             <option value="parcial">Solución Parcial</option>
-                         </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentario (Opcional si es cierre, obligatorio si es reabrir)</label>
-                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-3 dark:bg-gray-700 dark:border-gray-600 resize-none dark:text-white" placeholder="Explica el motivo..."></textarea>
-                    </div>
-                </div>
-                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
-                    <button @click="showValidarModal = false" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancelar</button>
-                    <button @click="submitValidacion" :disabled="validarData.accion === 'reabrir' && !validarData.comentario" class="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50">Procesar Validación</button>
-                </div>
-            </div>
-        </div>
+
     </div>
 </template>
