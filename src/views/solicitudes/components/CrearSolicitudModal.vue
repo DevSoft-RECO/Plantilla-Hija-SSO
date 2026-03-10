@@ -127,7 +127,7 @@ const submit = async () => {
 <template>
     <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/30 transition-all duration-300">
         <!-- Modal Content -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 ring-1 ring-gray-200 dark:ring-gray-700">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 ring-1 ring-gray-200 dark:ring-gray-700 flex flex-col max-h-[90vh]">
 
             <!-- Header -->
             <div :class="`bg-gradient-to-r ${headerGradient} p-6 text-white flex justify-between items-start`">
@@ -143,7 +143,7 @@ const submit = async () => {
             </div>
 
             <!-- Body -->
-            <div class="p-6 space-y-5">
+            <div class="p-6 space-y-5 overflow-y-auto flex-1">
                 <!-- Titulo -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Asunto</label>
