@@ -78,7 +78,7 @@ const submitCierre = () => {
                 <!-- Header Part 1: Title & Stats -->
                 <div class="p-2 px-4 flex justify-between items-center border-b border-white/10">
                     <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase">
-                        <i class="fas fa-list-ul text-white/80 text-[10px]"></i> Mi Bandeja
+                        <i class="fas fa-list-ul text-white/80 text-[10px]"></i> Mi Bandeja Administrativa
                     </h2>
                     <span class="text-[10px] font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full shadow-sm">
                         {{ pagination.total }} TOTAL
