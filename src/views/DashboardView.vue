@@ -16,7 +16,7 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
                   <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-                      Dashboard de Gestiones
+                      Dashboard de TICKETS
                   </h2>
                   <p class="text-gray-500 dark:text-gray-400 text-sm">
                       Resumen de operaciones y métricas clave
@@ -80,9 +80,80 @@
               </div>
           </div>
 
-          <!-- Loading State -->
-          <div v-if="loading" class="flex justify-center py-12">
-              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+          <!-- Skeleton Loading State (Facebook style) -->
+          <div v-if="loading" class="animate-pulse space-y-6">
+              <!-- KPI Cards Skeleton -->
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div v-for="i in 4" :key="`sk-kpi-${i}`" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 dark:border-gray-700/50 h-[140px] flex flex-col justify-between">
+                      <div class="flex justify-between">
+                           <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+                           <div class="w-16 h-6 bg-gray-100 dark:bg-gray-800 rounded-md"></div>
+                      </div>
+                      <div>
+                          <div class="w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded-md mb-2"></div>
+                          <div class="w-32 h-4 bg-gray-100 dark:bg-gray-800 rounded-md"></div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Resolution Cards Skeleton -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div v-for="i in 2" :key="`sk-res-${i}`" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-t-[6px] border-t-gray-200 dark:border-t-gray-700 border border-gray-100 dark:border-gray-700/50 h-[140px] flex justify-between items-center">
+                       <div>
+                           <div class="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-md mb-3"></div>
+                           <div class="w-12 h-10 bg-gray-300 dark:bg-gray-600 rounded-md mb-2"></div>
+                           <div class="w-48 h-3 bg-gray-100 dark:bg-gray-700 rounded-md"></div>
+                       </div>
+                       <div class="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                   </div>
+              </div>
+
+              <!-- Charts Skeleton -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <!-- Left Col -->
+                  <div class="space-y-6">
+                      <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
+                          <div class="w-40 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
+                          <div class="space-y-5">
+                              <div v-for="i in 4" :key="`sk-bar1-${i}`">
+                                  <div class="flex justify-between mb-2">
+                                      <div class="w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                      <div class="w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                  </div>
+                                  <div class="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden"><div class="w-1/2 h-full bg-gray-200 dark:bg-gray-700"></div></div>
+                              </div>
+                          </div>
+                      </div>
+                       <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
+                          <div class="w-48 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
+                          <div class="space-y-5">
+                              <div v-for="i in 4" :key="`sk-bar2-${i}`">
+                                  <div class="flex justify-between mb-2">
+                                      <div class="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                      <div class="w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                  </div>
+                                  <div class="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden"><div class="w-1/3 h-full bg-gray-200 dark:bg-gray-700"></div></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Right Col -->
+                  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 flex flex-col h-[584px]">
+                      <div class="w-56 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
+                      <div class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-10">
+                           <div class="w-64 h-64 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center shadow-inner"></div>
+                           <div class="flex-1 w-full xl:w-auto space-y-4">
+                               <div v-for="i in 5" :key="`sk-leg-${i}`" class="flex items-center justify-between p-2">
+                                   <div class="flex items-center gap-3">
+                                       <div class="w-4 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                       <div class="w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
+                                   </div>
+                                   <div class="w-12 h-6 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                               </div>
+                           </div>
+                      </div>
+                  </div>
+              </div>
           </div>
 
           <div v-else class="space-y-6">
