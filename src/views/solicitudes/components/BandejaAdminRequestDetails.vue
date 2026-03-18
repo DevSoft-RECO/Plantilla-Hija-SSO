@@ -62,6 +62,7 @@ const showReasignarModal = ref(false);
 const onReasignado = () => {
     showReasignarModal.value = false;
     emit('solicitud-reasignada');
+    emit('verBackToList'); // Cierra el detalle y regresa a la tabla
 };
 
 const handleCierreFileUpload = (event) => {
