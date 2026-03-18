@@ -65,6 +65,8 @@ export const useAuthStore = defineStore('auth', () => {
     AuthService.logout()
   }
 
+  let fetchUserPromise = null;
+
   /**
    * Verifica si el token es válido y carga el usuario desde la App Madre
    */
@@ -74,27 +76,43 @@ export const useAuthStore = defineStore('auth', () => {
       return
     }
 
-    try {
-      // Cambio Importante: Solicitamos a la API LOCAL (/api/me)
-      // Esto dispara el middleware ValidateSSO en el Backend Hija,
-      // lo que a su vez sincroniza el usuario (JIT) en la base de datos local.
-      // Usamos el servicio de Axios configurado (que inyecta el token Bearer)
-      // No usamos MotherAuthService aqui para forzar el paso por el Backend Local.
-      const { default: axios } = await import('../api/axios') // Dynamic import to avoid circular deps if any
-
-      const response = await axios.get('/me')
-      const userData = response.data
-
-      user.value = userData
-      // Guardamos respaldo básico en localStorage por si acaso
-      localStorage.setItem('user_data', JSON.stringify(userData))
-    } catch (error) {
-      console.warn('Sesión expirada o inválida, o error al conectar con Api Local', error)
-      // Si falla la validación del token, hacemos logout
-      logout()
-    } finally {
+    // Si ya tenemos el usuario cargado, no volvemos a pedirlo a menos que se fuerce
+    if (user.value) {
       isReady.value = true
+      return
     }
+
+    // Si ya hay una petición en curso, retornamos la misma promesa para no duplicar
+    if (fetchUserPromise) {
+      return fetchUserPromise
+    }
+
+    fetchUserPromise = (async () => {
+      try {
+        // Cambio Importante: Solicitamos a la API LOCAL (/api/me)
+        // Esto dispara el middleware ValidateSSO en el Backend Hija,
+        // lo que a su vez sincroniza el usuario (JIT) en la base de datos local.
+        // Usamos el servicio de Axios configurado (que inyecta el token Bearer)
+        // No usamos MotherAuthService aqui para forzar el paso por el Backend Local.
+        const { default: axios } = await import('../api/axios') // Dynamic import to avoid circular deps if any
+
+        const response = await axios.get('/me')
+        const userData = response.data
+
+        user.value = userData
+        // Guardamos respaldo básico en localStorage por si acaso
+        localStorage.setItem('user_data', JSON.stringify(userData))
+      } catch (error) {
+        console.warn('Sesión expirada o inválida, o error al conectar con Api Local', error)
+        // Si falla la validación del token, hacemos logout
+        logout()
+      } finally {
+        isReady.value = true
+        fetchUserPromise = null // Limpiamos la promesa en curso al terminar
+      }
+    })()
+
+    return fetchUserPromise
   }
 
   /**

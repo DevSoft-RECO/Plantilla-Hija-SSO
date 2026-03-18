@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import AsignarSolicitudModal from '@/views/solicitudes/components/AsignarSolicitudModal.vue';
 
 const props = defineProps({
     solicitudes: Array,
@@ -12,7 +13,7 @@ const props = defineProps({
     filtros: Object
 });
 
-const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'update-filtros']);
+const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'update-filtros', 'solicitud-reasignada']);
 
 const statusTabs = [
     { label: 'Todas', value: '' },
@@ -54,6 +55,14 @@ const cierreData = ref({
     comentario: '',
     evidencias: []
 });
+
+// Reasignar Modal State
+const showReasignarModal = ref(false);
+
+const onReasignado = () => {
+    showReasignarModal.value = false;
+    emit('solicitud-reasignada');
+};
 
 const handleCierreFileUpload = (event) => {
     cierreData.value.evidencias = event.target.files;
@@ -173,6 +182,11 @@ const submitCierre = () => {
                 </button>
                 <div class="flex items-center gap-2">
                     <!-- Actions integrate directly here -->
+                    <button v-if="selectedSolicitud && selectedSolicitud.estado !== 'cerrada'" @click="showReasignarModal = true"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg shadow-sm transition text-xs font-bold flex items-center gap-2">
+                        <i class="fas fa-exchange-alt"></i> REASIGNAR
+                    </button>
+
                     <button v-if="canFinalize" @click="showFinalizarModal = true"
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg shadow-sm transition text-xs font-bold flex items-center gap-2">
                         <i class="fas fa-check-circle"></i> FINALIZAR CASO
@@ -270,6 +284,14 @@ const submitCierre = () => {
             </div>
         </div>
 
+        <!-- Reasignar Caso Modal -->
+        <AsignarSolicitudModal
+            :isOpen="showReasignarModal"
+            :solicitudId="selectedSolicitud?.id"
+            :categoriaGeneralId="selectedSolicitud?.categoria_general_id"
+            @close="showReasignarModal = false"
+            @assigned="onReasignado"
+        />
 
     </div>
 </template>
