@@ -36,8 +36,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.error('[Axios Local] Error 401. El token fue enviado pero rechazado por el servidor.');
-      console.error('Detalles del error:', error.response.data);
+      console.error('Sesión rechazada por Ecosistema.');
+      
+      // Destruir credenciales locales
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_data');
+      sessionStorage.clear();
+      
+      // Mandarlo a la pantalla de Auth para renovarse (Renovación PKCE)
+      // Como requiremos código PKCE asíncrono, usamos el AuthService.
+      import('@/services/AuthService').then(module => {
+           module.default.login();
+      });
     }
     return Promise.reject(error);
   }

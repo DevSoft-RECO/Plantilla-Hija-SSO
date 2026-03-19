@@ -2,12 +2,12 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import AuthService from '../services/AuthService'
 
-
+import axios from 'axios'
 import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {
   // --- STATE ---
-  const user = ref(null)
+  const user = ref(JSON.parse(sessionStorage.getItem('user_data') || 'null'))
   const token = ref(localStorage.getItem('access_token') || null)
   const processingSSO = ref(false)
   const isReady = ref(false)
@@ -28,27 +28,44 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * Procesa el token que viene de la App Madre
+   * Intercambia el código de autorización por el token Access
    */
-  async function handleDirectToken(incomingToken, userData = null) {
+  async function handlePKCECallback(code) {
     processingSSO.value = true
     try {
-      const data = AuthService.processDirectToken(incomingToken, userData)
-      // data.access_token ya está en localStorage gracias al service
-      // data.user también, si venía
-
-      token.value = data.access_token
-
-      // Si recibimos usuario, actualizamos state de una vez
-      if (data.user) {
-        user.value = data.user
-      } else {
-        // Si no vino usuario completo, lo pedimos
-        await fetchUser()
+      const verifier = sessionStorage.getItem('pkce_verifier')
+      if (!verifier) {
+        throw new Error('No se encontró el verifier para la validación PKCE')
       }
 
+      const client_id = import.meta.env.VITE_CLIENT_ID
+      const redirect_uri = import.meta.env.VITE_REDIRECT_URI
+      const mother_api_url = import.meta.env.VITE_MOTHER_API_URL || 'http://localhost:8000'
+
+      // Intercambio de code por token
+      const response = await axios.post(`${mother_api_url}/oauth/token`, {
+        grant_type: 'authorization_code',
+        client_id: client_id,
+        redirect_uri: redirect_uri,
+        code_verifier: verifier,
+        code: code
+      })
+
+      const access_token = response.data.access_token
+
+      // Guardamos en memoria rápida local
+      token.value = access_token
+      localStorage.setItem('access_token', access_token)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+
+      // Limpiamos el verifier de un solo uso
+      sessionStorage.removeItem('pkce_verifier')
+
+      // Pedimos datos de usuario
+      await fetchUser()
+
     } catch (error) {
-      console.error('Error procesando token SSO:', error)
+      console.error('Error procesando callback PKCE:', error)
       throw error
     } finally {
       processingSSO.value = false
@@ -94,18 +111,21 @@ export const useAuthStore = defineStore('auth', () => {
         // lo que a su vez sincroniza el usuario (JIT) en la base de datos local.
         // Usamos el servicio de Axios configurado (que inyecta el token Bearer)
         // No usamos MotherAuthService aqui para forzar el paso por el Backend Local.
-        const { default: axios } = await import('../api/axios') // Dynamic import to avoid circular deps if any
+        const { default: axiosInstance } = await import('../api/axios') // Dynamic import to avoid circular deps if any
 
-        const response = await axios.get('/me')
+        const response = await axiosInstance.get('/me')
         const userData = response.data
 
         user.value = userData
-        // Guardamos respaldo básico en localStorage por si acaso
+        // Caché de rendimiento en sessionStorage
+        sessionStorage.setItem('user_data', JSON.stringify(userData))
+        // Respaldo en localStorage por si acaso
         localStorage.setItem('user_data', JSON.stringify(userData))
       } catch (error) {
         console.warn('Sesión expirada o inválida, o error al conectar con Api Local', error)
         // Si falla la validación del token, hacemos logout
         logout()
+        throw error // PROPAGAR ERROR PARA DETENER LA REDIRECCIÓN AL DASHBOARD
       } finally {
         isReady.value = true
         fetchUserPromise = null // Limpiamos la promesa en curso al terminar
@@ -160,7 +180,7 @@ export const useAuthStore = defineStore('auth', () => {
     isReady,
     userAvatar, // Exported getter
     login,
-    handleDirectToken,
+    handlePKCECallback,
     logout,
     fetchUser,
     checkAuth,

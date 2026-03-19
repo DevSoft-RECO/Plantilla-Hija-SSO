@@ -12,7 +12,8 @@ import { useLayoutStore } from '@/stores/layout';
 const app = createApp(App);
 const pinia = createPinia(); // Creamos la instancia explícitamente
 
-// 2. Activamos Pinia y Router
+import { startSessionGuards } from './utils/sessionGuards';
+
 app.use(pinia);
 app.use(router);
 
@@ -29,5 +30,8 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
         layoutStore.initTheme();
     }
 });
+
+// Iniciamos los guardianes de fin de jornada y heartbeat
+startSessionGuards();
 
 app.mount('#app');

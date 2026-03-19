@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios' // Mantenemos axios para la configuración robusta
 
 const route = useRoute()
 const router = useRouter()
@@ -14,24 +13,25 @@ const subStatus = ref(
 )
 
 onMounted(async () => {
-  // ADAPTACIÓN: Usamos el token directo según el refactor reciente
-  const token = route.query.token
+  // ADAPTACIÓN: Capturamos el code de autorización para PKCE
+  const code = route.query.code
 
-  if (!token) {
+  if (!code) {
     status.value = 'Autenticación no válida'
     subStatus.value =
-      'No se recibió la información necesaria para validar la sesión.'
+      'No se recibió el código de autorización necesario para validar la sesión.'
     return
   }
 
-  try {
-    // 1. Configuración Robusta (Race Condition Fix)
-    authStore.token = token
-    localStorage.setItem('access_token', token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  // Limpiar URL para seguridad y estética
+  window.history.replaceState({}, document.title, window.location.pathname)
 
-    // 2. Procesar en store
-    await authStore.handleDirectToken(token)
+  try {
+    status.value = 'Intercambiando credenciales...'
+    subStatus.value = 'Validando acceso con YAMAN KUTX.'
+
+    // 2. Procesar el intercambio de código en el store
+    await authStore.handlePKCECallback(code)
 
     status.value = 'Acceso autorizado'
     subStatus.value =
