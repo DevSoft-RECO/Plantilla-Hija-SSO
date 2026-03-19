@@ -25,8 +25,11 @@ export default {
     authUrl.searchParams.append('code_challenge', challenge);
     authUrl.searchParams.append('code_challenge_method', 'S256');
 
-    // Redirección directa al login OAuth2
-    window.location.href = authUrl.toString();
+    // Timeout para asegurar que la I/O (guardado en sessionStorage)
+    // finalice correctamente en Navegación de Incógnito antes de redirigir.
+    setTimeout(() => {
+        window.location.href = authUrl.toString();
+    }, 150);
   },
 
   /**
