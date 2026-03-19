@@ -6,6 +6,15 @@ import axios from 'axios'
 import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {
+  // --- MIGRACIÓN Y LIMPIEZA DE CACHÉ (Anti-Old-Data) ---
+  const STORAGE_VERSION = 'v2_pkce'; 
+  if (localStorage.getItem('yk_storage_version') !== STORAGE_VERSION) {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_data');
+    sessionStorage.removeItem('user_data');
+    localStorage.setItem('yk_storage_version', STORAGE_VERSION);
+  }
+
   // --- STATE ---
   const user = ref(JSON.parse(sessionStorage.getItem('user_data') || 'null'))
   const token = ref(localStorage.getItem('access_token') || null)
