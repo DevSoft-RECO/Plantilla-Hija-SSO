@@ -7,11 +7,13 @@ import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {
   // --- MIGRACIÓN Y LIMPIEZA DE CACHÉ (Anti-Old-Data) ---
-  const STORAGE_VERSION = 'v2_pkce'; 
+  const STORAGE_VERSION = 'v3_clean_pkce'; 
   if (localStorage.getItem('yk_storage_version') !== STORAGE_VERSION) {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_data');
-    sessionStorage.removeItem('user_data');
+    const keysToRemove = ['access_token', 'user_data', 'pkce_verifier'];
+    keysToRemove.forEach(k => {
+      localStorage.removeItem(k);
+      sessionStorage.removeItem(k);
+    });
     localStorage.setItem('yk_storage_version', STORAGE_VERSION);
   }
 
@@ -70,8 +72,8 @@ export const useAuthStore = defineStore('auth', () => {
       // Limpiamos el verifier de un solo uso
       sessionStorage.removeItem('pkce_verifier')
 
-      // Pedimos datos de usuario
-      await fetchUser()
+      // Pedimos datos de usuario (forzamos petición ignorando caché para refrescar rol/permisos ok)
+      await fetchUser(true)
 
     } catch (error) {
       console.error('Error procesando callback PKCE:', error)
@@ -96,14 +98,14 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Verifica si el token es válido y carga el usuario desde la App Madre
    */
-  async function fetchUser() {
+  async function fetchUser(force = false) {
     if (!token.value) {
       isReady.value = true
       return
     }
 
     // Si ya tenemos el usuario cargado, no volvemos a pedirlo a menos que se fuerce
-    if (user.value) {
+    if (!force && user.value) {
       isReady.value = true
       return
     }
