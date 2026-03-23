@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import SolicitudService from '@/services/SolicitudService';
+import BandejaSolicitudesMobileCard from './components/BandejaSolicitudesMobileCard.vue';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/auth';
@@ -129,16 +130,17 @@ const eliminarSolicitud = async (id) => {
 </script>
 
 <template>
-    <div class="p-6 h-[calc(100vh-80px)] overflow-hidden flex flex-col">
-        <div class="flex justify-between items-center mb-6 flex-shrink-0">
+    <div class="p-4 sm:p-6 h-[calc(100dvh-80px)] md:h-[calc(100vh-80px)] overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center mb-4 sm:mb-6 flex-shrink-0">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Gestión centralizada de casos</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes</h1>
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Gestión centralizada de casos</p>
             </div>
         </div>
 
         <!-- Tabs Filter -->
-        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 flex-shrink-0 custom-scrollbar">
+        <!-- Desktop Filters -->
+        <div class="hidden sm:flex gap-2 mb-6 overflow-x-auto pb-2 flex-shrink-0 custom-scrollbar">
             <button
                 v-for="est in estados"
                 :key="est.value"
@@ -152,10 +154,23 @@ const eliminarSolicitud = async (id) => {
             </button>
         </div>
 
-        <!-- Table Container -->
-        <div class="flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
-            <div class="overflow-y-auto flex-1 custom-scrollbar">
-                <table class="w-full text-left border-collapse">
+        <!-- Mobile Filters -->
+        <div class="sm:hidden mb-4 flex-shrink-0">
+            <select
+                :value="filtroEstado"
+                @change="setFiltro($event.target.value)"
+                class="w-full text-sm font-bold text-gray-700 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 px-4 py-3"
+            >
+                <option v-for="est in estados" :key="est.value" :value="est.value">
+                    {{ est.label }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Desktop Table Container -->
+        <div class="hidden sm:flex flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex-col">
+            <div class="overflow-auto flex-1 custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold sticky top-0 backdrop-blur-sm z-10">
                         <tr>
                             <th class="p-4 border-b dark:border-gray-700">ID</th>
@@ -219,7 +234,7 @@ const eliminarSolicitud = async (id) => {
                 </table>
             </div>
 
-            <!-- Pagination Footer -->
+            <!-- Pagination Footer Desktop -->
             <div class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
                 <div class="text-sm text-gray-500 dark:text-gray-400">
                     Mostrando {{ pagination.from || 0 }} - {{ pagination.to || 0 }} de {{ pagination.total }} resultados
@@ -242,6 +257,52 @@ const eliminarSolicitud = async (id) => {
                         @click="cambiarPagina(pagination.current_page + 1)"
                         :disabled="pagination.current_page === pagination.last_page"
                         class="p-2 rounded-lg border dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                    >
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile List Container -->
+        <div class="sm:hidden flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
+            <div class="overflow-y-auto flex-1 custom-scrollbar bg-gray-50 dark:bg-gray-900/50">
+                <div v-if="loading" class="p-8 text-center text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando...
+                </div>
+                <div v-else-if="solicitudes.length === 0" class="p-8 text-center text-gray-500 bg-white dark:bg-gray-800">
+                    <i class="fas fa-inbox text-4xl mb-3 text-gray-300 dark:text-gray-600"></i><br>
+                    No se encontraron solicitudes.
+                </div>
+                <div v-else class="flex flex-col">
+                    <BandejaSolicitudesMobileCard 
+                        v-for="sol in solicitudes" 
+                        :key="`mob-${sol.id}`" 
+                        :sol="sol"
+                        :puede-eliminar="puedeEliminar(sol)"
+                        @ver="verDetalle(sol.id)"
+                        @eliminar="eliminarSolicitud(sol.id)"
+                    />
+                </div>
+            </div>
+
+            <!-- Pagination Mobile Footer -->
+            <div class="p-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800 w-full shrink-0">
+                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    {{ pagination.from || 0 }} - {{ pagination.to || 0 }} / {{ pagination.total }}
+                </span>
+                <div class="flex items-center gap-1" v-if="pagination.total > 0">
+                    <button
+                        @click="cambiarPagina(pagination.current_page - 1)"
+                        :disabled="pagination.current_page === 1"
+                        class="p-1.5 rounded-lg border bg-white dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 transition shadow-sm"
+                    >
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button
+                        @click="cambiarPagina(pagination.current_page + 1)"
+                        :disabled="pagination.current_page === pagination.last_page"
+                        class="p-1.5 rounded-lg border bg-white dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 transition shadow-sm"
                     >
                         <i class="fas fa-chevron-right text-xs"></i>
                     </button>
