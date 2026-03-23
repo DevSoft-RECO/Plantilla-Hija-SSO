@@ -180,7 +180,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100vh-120px)] min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
+    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100dvh-120px)] md:h-[calc(100vh-120px)] min-h-[480px] md:min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
         <div class="w-full flex-1 custom-grid overflow-hidden">
             <!-- Left Panel: Request List & Details -->
             <BandejaRequestDetails
@@ -205,6 +205,7 @@ onMounted(() => {
             <!-- Top Right: Interactive Chat/History -->
             <BandejaEventHistory
                 class="div3"
+                :class="{ 'hide-on-mobile': !selectedSolicitud }"
                 :selectedSolicitud="selectedSolicitud"
                 :solicitudDetalle="solicitudDetalle"
                 :loadingDetail="loadingDetail"
@@ -215,6 +216,7 @@ onMounted(() => {
             <!-- Bottom Right: Attachments -->
             <BandejaAttachments
                 class="div4"
+                :class="{ 'hide-on-mobile': !selectedSolicitud }"
                 :selectedSolicitud="selectedSolicitud"
                 :solicitudDetalle="solicitudDetalle"
                 :loadingDetail="loadingDetail"
@@ -237,6 +239,9 @@ onMounted(() => {
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
     .custom-grid {
         display: flex;
         flex-direction: column;
@@ -246,9 +251,15 @@ onMounted(() => {
         height: auto;
         flex: none;
     }
-    .div2 { height: 600px; }
-    .div3 { height: 400px; }
-    .div4 { height: 200px; }
+    .div2 { height: calc(100dvh - 150px); min-height: 480px; }
+    .div3 { height: 450px; }
+    .div4 { height: 250px; }
+}
+
+@media (max-width: 640px) {
+    .div2 { height: calc(100dvh - 140px); min-height: 400px; }
+    .div3 { height: 450px; }
+    .div4 { height: 250px; }
 }
 
 .custom-scrollbar::-webkit-scrollbar {

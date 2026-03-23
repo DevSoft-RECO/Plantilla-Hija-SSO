@@ -83,31 +83,50 @@ const submitCierre = () => {
     <div class="div2 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg border border-gray-100 dark:border-gray-700">
 
         <!-- VISTA DE LISTA -->
-        <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden">
-            <div class="shrink-0 flex flex-col z-10 shadow-sm" style="background-color: var(--color-azul-cope)">
+        <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden w-full min-w-0">
+            <div class="shrink-0 flex flex-col z-10 shadow-sm w-full min-w-0" style="background-color: var(--color-azul-cope)">
                 <!-- Header Part 1: Title & Stats -->
-                <div class="p-2 px-4 flex justify-between items-center border-b border-white/10">
-                    <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase">
-                        <i class="fas fa-list-ul text-white/80 text-[10px]"></i> Mi Bandeja
+                <div class="p-2 px-4 flex flex-wrap justify-between items-center border-b border-white/10 gap-2 w-full min-w-0">
+                    <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase min-w-0">
+                        <i class="fas fa-list-ul text-white/80 text-[10px] shrink-0"></i> <span class="truncate">Mi Bandeja Tecnologica</span>
                     </h2>
-                    <span class="text-[10px] font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full shadow-sm">
+                    <span class="text-[10px] font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full shadow-sm shrink-0 whitespace-nowrap">
                         {{ pagination.total }} TOTAL
                     </span>
                 </div>
 
                 <!-- Header Part 2: Functional Filters -->
-                <div class="px-2 py-1 flex gap-1 overflow-x-auto custom-scrollbar no-scrollbar">
+                <!-- Desktop View (Buttons) -->
+                <div class="hidden sm:flex px-2 py-1 gap-1 overflow-x-auto custom-scrollbar no-scrollbar w-full min-w-0">
                     <button
                         v-for="tab in statusTabs"
                         :key="tab.value"
                         @click="selectStatus(tab.value)"
-                        class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all whitespace-nowrap uppercase tracking-wider"
+                        class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all whitespace-nowrap uppercase tracking-wider shrink-0"
                         :class="filtros.estado === tab.value
                             ? 'bg-white text-[var(--color-azul-cope)] shadow-sm'
                             : 'text-white/70 hover:text-white hover:bg-white/10'"
                     >
                         {{ tab.label }}
                     </button>
+                </div>
+
+                <!-- Mobile View (Dropdown) -->
+                <div class="sm:hidden px-2 py-1.5 w-full">
+                    <select
+                        :value="filtros.estado"
+                        @change="selectStatus($event.target.value)"
+                        class="w-full text-[11px] font-bold text-gray-700 uppercase tracking-widest bg-white/90 border-none rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50 px-2.5 py-1.5"
+                    >
+                        <option
+                            v-for="tab in statusTabs"
+                            :key="tab.value"
+                            :value="tab.value"
+                            class="text-gray-800 font-bold"
+                        >
+                            {{ tab.label }}
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -136,10 +155,10 @@ const submitCierre = () => {
 
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 opacity-0 group-hover:opacity-100 transition-opacity" style="background-color: var(--color-verde-cope)"></div>
 
-                        <div class="flex justify-between items-start pl-2">
-                            <h3 class="font-bold text-sm text-[var(--color-azul-cope)] dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 pr-2">
-                                <span class="text-xs text-gray-400 font-normal mr-1">#{{ sol.id }}</span>
-                                {{ sol.titulo }}
+                        <div class="flex justify-between items-start pl-2 gap-2">
+                            <h3 class="font-bold text-sm text-[var(--color-azul-cope)] dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 min-w-0 flex-1 pr-2">
+                                <span class="text-xs text-gray-400 font-normal mr-1 shrink-0">#{{ sol.id }}</span>
+                                <span class="break-all">{{ sol.titulo }}</span>
                             </h3>
                             <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase flex items-center gap-1 shrink-0 shadow-sm" :class="getEstadoClass(sol.estado)">
                                 <i :class="getEstadoIcon(sol.estado)" class="text-[10px]"></i>
