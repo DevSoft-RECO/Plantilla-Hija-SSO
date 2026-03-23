@@ -62,81 +62,53 @@
         </svg>
       </button>
 
-      <div class="relative">
-        <button
-          @click="isDropdownOpen = !isDropdownOpen"
-          class="flex items-center gap-3 focus:outline-none group hover:bg-gray-50 dark:hover:bg-gray-700/50 p-2 rounded-lg transition"
-        >
-            <div class="hidden md:block text-right">
-                <p class="text-sm font-bold text-gray-700 dark:text-gray-200">
-                    {{ userName }}
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">{{ userAgencia }}</p>
-            </div>
+      <div class="flex items-center gap-3">
+          <div class="hidden md:block text-right">
+              <p class="text-sm font-bold text-gray-700 dark:text-gray-200">
+                  {{ userName }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ userAgencia }}</p>
+          </div>
 
-            <img
-                v-if="userPhoto"
-                :src="userPhoto"
-                class="h-9 w-9 rounded-full object-cover border-2 border-[var(--color-verde-cope)]"
-                alt="Avatar"
-            >
-            <div
-                v-else
-                class="h-9 w-9 rounded-full bg-[var(--color-azul-cope)] text-white flex items-center justify-center font-bold text-sm border-2 border-[var(--color-verde-cope)]"
-            >
-                {{ userInitials }}
-            </div>
+          <img
+              v-if="userPhoto"
+              :src="userPhoto"
+              class="h-9 w-9 rounded-full object-cover border-2 border-[var(--color-verde-cope)]"
+              alt="Avatar"
+          >
+          <div
+              v-else
+              class="h-9 w-9 rounded-full bg-[var(--color-azul-cope)] text-white flex items-center justify-center font-bold text-sm border-2 border-[var(--color-verde-cope)]"
+          >
+              {{ userInitials }}
+          </div>
 
-            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div v-if="isDropdownOpen" @click="isDropdownOpen = false" class="fixed inset-0 z-40"></div>
-
-        <transition
-            enter-active-class="transition ease-out duration-100"
-            enter-from-class="transform opacity-0 scale-95"
-            enter-to-class="transform opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95"
-        >
-            <div
-                v-if="isDropdownOpen"
-                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 z-50 py-1"
-            >
-                <div class="block md:hidden px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-                    <p class="text-sm font-bold text-gray-800 dark:text-white">{{ userName }}</p>
-                </div>
-
-                <button
-                    @click="handleReturnToMother"
-                    class="flex w-full items-center gap-2 px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Volver a App Madre
-                </button>
-            </div>
-        </transition>
+          <!-- Botón Regresar al Portal -->
+          <button
+              @click="handleReturnToMother"
+              class="ml-1 p-2 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition focus:outline-none"
+              title="Regresar al portal"
+          >
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+          </button>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue"
+import { computed, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { useLayoutStore } from "@/stores/layout"
 import { useAuthStore } from "@/stores/auth"
 import { getAvatarUrl } from "@/utils/imageUtils"
+import AuthService from "@/services/AuthService"
 
 const layoutStore = useLayoutStore()
 const authStore = useAuthStore()
 const route = useRoute()
-
-const isDropdownOpen = ref(false)
 
 // Datos del usuario (Protegidos contra null)
 const userName = computed(() => authStore.user?.name || "Usuario")
@@ -159,7 +131,7 @@ const userInitials = computed(() => {
 })
 
 const handleReturnToMother = () => {
-    isDropdownOpen.value = false
+    AuthService.logoutLocal() // Limpia tokens antes de irse
     // Redirigir a la App Madre (Dashboard principal)
     window.location.href = import.meta.env.VITE_MOTHER_APP_URL || 'http://localhost:5173'
 }

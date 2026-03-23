@@ -13,7 +13,7 @@ const api = axios.create({
 // Antes de que salga la petición, le pegamos el token si existe
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+    const token = sessionStorage.getItem('access_token');
 
     console.log(`[Axios Local] Preparando petición a: ${config.url}`);
 
@@ -23,7 +23,7 @@ api.interceptors.request.use(
       const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
       config.headers.Authorization = authHeader;
     } else {
-      console.warn("[Axios Local] ADVERTENCIA: No se encontró token en localStorage. La petición irá sin autenticación.");
+      console.warn("[Axios Local] ADVERTENCIA: No se encontró token en sessionStorage. La petición irá sin autenticación.");
     }
 
     return config;
@@ -39,8 +39,8 @@ api.interceptors.response.use(
       console.error('Sesión rechazada por Ecosistema.');
       
       // Destruir credenciales locales
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user_data');
+      sessionStorage.removeItem('access_token');
+      sessionStorage.removeItem('user_data');
       sessionStorage.clear();
       
       // Mandarlo a la pantalla de Auth para renovarse (Renovación PKCE)

@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // --- STATE ---
   const user = ref(JSON.parse(sessionStorage.getItem('user_data') || 'null'))
-  const token = ref(localStorage.getItem('access_token') || null)
+  const token = ref(sessionStorage.getItem('access_token') || null)
   const processingSSO = ref(false)
   const isReady = ref(false)
 
@@ -73,7 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Guardamos en memoria rápida local
       token.value = access_token
-      localStorage.setItem('access_token', access_token)
+      sessionStorage.setItem('access_token', access_token)
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
 
       // Limpiamos el verifier de un solo uso

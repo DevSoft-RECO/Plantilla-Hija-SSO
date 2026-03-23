@@ -37,7 +37,7 @@ export default {
    * Pedimos los datos del usuario a la Madre.
    */
   async getUser() {
-    const token = localStorage.getItem('access_token');
+    const token = sessionStorage.getItem('access_token');
     if (!token) throw new Error("No hay token disponible");
 
     // Usamos axios directo hacia la MADRE, inyectando el token manualmente.

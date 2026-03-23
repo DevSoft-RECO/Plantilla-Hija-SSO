@@ -6,7 +6,7 @@ export const startSessionGuards = () => {
   // REGLA A: EL "HEARTBEAT" CADA 5 MINUTOS (Vigilante)
   // ----------------------------------------------------
   setInterval(() => {
-    const token = localStorage.getItem('access_token');
+    const token = sessionStorage.getItem('access_token');
     if (token) {
       // Un sub-proceso silencioso a la Madre.
       const motherApi = import.meta.env.VITE_MOTHER_API_URL || 'http://localhost:8000';
@@ -26,7 +26,7 @@ export const startSessionGuards = () => {
   // Si aún no son las 5:50 PM, programamos la alarma visual.
   if (msUntilAlert > 0) {
     setTimeout(() => {
-      const token = localStorage.getItem('access_token');
+      const token = sessionStorage.getItem('access_token');
       if (token) {
         Swal.fire({
           toast: true,
