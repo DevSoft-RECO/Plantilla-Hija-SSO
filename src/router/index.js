@@ -142,9 +142,9 @@ router.beforeEach(async (to, from, next) => {
   // Caso 1: Ruta requiere Auth y no tenemos token
   if (to.matched.some(record => record.meta.requiresAuth) || to.path === '/') {
     if (!isAuthenticated) {
-      console.log("🔒 Acceso Hija: Usuario sin sesión. Iniciando flujo SSO...");
-      authStore.login();
-      // login() redirige a ventana completa, así que paramos aquí (aunque en SPA 'return' es suficiente)
+      console.log("🔒 Acceso Hija: Usuario sin sesión. Intentando recuperación fluida...");
+      // Guardamos a dónde iba para volver allí tras el login
+      authStore.login(to.fullPath);
       return;
     }
   }
@@ -152,11 +152,13 @@ router.beforeEach(async (to, from, next) => {
   // Caso 2: Estamos autenticados, verificar identidad y permisos
   if (isAuthenticated) {
     // Asegurar que el usuario esté cargado
-    if (!authStore.isReady) {
+    if (!authStore.isReady || !authStore.user) {
       try {
         await authStore.fetchUser();
       } catch {
-        // Si falla, el store ya maneja el logout, pero detenemos navegación
+        // Si falla fetchUser (p.ej. token expirado), intentamos re-loguear automáticamente
+        console.warn("🔄 Token local inválido. Intentando renovar sesión vía PKCE...");
+        authStore.login(to.fullPath);
         return;
       }
     }

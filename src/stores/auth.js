@@ -33,8 +33,15 @@ export const useAuthStore = defineStore('auth', () => {
   /**
    * Inicia el flujo de redirección a Microsoft/Laravel
    */
-  async function login() {
+  /**
+   * Inicia el flujo de redirección a Microsoft/Laravel
+   * @param {String} redirectTo URL a la que volver tras el login (opcional)
+   */
+  async function login(redirectTo = null) {
     processingSSO.value = true
+    if (redirectTo) {
+      sessionStorage.setItem('auth_redirect_to', redirectTo)
+    }
     await AuthService.login()
   }
 
@@ -74,6 +81,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Pedimos datos de usuario (forzamos petición ignorando caché para refrescar rol/permisos ok)
       await fetchUser(true)
+
+      // Si teníamos una redirección pendiente, avisamos al llamador (o manejamos aquí)
+      const savedRedirect = sessionStorage.getItem('auth_redirect_to')
+      if (savedRedirect) {
+        sessionStorage.removeItem('auth_redirect_to')
+        // El CallbackView se encargará de la redirección final si este valor existe
+      }
 
     } catch (error) {
       console.error('Error procesando callback PKCE:', error)
@@ -133,12 +147,14 @@ export const useAuthStore = defineStore('auth', () => {
         // Respaldo en localStorage por si acaso
         localStorage.setItem('user_data', JSON.stringify(userData))
       } catch (error) {
-        console.warn('Sesión expirada o inválida, o error al conectar con Api Local', error)
-        // Si falla la validación del token, hacemos logout
-        logout()
-        throw error // PROPAGAR ERROR PARA DETENER LA REDIRECCIÓN AL DASHBOARD
+        console.warn('Sesión expirada o inválida en Api Local', error)
+        // Ya no hacemos logout() aquí automáticamente para permitir que el Router
+        // intente una recuperación silenciosa vía PKCE si es posible.
+        // Solo limpiamos el usuario actual para disparar el re-fetch si es necesario.
+        user.value = null
+        isReady.value = true // Marcamos como listo pero sin usuario para que el router actúe
+        throw error 
       } finally {
-        isReady.value = true
         fetchUserPromise = null // Limpiamos la promesa en curso al terminar
       }
     })()
