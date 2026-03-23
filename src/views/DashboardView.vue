@@ -13,47 +13,47 @@
       <!-- Dashboard Content -->
       <div v-else>
           <!-- Header & Filters -->
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 sm:mb-6">
               <div>
-                  <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+                  <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
                       Dashboard de TICKETS
                   </h2>
-                  <p class="text-gray-500 dark:text-gray-400 text-sm">
+                  <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
                       Resumen de operaciones y métricas clave
                   </p>
               </div>
 
 
               <!-- Filters & Actions -->
-              <div class="flex flex-col-reverse sm:flex-row gap-3 items-end sm:items-center">
+              <div class="flex flex-col sm:flex-row-reverse gap-3 items-stretch sm:items-center w-full md:w-auto">
 
                    <!-- Action Buttons (Conditional on Permissions) -->
-                   <div class="flex gap-2">
+                   <div class="flex gap-2 w-full sm:w-auto">
                        <button
                           v-if="canCreateTech"
                           @click="openTechModal"
-                          class="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 transition text-sm font-medium"
+                          class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg border border-emerald-100 dark:border-emerald-800 hover:bg-emerald-100 transition text-sm font-medium shadow-sm"
                           title="Crear Solicitud Tecnológica"
                       >
-                          <i class="fas fa-plus"></i> <span class="hidden md:inline">Tecnológica</span>
+                          <i class="fas fa-plus"></i> <span class="inline sm:hidden md:inline">Tecnológica</span>
                       </button>
                        <button
                           v-if="canCreateAdmin"
                           @click="openAdminModal"
-                          class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition text-sm font-medium"
+                          class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2.5 sm:py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition text-sm font-medium shadow-sm"
                           title="Crear Solicitud Administrativa"
                       >
-                          <i class="fas fa-plus"></i> <span class="hidden md:inline">Administrativa</span>
+                          <i class="fas fa-plus"></i> <span class="inline sm:hidden md:inline">Administrativa</span>
                       </button>
                    </div>
 
                    <!-- Existing Filters -->
-                   <div class="flex gap-3">
+                   <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <!-- Category Filter -->
                       <select
                           v-model="filters.category_id"
                           @change="fetchMetrics"
-                          class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
+                          class="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
                       >
                           <option :value="null">Todas las Categorías</option>
                           <option :value="1">Tecnología</option>
@@ -61,11 +61,11 @@
                       </select>
 
                       <!-- Agency Filter (Admin Only) -->
-                      <div v-if="canViewGeneral && !isAgencyUser" class="relative">
+                      <div v-if="canViewGeneral && !isAgencyUser" class="relative w-full sm:w-auto">
                         <select
                               v-model="filters.agencia_id"
                               @change="fetchMetrics"
-                              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 w-full sm:w-48"
+                              class="w-full sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
                           >
                               <option :value="null">Todas las Agencias</option>
                               <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
@@ -73,7 +73,7 @@
                               </option>
                           </select>
                       </div>
-                      <div v-else class="flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300">
+                      <div v-else class="flex items-center px-4 py-2.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 w-full justify-center sm:w-auto sm:justify-start">
                           <i class="fas fa-building mr-2"></i> {{ authStore.user?.agencia_id ? 'Mi Agencia' : 'Sin Agencia' }}
                       </div>
                    </div>
@@ -112,7 +112,7 @@
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <!-- Left Col -->
                   <div class="space-y-6">
-                      <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
+                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
                           <div class="w-40 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
                           <div class="space-y-5">
                               <div v-for="i in 4" :key="`sk-bar1-${i}`">
@@ -124,7 +124,7 @@
                               </div>
                           </div>
                       </div>
-                       <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
+                       <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
                           <div class="w-48 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
                           <div class="space-y-5">
                               <div v-for="i in 4" :key="`sk-bar2-${i}`">
@@ -138,7 +138,7 @@
                       </div>
                   </div>
                   <!-- Right Col -->
-                  <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 flex flex-col h-[584px]">
+                  <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 flex flex-col h-[584px]">
                       <div class="w-56 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
                       <div class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-10">
                            <div class="w-64 h-64 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center shadow-inner"></div>
@@ -160,10 +160,10 @@
               <!-- KPI Cards -->
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <!-- Total -->
-                  <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <div class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
                       <div>
-                          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Solicitudes</p>
-                          <h3 class="text-3xl font-bold text-gray-800 dark:text-white mt-1">{{ metrics.kpi?.total || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Total Solicitudes</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mt-1">{{ metrics.kpi?.total || 0 }}</h3>
                       </div>
                       <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
                           <i class="fas fa-clipboard-list text-xl"></i>
@@ -174,11 +174,11 @@
                   <div
                     @click="canDrillDown ? navigateTo('abiertas') : null"
                     :class="{'cursor-pointer hover:border-emerald-400 transition-colors': canDrillDown}"
-                    class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
                   >
                       <div>
-                          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Abiertas</p>
-                          <h3 class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ metrics.kpi?.open || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Abiertas</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ metrics.kpi?.open || 0 }}</h3>
                       </div>
                       <div class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
                           <i class="fas fa-clock text-xl"></i>
@@ -189,11 +189,11 @@
                    <div
                      @click="canDrillDown ? navigateTo('validacion') : null"
                      :class="{'cursor-pointer hover:border-amber-400 transition-colors': canDrillDown}"
-                     class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+                     class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
                    >
                       <div>
-                          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Por Validar</p>
-                          <h3 class="text-3xl font-bold text-amber-500 dark:text-amber-400 mt-1">{{ metrics.kpi?.validation || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Por Validar</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-amber-500 dark:text-amber-400 mt-1">{{ metrics.kpi?.validation || 0 }}</h3>
                       </div>
                       <div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-500 dark:text-amber-400">
                           <i class="fas fa-check-circle text-xl"></i>
@@ -201,10 +201,10 @@
                   </div>
 
                    <!-- Closed -->
-                   <div class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                   <div class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
                       <div>
-                          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Cerradas</p>
-                          <h3 class="text-3xl font-bold text-gray-400 dark:text-gray-500 mt-1">{{ metrics.kpi?.closed || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Cerradas</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 mt-1">{{ metrics.kpi?.closed || 0 }}</h3>
                       </div>
                       <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-gray-400 dark:text-gray-500">
                           <i class="fas fa-archive text-xl"></i>
@@ -217,13 +217,13 @@
                   <!-- Total Resolution -->
                   <div
                     @click="canDrillDown && metrics.resolution?.total > 0 ? openResolutionModal('total') : null"
-                    class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
+                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
                     :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
                   >
                       <div class="flex items-center justify-between">
                          <div>
-                             <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-1 uppercase tracking-wider">Solución Total</p>
-                             <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.total || 0 }}</h3>
+                             <p class="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-1 uppercase tracking-wider">Solución Total</p>
+                             <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.total || 0 }}</h3>
                              <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas al 100%</p>
                          </div>
                          <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
@@ -235,13 +235,13 @@
                   <!-- Partial Resolution -->
                    <div
                     @click="canDrillDown && metrics.resolution?.parcial > 0 ? openResolutionModal('parcial') : null"
-                    class="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
+                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
                     :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
                   >
                        <div class="flex items-center justify-between">
                          <div>
-                             <p class="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1 uppercase tracking-wider">Solución Parcial</p>
-                             <h3 class="text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
+                             <p class="text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 mb-1 uppercase tracking-wider">Solución Parcial</p>
+                             <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
                               <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas parcialmente</p>
                          </div>
                          <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
@@ -257,7 +257,7 @@
                    <!-- Left Column: Subcategories & Status -->
                   <div class="space-y-6 flex flex-col">
                       <!-- Subcategories Bar Chart -->
-                      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
+                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
                           <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Top Subcategorías</h3>
                           <div class="space-y-4">
                               <div v-for="(item, index) in metrics.charts?.subcategories" :key="index" class="space-y-1">
@@ -279,7 +279,7 @@
                       </div>
 
                       <!-- Status Distribution -->
-                      <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
+                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
                           <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Estado de Solicitudes</h3>
                           <div class="space-y-4">
                                <div v-for="(item, index) in metrics.charts?.status" :key="index" class="space-y-1">
@@ -303,7 +303,7 @@
                   </div>
 
                    <!-- Right Column: Agency Volume (Vertical Bar Chart) -->
-                  <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-full">
+                  <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-full">
                       <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Volumen por Agencia (Top 10)</h3>
 
                       <div v-if="metrics.charts?.agencies?.length" class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-8 min-h-[300px]">
@@ -344,9 +344,9 @@
               </div>
 
               <!-- Full Width Agency Bar Chart (Admin Only - All Agencies) -->
-              <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                   <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Total Solicitudes por todas las agencias</h3>
-                  <div class="overflow-x-auto pb-6">
+                  <div class="overflow-x-auto custom-scrollbar pb-6">
                       <div class="flex items-end gap-3 min-h-[250px] min-w-max px-2 pt-8">
                            <div
                               v-for="(item, index) in metrics.charts?.all_agencies || metrics.charts?.agencies"
@@ -632,5 +632,16 @@ const openResolutionModal = async (type) => {
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.custom-scrollbar::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
 }
 </style>
