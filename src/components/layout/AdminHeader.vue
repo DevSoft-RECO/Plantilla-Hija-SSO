@@ -5,12 +5,12 @@
            border-b-2 border-[var(--color-verde-cope)]
            shadow-sm transition-colors duration-300"
   >
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
 
       <!-- Mobile Sidebar Toggle -->
       <button
         @click="layoutStore.toggleSidebar"
-        class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"
       >
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
       </button>
@@ -18,7 +18,7 @@
       <!-- Desktop Sidebar Toggle -->
       <button
         @click="layoutStore.toggleCollapse"
-        class="hidden md:flex p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        class="hidden md:flex p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"
       >
         <svg
             class="w-6 h-6 transition-transform duration-300"
@@ -30,11 +30,16 @@
       </button>
 
       <!-- Branding / Title -->
-      <div class="flex flex-col ml-2">
-        <h1 class="text-lg font-extrabold text-[var(--color-azul-cope)] dark:text-white uppercase tracking-tight leading-tight">
+      <div class="flex flex-col ml-1 md:ml-2 min-w-0 flex-1">
+        <!-- Desktop title -->
+        <h1 class="hidden sm:block text-lg font-extrabold text-[var(--color-azul-cope)] dark:text-white uppercase tracking-tight leading-tight truncate">
           {{ currentRouteTitle }}
         </h1>
-        <span class="text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest">
+        <!-- Mobile title (max 2 words) -->
+        <h1 class="block sm:hidden text-[11px] font-extrabold text-[var(--color-azul-cope)] dark:text-white uppercase tracking-tight leading-tight truncate" :title="currentRouteTitle">
+          {{ shortRouteTitle }}
+        </h1>
+        <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 dark:text-gray-400 uppercase tracking-widest truncate">
           Sistema Centralizado
         </span>
       </div>
@@ -140,6 +145,13 @@ const userPhoto = computed(() => getAvatarUrl(authStore.user?.avatar) || null)
 
 // Título dinámico
 const currentRouteTitle = computed(() => route.meta?.title || 'Panel')
+const shortRouteTitle = computed(() => {
+    const title = currentRouteTitle.value;
+    if (!title) return '';
+    const words = title.split(' ');
+    // Toma máximo 2 palabras y agrega puntos si hay más
+    return words.length > 2 ? words.slice(0, 2).join(' ') + '...' : title;
+});
 
 // Iniciales
 const userInitials = computed(() => {
