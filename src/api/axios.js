@@ -18,7 +18,7 @@ api.interceptors.request.use(
     console.log(`[Axios Local] Preparando petición a: ${config.url}`);
 
     if (token) {
-      console.log("[Axios Local] Token encontrado en localStorage. Agregando header Authorization.");
+      console.log("[Axios Local] Token encontrado en sessionStorage. Agregando header Authorization.");
       // Aseguramos que no haya doble Bearer por si acaso
       const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
       config.headers.Authorization = authHeader;
