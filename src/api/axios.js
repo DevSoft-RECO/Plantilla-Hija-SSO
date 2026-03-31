@@ -9,11 +9,13 @@ const api = axios.create({
   }
 });
 
+import { AUTH_KEYS } from '@/utils/auth-keys';
+
 // --- INTERCEPTOR DE REQUEST (Salida) ---
 // Antes de que salga la petición, le pegamos el token si existe
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
 
     console.log(`[Axios Local] Preparando petición a: ${config.url}`);
 
@@ -36,18 +38,19 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.error('Sesión rechazada por Ecosistema.');
-      
-      // Destruir credenciales locales
-      sessionStorage.removeItem('access_token');
-      sessionStorage.removeItem('user_data');
-      sessionStorage.clear();
-      
-      // Mandarlo a la pantalla de Auth para renovarse (Renovación PKCE)
-      // Como requiremos código PKCE asíncrono, usamos el AuthService.
-      import('@/services/AuthService').then(module => {
-           module.default.login();
-      });
+        // Evitar que múltiples peticiones 401 disparen múltiples redirecciones al mismo tiempo
+        if (!sessionStorage.getItem(AUTH_KEYS.SSO_LOCK)) {
+            sessionStorage.setItem(AUTH_KEYS.SSO_LOCK, 'true');
+            console.warn('Sesión expirada (401). Iniciando redirección a SSO Madre...');
+            
+            // Limpieza básica de sesión antes de irse (usando claves prefijadas)
+            sessionStorage.removeItem(AUTH_KEYS.ACCESS_TOKEN);
+            sessionStorage.removeItem(AUTH_KEYS.USER_DATA);
+            
+            import('@/services/AuthService').then(module => {
+                 module.default.login();
+            });
+        }
     }
     return Promise.reject(error);
   }

@@ -9,6 +9,8 @@ const MOTHER_API_URL = import.meta.env.VITE_MOTHER_API_URL || 'http://localhost:
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 
+import { AUTH_KEYS } from '@/utils/auth-keys';
+
 export default {
   /**
    * 1. INICIAR LOGIN PKCE (Navegador)
@@ -24,12 +26,12 @@ export default {
     authUrl.searchParams.append('scope', '*');
     authUrl.searchParams.append('code_challenge', challenge);
     authUrl.searchParams.append('code_challenge_method', 'S256');
+    authUrl.searchParams.append('v', Date.now().toString()); // BLINDAJE V5: Rompe caché de redirección de la Madre
 
-    // Timeout para asegurar que la I/O (guardado en sessionStorage)
-    // finalice correctamente en Navegación de Incógnito antes de redirigir.
+    // Timeout de 300ms (BLINDAJE V5) para asegurar el "aterrizaje" de las claves en el disco físico
     setTimeout(() => {
         window.location.href = authUrl.toString();
-    }, 150);
+    }, 300);
   },
 
   /**
@@ -37,7 +39,7 @@ export default {
    * Pedimos los datos del usuario a la Madre.
    */
   async getUser() {
-    const token = sessionStorage.getItem('access_token');
+    const token = sessionStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
     if (!token) throw new Error("No hay token disponible");
 
     // Usamos axios directo hacia la MADRE, inyectando el token manualmente.
@@ -58,7 +60,18 @@ export default {
   },
 
   logoutLocal() {
-    const keysToRemove = ['access_token', 'user_data', 'pkce_verifier'];
+    // BLINDAJE V5: Limpieza nuclear (Claves actuales + Claves Legacy para evitar residuos)
+    const keysToRemove = [
+        AUTH_KEYS.ACCESS_TOKEN, 
+        AUTH_KEYS.USER_DATA, 
+        AUTH_KEYS.PKCE_VERIFIER,
+        AUTH_KEYS.AUTH_REDIRECT,
+        AUTH_KEYS.SSO_LOCK,
+        AUTH_KEYS.STORAGE_VERSION,
+        'access_token', // Legacy key
+        'user_data',    // Legacy key
+        'pkce_verifier' // Legacy key
+    ];
     keysToRemove.forEach(k => {
       localStorage.removeItem(k);
       sessionStorage.removeItem(k);

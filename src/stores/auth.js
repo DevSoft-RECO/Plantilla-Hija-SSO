@@ -1,25 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import AuthService from '../services/AuthService'
+import { AUTH_KEYS } from '@/utils/auth-keys'
 
 import axios from 'axios'
 import { getAvatarUrl } from '../utils/imageUtils'
 
 export const useAuthStore = defineStore('auth', () => {
   // --- MIGRACIÓN Y LIMPIEZA DE CACHÉ (Anti-Old-Data) ---
-  const STORAGE_VERSION = 'v3_clean_pkce'; 
-  if (localStorage.getItem('yk_storage_version') !== STORAGE_VERSION) {
-    const keysToRemove = ['access_token', 'user_data', 'pkce_verifier'];
-    keysToRemove.forEach(k => {
-      localStorage.removeItem(k);
-      sessionStorage.removeItem(k);
-    });
-    localStorage.setItem('yk_storage_version', STORAGE_VERSION);
+  const STORAGE_VERSION = 'v4_prefixed_keys'; 
+
+  // Si la versión guardada es distinta, limpiamos TODO lo relacionado a esta app
+  if (localStorage.getItem(AUTH_KEYS.STORAGE_VERSION) !== STORAGE_VERSION) {
+    AuthService.logoutLocal();
+    localStorage.setItem(AUTH_KEYS.STORAGE_VERSION, STORAGE_VERSION);
   }
 
   // --- STATE ---
-  const user = ref(JSON.parse(sessionStorage.getItem('user_data') || 'null'))
-  const token = ref(sessionStorage.getItem('access_token') || null)
+  const user = ref(JSON.parse(sessionStorage.getItem(AUTH_KEYS.USER_DATA) || 'null'))
+  const token = ref(sessionStorage.getItem(AUTH_KEYS.ACCESS_TOKEN) || null)
   const processingSSO = ref(false)
   const isReady = ref(false)
 
@@ -40,7 +39,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(redirectTo = null) {
     processingSSO.value = true
     if (redirectTo) {
-      sessionStorage.setItem('auth_redirect_to', redirectTo)
+      sessionStorage.setItem(AUTH_KEYS.REDIRECT_TO, redirectTo)
     }
     await AuthService.login()
   }
@@ -51,9 +50,17 @@ export const useAuthStore = defineStore('auth', () => {
   async function handlePKCECallback(code) {
     processingSSO.value = true
     try {
-      const verifier = sessionStorage.getItem('pkce_verifier')
+      // --- BLINDAJE V5: TOLERANCIA TOTAL A NOMBRES (Anti-Cache) ---
+      // Buscamos el verifier en 4 variantes posibles para máxima compatibilidad
+      const localPrefixed = localStorage.getItem(AUTH_KEYS.PKCE_VERIFIER);
+      const sessionPrefixed = sessionStorage.getItem(AUTH_KEYS.PKCE_VERIFIER);
+      const sessionLegacy = sessionStorage.getItem('pkce_verifier'); // Variante sin prefijo
+      const localLegacy = localStorage.getItem('pkce_verifier');
+      
+      const verifier = localPrefixed || sessionPrefixed || sessionLegacy || localLegacy;
+
       if (!verifier) {
-        throw new Error('No se encontró el verifier para la validación PKCE')
+        throw new Error('No se encontró el verifier para la validación PKCE en ninguna variante (Local/Session/Legacy)')
       }
 
       const client_id = import.meta.env.VITE_CLIENT_ID
@@ -73,19 +80,25 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Guardamos en memoria rápida local
       token.value = access_token
-      sessionStorage.setItem('access_token', access_token)
+      sessionStorage.setItem(AUTH_KEYS.ACCESS_TOKEN, access_token)
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
 
-      // Limpiamos el verifier de un solo uso
+      // BLINDAJE V5: Limpieza nuclear de verifiers (todas las variantes)
+      localStorage.removeItem(AUTH_KEYS.PKCE_VERIFIER)
+      sessionStorage.removeItem(AUTH_KEYS.PKCE_VERIFIER)
       sessionStorage.removeItem('pkce_verifier')
+      localStorage.removeItem('pkce_verifier')
+      
+      sessionStorage.removeItem(AUTH_KEYS.SSO_LOCK) // Limpiar el flag de bloqueo
+      processingSSO.value = false
 
       // Pedimos datos de usuario (forzamos petición ignorando caché para refrescar rol/permisos ok)
       await fetchUser(true)
 
       // Si teníamos una redirección pendiente, avisamos al llamador (o manejamos aquí)
-      const savedRedirect = sessionStorage.getItem('auth_redirect_to')
+      const savedRedirect = sessionStorage.getItem(AUTH_KEYS.REDIRECT_TO)
       if (savedRedirect) {
-        sessionStorage.removeItem('auth_redirect_to')
+        sessionStorage.removeItem(AUTH_KEYS.REDIRECT_TO)
         // El CallbackView se encargará de la redirección final si este valor existe
       }
 
@@ -143,9 +156,9 @@ export const useAuthStore = defineStore('auth', () => {
 
         user.value = userData
         // Caché de rendimiento en sessionStorage
-        sessionStorage.setItem('user_data', JSON.stringify(userData))
+        sessionStorage.setItem(AUTH_KEYS.USER_DATA, JSON.stringify(userData))
         // Respaldo en localStorage por si acaso
-        localStorage.setItem('user_data', JSON.stringify(userData))
+        localStorage.setItem(AUTH_KEYS.USER_DATA, JSON.stringify(userData))
       } catch (error) {
         console.warn('Sesión expirada o inválida en Api Local', error)
         // Ya no hacemos logout() aquí automáticamente para permitir que el Router

@@ -32,6 +32,8 @@ export function base64urlencode(buffer) {
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+import { AUTH_KEYS } from './auth-keys';
+
 /**
  * Prepara el flujo PKCE.
  * Genera el verifier, lo guarda en sessionStorage y retorna el challenge.
@@ -41,8 +43,9 @@ export async function preparePKCE() {
     const challengeBuffer = await sha256(verifier);
     const challenge = base64urlencode(challengeBuffer);
 
-    // El verifier se guarda en sessionStorage para esta sesión de login
-    sessionStorage.setItem('pkce_verifier', verifier);
+    // BLINDAJE V5 (Dual-Storage): Guardado doble para supervivencia en saltos de dominio
+    localStorage.setItem(AUTH_KEYS.PKCE_VERIFIER, verifier);
+    sessionStorage.setItem(AUTH_KEYS.PKCE_VERIFIER, verifier);
 
     return challenge;
 }

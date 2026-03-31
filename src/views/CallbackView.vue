@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
+import { AUTH_KEYS } from '@/utils/auth-keys'
+
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
@@ -47,9 +49,9 @@ onMounted(async () => {
       'Bienvenido a los sistemas internos de la Cooperativa YAMAN KUTX.'
 
     // Redirección Dinámica: ¿A dónde iba el usuario antes de ser interrumpido por el login?
-    const redirectUrl = sessionStorage.getItem('auth_redirect_to') || { name: 'dashboard' }
-    if (sessionStorage.getItem('auth_redirect_to')) {
-       sessionStorage.removeItem('auth_redirect_to')
+    const redirectUrl = sessionStorage.getItem(AUTH_KEYS.REDIRECT_TO) || { name: 'dashboard' }
+    if (sessionStorage.getItem(AUTH_KEYS.REDIRECT_TO)) {
+       sessionStorage.removeItem(AUTH_KEYS.REDIRECT_TO)
     }
 
     setTimeout(() => {
