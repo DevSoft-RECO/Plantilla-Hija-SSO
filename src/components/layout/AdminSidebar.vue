@@ -54,7 +54,7 @@
             ]"
             >
                 <span class="shrink-0 transition-colors duration-200"
-                      :class="isActive(item.route) ? 'text-verde-cope' : 'group-hover:text-verde-cope'">
+                      :class="isActive(item.route) ? 'text-verde-cope' : item.iconColor || 'group-hover:text-verde-cope'">
                     <svg v-html="item.iconSvg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"></svg>
                 </span>
 
@@ -85,7 +85,7 @@
                 ]"
             >
                 <div class="flex items-center">
-                    <span class="shrink-0 transition-colors" :class="openGroups.includes(item.id) ? 'text-verde-cope' : 'group-hover:text-verde-cope'">
+                    <span class="shrink-0 transition-colors" :class="[openGroups.includes(item.id) ? 'text-verde-cope' : item.iconColor || 'group-hover:text-verde-cope']">
                         <svg v-html="item.iconSvg" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"></svg>
                     </span>
                     <span v-if="!layoutStore.isCollapsed" class="ml-3 font-medium text-sm truncate">{{ item.label }}</span>
@@ -253,13 +253,13 @@ const menuItems = computed(() => {
     ];
     const showConfigGeneral = authStore.hasRole('Super Admin');
 
-
     const items = [
         {
             id: 'home',
             label: 'Dashboard',
             route: '/admin/dashboard',
             iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2 7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2v10a1 1 0 01-1 1h-3m-4 0h4" />',
+            iconColor: 'text-blue-400',
             show: authStore.hasRole('Super Admin') || authStore.hasPermission('ver-dashboard-general') || authStore.hasPermission('ver-dashboard-agencia') || authStore.hasPermission('dashboard-solo-lectura')
         },
         // Auditoría
@@ -267,14 +267,16 @@ const menuItems = computed(() => {
             id: 'auditoria',
             label: 'Auditoría',
             route: '/admin/audit-dashboard',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />',
+            iconColor: 'text-purple-400',
             show: authStore.hasRole('Super Admin') || authStore.hasPermission('auditoria')
         },
         // Solicitudes Tecnologicas
         {
             id: 'solicitudes',
             label: 'Solicitudes Tecnologicas',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />',
+            iconColor: 'text-cyan-400',
             show: solTecChildren.length > 0,
             children: solTecChildren
         },
@@ -282,7 +284,8 @@ const menuItems = computed(() => {
         {
             id: 'solicitudes-admin',
             label: 'Solicitudes Administración',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />',
+            iconColor: 'text-orange-400',
             show: solAdminChildren.length > 0,
             children: solAdminChildren
         },
@@ -290,7 +293,8 @@ const menuItems = computed(() => {
         {
             id: 'mis-solicitudes-grupo',
             label: 'Mis Solicitudes',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.510m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.981l7.5-4.039a2.25 2.25 0 012.134 0l7.5 4.039a2.25 2.25 0 011.183 1.98V14.74z" />',
+            iconColor: 'text-yellow-400',
             show: misSolicitudesChildren.length > 0,
             children: misSolicitudesChildren
         },
@@ -298,7 +302,8 @@ const menuItems = computed(() => {
         {
             id: 'config_solicitudes',
             label: 'Config. Solicitudes',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" />',
+            iconColor: 'text-teal-400',
             show: showConfigSolicitudes,
             children: configSolicitudesChildren
         },
@@ -306,21 +311,11 @@ const menuItems = computed(() => {
         {
             id: 'configuraciones',
             label: 'Configuraciones',
-            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />',
+            iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.905-16.474l.26-1.478m-1.39 17.17l-.26-1.477M12.132 4.11l-.26-1.478m5.277 14.857l-1.15-.964M7.992 7.48l-1.15-.964m10.902 12.793l-1.41-.513M6.516 5.195l-1.41-.513M14.25 19.795l-.75-1.3m-4.5-12.99l-.75-1.3" />',
+            iconColor: 'text-pink-400',
             show: showConfigGeneral,
             children: configGeneralChildren
         },
-        // --- EJEMPLO DE GRUPO (PLANTILLA) ---
-        // {
-        //     id: 'caja',
-        //     label: 'Caja (Ejemplo Grupo)',
-        //     iconSvg: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />',
-        //     show: authStore.hasRole('Super Admin'), // Ejemplo: mantener oculto para prod
-        //     children: [
-        //         { label: 'Sub-item 1', route: '/admin/caja' },
-        //         { label: 'Sub-item 2', route: '/admin/caja/ejemplo' }
-        //     ]
-        // },
     ]
 
     return items.filter(item => item.show)
