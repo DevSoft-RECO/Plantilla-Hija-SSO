@@ -119,7 +119,7 @@ const submit = () => {
         </div>
 
         <!-- Interactive Area -->
-        <div v-if="selectedSolicitud && solicitudDetalle?.estado !== 'cerrada'" class="p-2 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 shrink-0">
+        <div v-if="selectedSolicitud && solicitudDetalle?.estado !== 'cerrada'" class="p-2 bg-gray dark:bg-gray-800 shrink-0">
             <div class="flex flex-col gap-1.5">
                 <!-- Textarea -->
                 <textarea
