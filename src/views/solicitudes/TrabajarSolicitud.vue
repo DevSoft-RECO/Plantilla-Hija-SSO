@@ -47,11 +47,8 @@ const isAssignee = computed(() => {
 });
 
 const backRouteName = computed(() => {
-    // 2 is Administrative, everything else (or 1) is Technology/Default
-    if (solicitud.value?.categoria_general_id === 2) {
-        return 'mis-asignaciones-admin';
-    }
-    return 'mis-asignaciones';
+    // Regresa siempre a la vista de reportes personales (Mis Solicitudes) según la categoría
+    return solicitud.value?.categoria_general_id === 2 ? 'mis-solicitudes-admin' : 'mis-solicitudes-tec';
 });
 
 const misSolicitudesRoute = computed(() => {
@@ -449,7 +446,7 @@ const isDeletedFile = (url) => {
             <!-- Columna Izquierda: Detalles del Caso -->
             <div class="lg:col-span-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 p-6 overflow-y-auto custom-scrollbar">
                 <button @click="router.push({ name: backRouteName })" class="text-white/40 hover:text-white mb-4 flex items-center gap-2 text-sm transition-colors">
-                    <i class="fas fa-arrow-left"></i> Volver a Mi Bandeja
+                    <i class="fas fa-arrow-left"></i> Volver a Mis Reportes
                 </button>
 
                 <h1 class="text-xl font-bold text-white mb-2 leading-tight">{{ solicitud.titulo }}</h1>
