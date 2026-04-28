@@ -80,12 +80,12 @@ const verDetalle = (id) => {
 
 const getEstadoClass = (estado) => {
     switch (estado) {
-        case 'reportada': return 'bg-red-100 text-red-800 border-red-200';
-        case 'asignada': return 'bg-blue-100 text-blue-800 border-blue-200';
-        case 'en_seguimiento': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        case 'pendiente_validacion': return 'bg-purple-100 text-purple-800 border-purple-200';
-        case 'cerrada': return 'bg-green-100 text-green-800 border-green-200';
-        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+        case 'reportada': return 'bg-red-500/20 text-red-200 border-red-500/30';
+        case 'asignada': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+        case 'en_seguimiento': return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30';
+        case 'pendiente_validacion': return 'bg-purple-500/20 text-purple-200 border-purple-500/30';
+        case 'cerrada': return 'bg-green-500/20 text-green-200 border-green-500/30';
+        default: return 'bg-white/10 text-white/80 border-white/20';
     }
 };
 
@@ -147,7 +147,7 @@ const eliminarSolicitud = async (id) => {
                 @click="setFiltro(est.value)"
                 class="px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap border"
                 :class="filtroEstado === est.value
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105'
+                    ? 'bg-verde-cope text-white border-verde-cope/50 shadow-lg shadow-emerald-500/20 transform scale-105'
                     : 'bg-white/10 backdrop-blur-md text-white/80 border-white/20 hover:bg-white/20'"
             >
                 {{ est.label }}
@@ -168,7 +168,7 @@ const eliminarSolicitud = async (id) => {
         </div>
 
         <!-- Desktop Table Container -->
-        <div class="hidden sm:flex flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 overflow-hidden flex-col">
+        <div class="hidden sm:flex flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 overflow-hidden flex-col">
             <div class="overflow-auto flex-1 custom-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[800px]">
                     <thead class="bg-white/10 text-white uppercase text-xs font-semibold sticky top-0 backdrop-blur-md z-10">
@@ -185,12 +185,12 @@ const eliminarSolicitud = async (id) => {
                     </thead>
                     <tbody class="text-sm divide-y divide-gray-100 divide-white/10">
                         <tr v-if="loading">
-                            <td colspan="8" class="p-8 text-center text-gray-500">
+                            <td colspan="8" class="p-8 text-center text-white/40">
                                 <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando...
                             </td>
                         </tr>
                         <tr v-else-if="solicitudes.length === 0">
-                            <td colspan="8" class="p-8 text-center text-gray-500">
+                            <td colspan="8" class="p-8 text-center text-white/40">
                                 No se encontraron solicitudes.
                             </td>
                         </tr>
@@ -203,32 +203,32 @@ const eliminarSolicitud = async (id) => {
                                     {{ sol.estado?.replace('_', ' ') }}
                                 </span>
                             </td>
-                            <td class="p-4 text-white/80 dark:text-gray-300">
+                            <td class="p-4 text-white/80">
                                 <div class="text-xs font-bold">{{ sol.creado_por?.name || 'Desconocido' }}</div>
-                                <div class="text-xs opacity-75">{{ sol.agencia?.nombre || 'S/A' }}</div>
+                                <div class="text-xs text-white/40">{{ sol.agencia?.nombre || 'S/A' }}</div>
                             </td>
-                            <td class="p-4 text-white/80 dark:text-gray-300">
+                            <td class="p-4">
                                 <div v-if="sol.responsable" class="flex items-center gap-2">
-                                    <div class="bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                    <div class="bg-white/10 text-white h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold border border-white/20">
                                         {{ sol.responsable.name.charAt(0) }}
                                     </div>
-                                    {{ sol.responsable.name }}
+                                    <span class="text-white/80 text-xs font-medium">{{ sol.responsable.name }}</span>
                                 </div>
-                                <span v-else class="text-gray-400 italic">--</span>
+                                <span v-else class="text-white/20 italic text-xs">--</span>
                             </td>
                             <td class="p-4 text-white/40">
                                 {{ new Date(sol.created_at).toLocaleDateString() }}
                             </td>
                             <td class="p-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                <button @click="verDetalle(sol.id)" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 font-medium px-3 py-1.5 rounded-lg transition text-xs border border-emerald-200">
-                                    Asignar / Ver
+                                <button @click="verDetalle(sol.id)" class="bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500 hover:text-white font-bold px-3 py-1.5 rounded-lg transition text-[10px] border border-emerald-500/30 uppercase tracking-wider">
+                                    GESTIONAR
                                 </button>
-                                <button v-if="puedeEliminar(sol)" @click="eliminarSolicitud(sol.id)" class="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 font-medium px-2 py-1.5 rounded-lg transition text-xs border border-red-200" title="Eliminar Solicitud">
+                                <button v-if="puedeEliminar(sol)" @click="eliminarSolicitud(sol.id)" class="bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white font-medium px-2.5 py-1.5 rounded-lg transition text-xs border border-red-500/30" title="Eliminar Solicitud">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
-                            </div>
-                        </td>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -244,19 +244,19 @@ const eliminarSolicitud = async (id) => {
                     <button
                         @click="cambiarPagina(pagination.current_page - 1)"
                         :disabled="pagination.current_page === 1"
-                        class="p-2 rounded-lg border dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white border border-white/10 disabled:opacity-30 hover:bg-white/20 transition"
                     >
                         <i class="fas fa-chevron-left text-xs"></i>
                     </button>
 
-                    <span class="text-sm font-medium px-2">
-                        Página {{ pagination.current_page }} de {{ pagination.last_page }}
+                    <span class="text-xs font-bold text-white/60 uppercase tracking-widest px-2">
+                        Pág {{ pagination.current_page }} <span class="mx-0.5 font-normal text-white/20">/</span> {{ pagination.last_page }}
                     </span>
 
                     <button
                         @click="cambiarPagina(pagination.current_page + 1)"
                         :disabled="pagination.current_page === pagination.last_page"
-                        class="p-2 rounded-lg border dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white border border-white/10 disabled:opacity-30 hover:bg-white/20 transition"
                     >
                         <i class="fas fa-chevron-right text-xs"></i>
                     </button>
@@ -265,7 +265,7 @@ const eliminarSolicitud = async (id) => {
         </div>
 
         <!-- Mobile List Container -->
-        <div class="sm:hidden flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
+        <div class="sm:hidden flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 overflow-hidden flex flex-col">
             <div class="overflow-y-auto flex-1 custom-scrollbar bg-gray-50 dark:bg-gray-900/50">
                 <div v-if="loading" class="p-8 text-center text-gray-500">
                     <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando...
@@ -287,22 +287,22 @@ const eliminarSolicitud = async (id) => {
             </div>
 
             <!-- Pagination Mobile Footer -->
-            <div class="p-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800 w-full shrink-0">
-                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
-                    {{ pagination.from || 0 }} - {{ pagination.to || 0 }} / {{ pagination.total }}
+            <div class="p-3 border-t border-white/10 flex justify-between items-center bg-white/5 w-full shrink-0">
+                <span class="text-xs font-bold text-white/40 uppercase tracking-tighter">
+                    {{ pagination.from || 0 }}-{{ pagination.to || 0 }} / {{ pagination.total }}
                 </span>
                 <div class="flex items-center gap-1" v-if="pagination.total > 0">
                     <button
                         @click="cambiarPagina(pagination.current_page - 1)"
                         :disabled="pagination.current_page === 1"
-                        class="p-1.5 rounded-lg border bg-white dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 transition shadow-sm"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white border border-white/10 disabled:opacity-30 hover:bg-white/20 transition"
                     >
                         <i class="fas fa-chevron-left text-xs"></i>
                     </button>
                     <button
                         @click="cambiarPagina(pagination.current_page + 1)"
                         :disabled="pagination.current_page === pagination.last_page"
-                        class="p-1.5 rounded-lg border bg-white dark:bg-gray-700 dark:border-gray-600 disabled:opacity-50 hover:bg-gray-100 transition shadow-sm"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 text-white border border-white/10 disabled:opacity-30 hover:bg-white/20 transition"
                     >
                         <i class="fas fa-chevron-right text-xs"></i>
                     </button>

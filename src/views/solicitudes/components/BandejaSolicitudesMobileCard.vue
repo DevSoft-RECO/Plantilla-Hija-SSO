@@ -16,12 +16,12 @@ const emit = defineEmits(['ver', 'eliminar']);
 
 const getEstadoClass = (estado) => {
     switch (estado) {
-        case 'reportada': return 'bg-red-100 text-red-800 border-red-200';
-        case 'asignada': return 'bg-blue-100 text-blue-800 border-blue-200';
-        case 'en_seguimiento': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        case 'pendiente_validacion': return 'bg-purple-100 text-purple-800 border-purple-200';
-        case 'cerrada': return 'bg-green-100 text-green-800 border-green-200';
-        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+        case 'reportada': return 'bg-red-500/20 text-red-200 border-red-500/30';
+        case 'asignada': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+        case 'en_seguimiento': return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30';
+        case 'pendiente_validacion': return 'bg-purple-500/20 text-purple-200 border-purple-500/30';
+        case 'cerrada': return 'bg-green-500/20 text-green-200 border-green-500/30';
+        default: return 'bg-white/10 text-white/80 border-white/20';
     }
 };
 
@@ -39,12 +39,12 @@ const getEstadoIcon = (estado) => {
 const avatarClass = computed(() => {
     const estado = props.sol.estado;
     switch (estado) {
-        case 'reportada': return 'bg-red-500';
-        case 'asignada': return 'bg-blue-500';
-        case 'en_seguimiento': return 'bg-yellow-500';
-        case 'pendiente_validacion': return 'bg-purple-500';
-        case 'cerrada': return 'bg-green-500';
-        default: return 'bg-gray-400';
+        case 'reportada': return 'bg-red-500/40 border-red-500/50';
+        case 'asignada': return 'bg-blue-500/40 border-blue-500/50';
+        case 'en_seguimiento': return 'bg-yellow-500/40 border-yellow-500/50';
+        case 'pendiente_validacion': return 'bg-purple-500/40 border-purple-500/50';
+        case 'cerrada': return 'bg-green-500/40 border-green-500/50';
+        default: return 'bg-white/10 border-white/20';
     }
 });
 </script>
@@ -52,7 +52,7 @@ const avatarClass = computed(() => {
 <template>
     <div class="px-4 py-3 flex items-start gap-3 hover:bg-white/5 transition border-b border-white/10 bg-white/10 backdrop-blur-md cursor-pointer" @click="emit('ver')">
         <!-- Icon -->
-        <div class="h-10 w-10 shrink-0 rounded-full flex items-center justify-center text-white shadow-sm mt-0.5" :class="avatarClass">
+        <div class="h-10 w-10 shrink-0 rounded-full flex items-center justify-center text-white shadow-sm mt-0.5 border" :class="avatarClass">
             <i :class="getEstadoIcon(sol.estado) + (sol.estado === 'en_seguimiento' ? ' fa-spin' : '')" class="text-sm"></i>
         </div>
         

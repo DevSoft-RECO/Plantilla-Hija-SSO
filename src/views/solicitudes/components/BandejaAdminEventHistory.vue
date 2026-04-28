@@ -45,7 +45,7 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="div3 bg-white dark:bg-gray-800 flex flex-col overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg border border-gray-100 dark:border-gray-700">
+    <div class="div3 bg-white/10 backdrop-blur-md flex flex-col overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-verde-cope/30">
         <div class="p-2 px-4 shrink-0 flex items-center justify-between shadow-sm z-10" style="background-color: var(--color-azul-cope)">
             <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase">
                 <i class="fas fa-history text-white/80 text-[10px]"></i> Historial de Interacción
@@ -53,17 +53,17 @@ const submit = () => {
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-gray-50/30 dark:bg-transparent">
-            <div v-if="!selectedSolicitud" class="h-full flex flex-col justify-center items-center text-gray-400 dark:text-gray-600 p-6 text-center">
-                <i class="fas fa-mouse-pointer text-4xl mb-3 opacity-50"></i>
+            <div v-if="!selectedSolicitud" class="h-full flex flex-col justify-center items-center text-white/40 p-6 text-center">
+                <i class="fas fa-mouse-pointer text-4xl mb-3 opacity-20"></i>
                 <p class="text-sm font-medium">Seleccione un caso para interactuar</p>
             </div>
-            <div v-else-if="loadingDetail" class="space-y-4 relative">
-                <div v-for="i in 3" :key="i" class="flex gap-4 animate-pulse">
-                    <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                    <div class="flex-1 bg-gray-100 dark:bg-gray-800 h-16 rounded-xl"></div>
+            <div v-else-if="loadingDetail" class="flex gap-2">
+                <div v-for="i in 3" :key="i" class="bg-white/5 border border-white/10 rounded-lg p-1.5 flex flex-col items-center justify-center animate-pulse h-18 w-20">
+                    <div class="h-6 w-6 bg-white/10 rounded mb-1"></div>
+                    <div class="h-1.5 w-10 bg-white/10 rounded"></div>
                 </div>
             </div>
-            <div v-else-if="solicitudDetalle?.seguimientos?.length === 0" class="h-full flex flex-col justify-center items-center text-gray-400 italic text-sm">
+            <div v-else-if="solicitudDetalle?.seguimientos?.length === 0" class="h-full flex flex-col justify-center items-center text-white/40 italic text-sm">
                 Sin seguimiento del caso. ¡Inicia la conversación!
             </div>
             <div v-else class="flex flex-col pt-2 pb-4 space-y-6">
@@ -84,31 +84,31 @@ const submit = () => {
                     <div class="flex flex-col w-full min-w-0 font-sans" :class="seg.seguimiento_por_id === (solicitudDetalle.user_id || solicitudDetalle.creado_por?.id) ? 'items-end' : 'items-start'">
 
                         <div class="flex items-baseline gap-2 mb-1 px-1" :class="seg.seguimiento_por_id === (solicitudDetalle.user_id || solicitudDetalle.creado_por?.id) ? 'flex-row-reverse' : 'flex-row'">
-                            <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">
+                            <span class="text-[11px] font-bold text-white/80">
                                 {{ seg.seguimiento_por_nombre.split(' ').slice(0, 2).join(' ') }}
                             </span>
-                            <span class="text-[9px] text-gray-400 font-medium tracking-wide">
+                            <span class="text-[9px] text-white/40 font-medium tracking-wide">
                                 {{ seg.seguimiento_por_cargo || 'Usuario' }}
                             </span>
                         </div>
 
-                        <div class="p-3 shadow-sm border text-[13px] text-gray-700 dark:text-gray-200 whitespace-pre-wrap leading-relaxed relative"
+                        <div class="p-3 shadow-sm border text-[13px] text-white/80 whitespace-pre-wrap leading-relaxed relative"
                              :class="seg.seguimiento_por_id === (solicitudDetalle.user_id || solicitudDetalle.creado_por?.id)
-                                ? 'bg-white dark:bg-gray-800 border-blue-100 dark:border-blue-900/50 rounded-2xl rounded-br-sm'
-                                : 'bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800/50 rounded-2xl rounded-bl-sm'">
+                                ? 'bg-white/10 border-white/20 rounded-2xl rounded-br-sm'
+                                : 'bg-orange-500/20 border-orange-500/30 text-white/90 rounded-2xl rounded-bl-sm'">
                             <div v-html="seg.comentario"></div>
 
                             <div v-if="seg.evidencias && seg.evidencias.length" class="mt-3 flex flex-wrap gap-2">
                                 <a v-for="(ev, idx) in seg.evidencias" :key="idx" :href="ev" target="_blank"
-                                   class="w-16 h-16 rounded overflow-hidden border border-gray-100 dark:border-gray-700 hover:opacity-80 transition shadow-sm">
+                                   class="w-16 h-16 rounded overflow-hidden border border-white/10 hover:opacity-80 transition shadow-sm">
                                     <img v-if="ev.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i)" :src="ev" class="w-full h-full object-cover">
-                                    <div v-else class="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-700 text-[10px]">
-                                        <i class="fas fa-file-alt text-gray-400"></i>
+                                    <div v-else class="w-full h-full flex items-center justify-center bg-white/5 text-[10px]">
+                                        <i class="fas fa-file-alt text-white/40"></i>
                                     </div>
                                 </a>
                             </div>
 
-                            <div class="mt-2 text-[10px] text-gray-400 font-bold tracking-widest flex items-center gap-1 opacity-80 justify-end">
+                            <div class="mt-2 text-[10px] text-white/40 font-bold tracking-widest flex items-center gap-1 opacity-80 justify-end">
                                 <i class="far fa-clock"></i> {{ new Date(seg.created_at).toLocaleString([], { year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute:'2-digit' }) }}
                             </div>
                         </div>
@@ -126,7 +126,7 @@ const submit = () => {
                     v-model="form.comentario"
                     rows="2"
                     placeholder="Escribe una actualización..."
-                    class="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 rounded-xl px-3 py-1.5 text-[13px] focus:ring-2 focus:ring-blue-500 transition-all resize-none dark:text-gray-100 outline-none shadow-inner"
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[13px] focus:ring-2 focus:ring-blue-500 transition-all resize-none text-white outline-none shadow-inner placeholder:text-white/20"
                     @keyup.ctrl.enter="submit"
                 ></textarea>
 
@@ -145,7 +145,7 @@ const submit = () => {
                     <div class="flex items-center gap-1.5 shrink-0">
                          <input type="file" ref="fileInput" multiple class="hidden" @change="handleFileUpload">
                          <button @click="triggerUpload" title="Adjuntar archivos"
-                                 class="w-7 h-7 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                                 class="w-7 h-7 rounded-lg bg-white/10 text-white/60 hover:bg-white/20 transition flex items-center justify-center border border-white/10">
                              <i class="fas fa-paperclip text-xs"></i>
                          </button>
 
