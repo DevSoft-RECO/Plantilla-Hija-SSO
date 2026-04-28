@@ -240,8 +240,15 @@ const enviarSeguimiento = async () => {
         saving.value = false;
     }
 };
+const backRouteName = computed(() => {
+    if (solicitud.value?.categoria_general_id === 2) {
+        return 'bandeja-solicitudes-admin';
+    }
+    return 'bandeja-solicitudes';
+});
+
 const backToBandeja = () => {
-    router.push({ name: 'bandeja-solicitudes' });
+    router.push({ name: backRouteName.value });
 };
 </script>
 

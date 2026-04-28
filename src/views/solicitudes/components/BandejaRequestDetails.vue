@@ -286,28 +286,49 @@ const submitCierre = () => {
 
         <!-- MODALS -->
         <!-- Finalizar Caso -->
-        <div v-if="showFinalizarModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="bg-green-600 p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg"><i class="fas fa-check-circle mr-2"></i> Finalizar y Resolver Caso</h3>
-                    <button @click="showFinalizarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+        <div v-if="showFinalizarModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-black/60">
+            <div class="bg-[#1e293b]/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-verde-cope/30 animate-fade-in-up">
+                <div class="bg-verde-cope p-5 text-white flex justify-between items-center shadow-lg">
+                    <h3 class="font-bold text-lg uppercase tracking-wider"><i class="fas fa-check-circle mr-2"></i> Finalizar Caso</h3>
+                    <button @click="showFinalizarModal = false" class="hover:bg-white/20 rounded-full p-2 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
-                <div class="p-6 space-y-4">
-                    <div class="bg-blue-50 dark:bg-gray-700/50 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-gray-600">
-                        Describe la solución aplicada y adjunta evidencias si es necesario.
+
+                <div class="p-6 space-y-6">
+                    <div class="bg-white/5 p-4 rounded-xl text-sm text-white/80 border border-white/10">
+                        <i class="fas fa-info-circle mr-2 text-verde-cope"></i>
+                        Describe la solución aplicada y adjunta evidencias de la resolución.
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Solución Applicada <span class="text-red-500">*</span></label>
-                        <textarea v-model="cierreData.comentario" rows="4" class="w-full border rounded-lg p-3 dark:bg-gray-700 dark:border-gray-600 resize-none focus:ring-2 focus:ring-green-500 dark:text-white" placeholder="Describe que se hizo..."></textarea>
+                        <label class="block text-[10px] font-bold text-white/40 uppercase mb-2 tracking-widest">Solución Aplicada <span class="text-red-500">*</span></label>
+                        <textarea
+                            v-model="cierreData.comentario"
+                            rows="4"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:ring-2 focus:ring-verde-cope resize-none transition-all text-white outline-none placeholder:text-white/20 shadow-inner"
+                            placeholder="Ej: Se restableció la conexión..."
+                        ></textarea>
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Evidencias (Opcional)</label>
-                        <input type="file" multiple @change="handleCierreFileUpload" class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-green-50 file:px-4 file:py-2 dark:text-gray-300">
+                        <label class="block text-[10px] font-bold text-white/40 uppercase mb-2 tracking-widest">Evidencias de Solución</label>
+                        <input
+                            type="file"
+                            multiple
+                            @change="handleCierreFileUpload"
+                            class="w-full text-xs text-white/40 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 transition cursor-pointer"
+                        >
                     </div>
                 </div>
-                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
-                    <button @click="showFinalizarModal = false" class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancelar</button>
-                    <button @click="submitCierre" :disabled="!cierreData.comentario" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold disabled:opacity-50">Confirmar Resolución</button>
+
+                <div class="p-5 bg-white/5 flex justify-end gap-3 border-t border-white/10">
+                    <button @click="showFinalizarModal = false" class="px-5 py-2 text-white/60 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest">Cancelar</button>
+                    <button
+                        @click="submitCierre"
+                        :disabled="!cierreData.comentario"
+                        class="bg-verde-cope hover:opacity-90 text-white px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-900/20 transition font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
+                    >
+                        Confirmar Resolución
+                    </button>
                 </div>
             </div>
         </div>
