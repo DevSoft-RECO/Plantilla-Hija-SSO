@@ -16,14 +16,14 @@
 
   <aside
     class="fixed top-4 bottom-4 left-4 z-50 flex flex-col transition-all duration-300 shadow-2xl
-           bg-azul-cope/90 dark:bg-gray-900/90 backdrop-blur-xl
-           border border-white/10 dark:border-gray-800 rounded-2xl"
+           bg-azul-cope/90 dark:bg-white/5 backdrop-blur-xl
+           border border-white/10 dark:border-white/10 rounded-2xl"
     :class="[
       layoutStore.isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       layoutStore.isCollapsed ? 'w-20' : 'w-64'
     ]"
   >
-    <div class="h-16 flex items-center justify-between px-6 shrink-0 bg-black/10 dark:bg-black/20 border-b border-white/5 dark:border-gray-800 rounded-t-2xl">
+    <div class="h-16 flex items-center justify-between px-6 shrink-0 bg-black/10 dark:bg-black/30 border-b border-white/5 dark:border-white/5 rounded-t-2xl">
 
       <div v-if="!layoutStore.isCollapsed" class="flex items-center justify-center w-full fade-in">
         <img src="@/assets/logoyk1.svg" alt="YK" class="h-14 w-auto object-contain transition-all" />

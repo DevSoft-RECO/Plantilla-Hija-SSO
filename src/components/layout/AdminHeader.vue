@@ -1,8 +1,8 @@
 <template>
   <header
     class="sticky top-4 z-30 flex h-16 mx-4 mt-4 items-center justify-between px-6
-           bg-azul-cope/95 dark:bg-gray-900/95 backdrop-blur-md
-           border border-white/10 dark:border-gray-800
+           bg-azul-cope/95 dark:bg-white/5 backdrop-blur-xl
+           border border-white/10 dark:border-white/10
            shadow-2xl rounded-2xl transition-all duration-300 overflow-hidden"
   >
     <!-- Efecto de brillo verde (Verde Cope) para coherencia con el sidebar -->
