@@ -216,7 +216,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100dvh-120px)] md:h-[calc(100vh-120px)] min-h-[480px] md:min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
+    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100dvh-120px)] md:h-[calc(100vh-120px)] min-h-[480px] md:min-h-[600px] bg-transparent border-none rounded-2xl relative overflow-hidden flex flex-col">
         <div class="w-full flex-1 custom-grid overflow-hidden">
             <!-- Left Panel: Request List & Details -->
             <BandejaRequestDetails

@@ -68,12 +68,12 @@ const cambiarPagina = (page) => {
 
 const getEstadoClass = (estado) => {
     switch (estado) {
-        case 'reportada': return 'bg-red-100 text-red-800';
-        case 'asignada': return 'bg-blue-100 text-blue-800';
-        case 'en_seguimiento': return 'bg-yellow-100 text-yellow-800';
-        case 'pendiente_validacion': return 'bg-purple-100 text-purple-800';
-        case 'cerrada': return 'bg-green-100 text-green-800';
-        default: return 'bg-gray-100 text-gray-800';
+        case 'reportada': return 'bg-red-500/20 text-red-200 border-red-500/30';
+        case 'asignada': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+        case 'en_seguimiento': return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30';
+        case 'pendiente_validacion': return 'bg-purple-500/20 text-purple-200 border-purple-500/30';
+        case 'cerrada': return 'bg-green-500/20 text-green-200 border-green-500/30';
+        default: return 'bg-white/10 text-white/80 border-white/20';
     }
 };
 </script>
@@ -121,13 +121,13 @@ const getEstadoClass = (estado) => {
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
                     <tr v-if="loading">
-                        <td colspan="7" class="p-8 text-center text-gray-500">
+                        <td colspan="7" class="p-8 text-center text-white/40">
                             <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando solicitudes...
                         </td>
                     </tr>
                     <tr v-else-if="solicitudes.length === 0">
-                        <td colspan="7" class="p-8 text-center text-gray-500">
-                            <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                        <td colspan="7" class="p-8 text-center text-white/40">
+                            <i class="fas fa-inbox text-4xl mb-3 text-white/20"></i>
                             <p>No has registrado ninguna solicitud aún.</p>
                         </td>
                     </tr>
@@ -152,7 +152,7 @@ const getEstadoClass = (estado) => {
                                 </div>
                                 {{ sol.responsable.name }}
                             </div>
-                            <span v-else class="text-gray-400 italic">Sin asignar</span>
+                            <span v-else class="text-white/20 italic">Sin asignar</span>
                         </td>
                         <td class="p-4 text-white/40">
                             {{ new Date(sol.created_at).toLocaleDateString() }}
@@ -179,16 +179,14 @@ const getEstadoClass = (estado) => {
                 <button
                     @click="cambiarPagina(currentPage - 1)"
                     :disabled="currentPage === 1"
-                    class="px-4 py-2 border rounded-lg text-sm font-medium transition"
-                    :class="currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600 dark:border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 dark:border-gray-600'"
+                    class="px-4 py-2 border border-white/20 rounded-lg text-sm font-medium transition bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none"
                 >
                     <i class="fas fa-chevron-left mr-1"></i> Anterior
                 </button>
                 <button
                     @click="cambiarPagina(currentPage + 1)"
                     :disabled="currentPage === lastPage"
-                    class="px-4 py-2 border rounded-lg text-sm font-medium transition"
-                    :class="currentPage === lastPage ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600 dark:border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 dark:border-gray-600'"
+                    class="px-4 py-2 border border-white/20 rounded-lg text-sm font-medium transition bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 disabled:pointer-events-none"
                 >
                     Siguiente <i class="fas fa-chevron-right ml-1"></i>
                 </button>

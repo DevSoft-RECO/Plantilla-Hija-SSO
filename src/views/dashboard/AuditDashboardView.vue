@@ -136,7 +136,7 @@ const verBackToList = () => {
 
 <template>
     <!-- 120px calculation accounts for: AdminHeader (approx 64px) + Parent main p-6 (48px) + safety buffer -->
-    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100vh-120px)] min-h-[600px] bg-[#f0f4f8] dark:bg-gray-900 border-none rounded-2xl relative overflow-hidden flex flex-col">
+    <div class="px-2 py-3 md:px-4 md:-mx-3 h-[calc(100vh-120px)] min-h-[600px] bg-transparent border-none rounded-2xl relative overflow-hidden flex flex-col">
         <div class="w-full flex-1 custom-grid overflow-hidden">
 
             <AuditFilters
@@ -223,13 +223,10 @@ const verBackToList = () => {
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 9999px;
 }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #475569;
-}
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8;
+    background-color: rgba(255, 255, 255, 0.4);
 }
 </style>

@@ -12,12 +12,12 @@ defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList']);
 
 const getEstadoClass = (estado) => {
     switch (estado) {
-        case 'reportada': return 'bg-red-100 text-red-800 border-red-200';
-        case 'asignada': return 'bg-blue-100 text-blue-800 border-blue-200';
-        case 'en_seguimiento': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        case 'pendiente_validacion': return 'bg-purple-100 text-purple-800 border-purple-200';
-        case 'cerrada': return 'bg-green-100 text-green-800 border-green-200';
-        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+        case 'reportada': return 'bg-red-500/20 text-red-200 border-red-500/30';
+        case 'asignada': return 'bg-blue-500/20 text-blue-200 border-blue-500/30';
+        case 'en_seguimiento': return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30';
+        case 'pendiente_validacion': return 'bg-purple-500/20 text-purple-200 border-purple-500/30';
+        case 'cerrada': return 'bg-green-500/20 text-green-200 border-green-500/30';
+        default: return 'bg-white/10 text-white/80 border-white/20';
     }
 };
 
@@ -35,7 +35,7 @@ const getEstadoIcon = (estado) => {
 </script>
 
 <template>
-    <div class="div2 bg-white dark:bg-gray-800 flex flex-col h-full overflow-hidden rounded-2xl shadow-md relative transition-shadow hover:shadow-lg border border-gray-100 dark:border-gray-700">
+    <div class="div2 bg-white/10 backdrop-blur-md flex flex-col h-full overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-white/20">
 
         <!-- VISTA DE LISTA -->
         <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden">
@@ -43,41 +43,41 @@ const getEstadoIcon = (estado) => {
                 <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
                     <i class="fas fa-list-ul text-white/80"></i> Lista de Solicitudes
                 </h2>
-                <span class="text-xs font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-3 py-1 rounded-full shadow-sm">
+                <span class="text-xs font-bold text-azul-cope bg-white px-3 py-1 rounded-full shadow-sm">
                     {{ pagination.total }} solicitudes
                 </span>
             </div>
 
             <div class="flex-1 overflow-y-auto custom-scrollbar p-2">
                 <div v-if="loadingList" class="space-y-3 p-2">
-                    <div v-for="i in 5" :key="i" class="p-4 rounded-xl bg-gray-50 dark:bg-gray-700 animate-pulse">
+                    <div v-for="i in 5" :key="i" class="p-4 rounded-xl bg-white/10 animate-pulse">
                         <div class="flex justify-between items-start mb-2">
-                            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-12"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded-full w-20"></div>
+                            <div class="h-3 bg-white/20 rounded w-12"></div>
+                            <div class="h-4 bg-white/20 rounded-full w-20"></div>
                         </div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4 mb-3"></div>
+                        <div class="h-4 bg-white/20 rounded w-3/4 mb-3"></div>
                         <div class="flex justify-between items-end mt-2">
-                            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/3"></div>
-                            <div class="h-3 bg-gray-200 dark:bg-gray-600 rounded w-16"></div>
+                            <div class="h-3 bg-white/20 rounded w-1/3"></div>
+                            <div class="h-3 bg-white/20 rounded w-16"></div>
                         </div>
                     </div>
                 </div>
-                <div v-else-if="solicitudes.length === 0" class="text-center p-8 text-gray-500 text-sm">
-                    <i class="fas fa-inbox text-3xl mb-2 text-gray-300"></i><br>
+                <div v-else-if="solicitudes.length === 0" class="text-center p-8 text-white/40 text-sm">
+                    <i class="fas fa-inbox text-3xl mb-2 text-white/20"></i><br>
                     No hay resultados con estos filtros
                 </div>
                 <div v-else class="space-y-2 px-1 py-1">
                     <div v-for="sol in solicitudes" :key="sol.id"
                          @click="$emit('seleccionar', sol)"
-                         class="bg-white dark:bg-gray-800 rounded-xl p-3 cursor-pointer shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-300 group relative overflow-hidden flex flex-col gap-1.5">
+                         class="bg-white/5 rounded-xl p-3 cursor-pointer border border-white/10 hover:bg-white/10 transition-all duration-300 group relative overflow-hidden flex flex-col gap-1.5">
 
                         <!-- Hover left border indicator -->
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 opacity-0 group-hover:opacity-100 transition-opacity" style="background-color: var(--color-verde-cope)"></div>
 
                         <!-- Header Line: Title & ID -->
                         <div class="flex justify-between items-start pl-2">
-                            <h3 class="font-bold text-sm text-[var(--color-azul-cope)] dark:text-gray-100 leading-tight group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors line-clamp-1 pr-2">
-                                <span class="text-xs text-gray-400 font-normal mr-1">#{{ sol.id }}</span>
+                            <h3 class="font-bold text-sm text-white leading-tight group-hover:text-blue-300 transition-colors line-clamp-1 pr-2">
+                                <span class="text-xs text-white/40 font-normal mr-1">#{{ sol.id }}</span>
                                 {{ sol.titulo }}
                             </h3>
                             <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase flex items-center gap-1 shrink-0 shadow-sm" :class="getEstadoClass(sol.estado)">
@@ -88,11 +88,11 @@ const getEstadoIcon = (estado) => {
 
                         <!-- Footer Info Row -->
                         <div class="flex justify-between items-center pl-2 mt-1">
-                            <div class="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400 max-w-[65%] truncate" title="Agencia">
-                                <i class="fas fa-building text-gray-400 text-[10px]"></i>
+                            <div class="flex items-center gap-1.5 text-[11px] text-white/60 max-w-[65%] truncate" title="Agencia">
+                                <i class="fas fa-building text-white/30 text-[10px]"></i>
                                 <span class="truncate font-medium">{{ sol.agencia?.nombre || 'Sin Agencia' }}</span>
                             </div>
-                            <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium shrink-0">
+                            <div class="flex items-center gap-1.5 text-[10px] text-white/40 font-medium shrink-0">
                                 <i class="far fa-calendar-alt"></i>
                                 {{ new Date(sol.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) }}
                             </div>
@@ -100,13 +100,13 @@ const getEstadoIcon = (estado) => {
                     </div>
                 </div>
             </div>
-            <div class="p-4 shrink-0 flex justify-center bg-white dark:bg-gray-800 z-10 border-t border-gray-100 dark:border-gray-700">
+            <div class="p-4 shrink-0 flex justify-center bg-white/5 z-10 border-t border-white/10">
                  <div class="flex items-center gap-1 bg-gray-50 dark:bg-gray-700/50 p-1 rounded-xl border border-gray-200 dark:border-gray-600 shadow-inner inline-flex">
                      <button @click="$emit('cambiarPagina', pagination.current_page - 1)" :disabled="pagination.current_page === 1" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white dark:bg-gray-600 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-500 text-gray-600 dark:text-gray-300 disabled:opacity-50 disabled:shadow-none transition-all disabled:pointer-events-none">
                          <i class="fas fa-chevron-left"></i>
                      </button>
-                     <span class="text-[11px] px-3 font-bold text-gray-500 dark:text-gray-400 tracking-widest uppercase">
-                         Pág {{ pagination.current_page }} <span class="mx-0.5 font-normal text-gray-300 dark:text-gray-600">/</span> {{ pagination.last_page }}
+                     <span class="text-[11px] px-3 font-bold text-white/60 tracking-widest uppercase">
+                         Pág {{ pagination.current_page }} <span class="mx-0.5 font-normal text-white/20">/</span> {{ pagination.last_page }}
                      </span>
                      <button @click="$emit('cambiarPagina', pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white dark:bg-gray-600 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-500 text-gray-600 dark:text-gray-300 disabled:opacity-50 disabled:shadow-none transition-all disabled:pointer-events-none">
                          <i class="fas fa-chevron-right"></i>
@@ -116,7 +116,7 @@ const getEstadoIcon = (estado) => {
         </div>
 
         <!-- VISTA DE DETALLE -->
-        <div v-else class="flex flex-col h-full overflow-hidden bg-white dark:bg-gray-800 relative z-10 w-full">
+        <div v-else class="flex flex-col h-full overflow-hidden bg-transparent relative z-10 w-full">
              <div class="p-4 shrink-0 flex items-center justify-between z-10 shadow-sm" style="background-color: var(--color-azul-cope)">
                 <button @click="$emit('verBackToList')" class="text-blue-900 dark:text-blue-100 hover:text-blue-950 dark:hover:text-white bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition px-3 py-1.5 text-xs flex items-center gap-2 font-bold rounded-lg shadow-sm">
                     <i class="fas fa-arrow-left"></i> Volver a la Lista
@@ -132,76 +132,76 @@ const getEstadoIcon = (estado) => {
             <div class="flex-1 overflow-y-auto p-5 custom-scrollbar relative">
                 <div v-if="loadingDetail" class="space-y-6 animate-pulse p-2">
                     <div>
-                        <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
-                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                        <div class="h-3 bg-white/10 rounded w-24 mb-2"></div>
+                        <div class="h-6 bg-white/10 rounded w-3/4"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-gray-900/50 p-6 rounded-2xl shadow-inner">
                         <div v-for="i in 6" :key="i">
-                            <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                            <div class="h-2 bg-white/10 rounded w-16 mb-2"></div>
+                            <div class="h-4 bg-white/10 rounded w-32"></div>
                         </div>
                     </div>
                     <div>
-                        <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-3"></div>
-                        <div class="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-800 space-y-2">
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6"></div>
+                        <div class="h-3 bg-white/10 rounded w-24 mb-3"></div>
+                        <div class="bg-white/5 border border-white/10 animate-pulse">
+                            <div class="h-4 bg-white/10 rounded w-full"></div>
+                            <div class="h-4 bg-white/10 rounded w-5/6"></div>
+                            <div class="h-4 bg-white/10 rounded w-4/6"></div>
                         </div>
                     </div>
                 </div>
                 <template v-else-if="solicitudDetalle">
                     <div class="space-y-6">
                         <div>
-                            <div class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Título</div>
-                            <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">{{ solicitudDetalle.titulo }}</h1>
+                            <div class="text-xs text-white/40">Título</div>
+                            <h1 class="text-xl font-bold text-white">{{ solicitudDetalle.titulo }}</h1>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl shadow-inner border border-gray-100 dark:border-gray-800">
+                        <div class="grid grid-cols-2 gap-4 bg-white/5 p-6 rounded-2xl shadow-inner border border-white/10">
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="fas fa-building text-gray-300"></i> Agencia
                                 </span>
-                                <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ solicitudDetalle.agencia?.nombre || 'S/A' }}</span>
+                                <span class="text-sm font-bold text-white/80">{{ solicitudDetalle.agencia?.nombre || 'S/A' }}</span>
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="fas fa-tags text-gray-300"></i> Categoría
                                 </span>
-                                <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ solicitudDetalle.categoria_general_id === 1 ? 'Tecnológico' : 'Administrativo' }}</span>
+                                <span class="text-sm font-bold text-white/80">{{ solicitudDetalle.categoria_general_id === 1 ? 'Tecnológico' : 'Administrativo' }}</span>
                             </div>
-                            <div class="flex flex-col pt-2 border-t border-gray-200 dark:border-gray-700">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                            <div class="flex flex-col pt-2 border-t border-white/10">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="fas fa-user text-gray-300"></i> Solicitante
                                 </span>
-                                <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ solicitudDetalle.creado_por?.name || 'Sistema' }}</span>
-                                <span class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{{ solicitudDetalle.creado_por?.puesto?.nombre || 'Sin puesto' }}</span>
+                                <span class="text-sm font-bold text-white/80">{{ solicitudDetalle.creado_por?.name || 'Sistema' }}</span>
+                                <span class="text-[10px] text-white/60">{{ solicitudDetalle.creado_por?.puesto?.nombre || 'Sin puesto' }}</span>
                             </div>
-                            <div class="flex flex-col pt-2 border-t border-gray-200 dark:border-gray-700">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                            <div class="flex flex-col pt-2 border-t border-white/10">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="fas fa-user-check text-gray-300"></i> Responsable
                                 </span>
-                                <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ solicitudDetalle.responsable?.name || 'No Asignado' }}</span>
+                                <span class="text-sm font-bold text-white/80">{{ solicitudDetalle.responsable?.name || 'No Asignado' }}</span>
                             </div>
-                            <div class="flex flex-col pt-2 border-t border-gray-200 dark:border-gray-700">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                            <div class="flex flex-col pt-2 border-t border-white/10">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="far fa-calendar-plus text-gray-300"></i> F. Creación
                                 </span>
-                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ new Date(solicitudDetalle.created_at).toLocaleString() }}</span>
+                                <span class="text-xs font-medium text-white/40">{{ new Date(solicitudDetalle.created_at).toLocaleString() }}</span>
                             </div>
-                            <div class="flex flex-col pt-2 border-t border-gray-200 dark:border-gray-700">
-                                <span class="text-[10px] text-gray-400 uppercase font-bold mb-1 flex items-center gap-1.5">
+                            <div class="flex flex-col pt-2 border-t border-white/10">
+                                <span class="text-[10px] text-white/40 uppercase font-bold mb-1 flex items-center gap-1.5">
                                     <i class="far fa-edit text-gray-300"></i> F. Actualización
                                 </span>
-                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ new Date(solicitudDetalle.updated_at).toLocaleString() }}</span>
+                                <span class="text-xs font-medium text-white/40">{{ new Date(solicitudDetalle.updated_at).toLocaleString() }}</span>
                             </div>
                         </div>
 
                         <div>
                             <div class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2 ml-1 flex items-center gap-2">
-                                <i class="fas fa-align-left text-gray-400"></i> Descripción
+                                <i class="fas fa-align-left text-white/40"></i> Descripción
                             </div>
-                            <div class="bg-gray-50 dark:bg-gray-900/60 p-5 rounded-2xl text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap leading-relaxed shadow-inner border border-gray-100 dark:border-gray-800">
+                            <div class="bg-white/5 p-5 rounded-2xl text-white/80 text-sm whitespace-pre-wrap leading-relaxed shadow-inner border border-white/10">
                                 {{ solicitudDetalle.descripcion }}
                             </div>
                         </div>
