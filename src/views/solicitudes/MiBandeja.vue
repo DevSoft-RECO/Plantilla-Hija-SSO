@@ -168,6 +168,42 @@ const handleConfirmarValidacion = async (validarData) => {
     }
 };
 
+const handleExportCSV = async () => {
+    try {
+        Swal.fire({
+            title: 'Generando Reporte',
+            text: 'Por favor espere...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        const response = await SolicitudService.exportSolicitudes({
+            mis_asignaciones: 'true',
+            categoria_general_id: filtros.value.tipo,
+            estado: filtros.value.estado,
+            agencia_id: filtros.value.agencia
+        });
+
+        // Crear un link para descargar el blob
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `reporte_solicitudes_${new Date().getTime()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+        Swal.close();
+    } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'No se pudo generar el reporte', 'error');
+    }
+};
+
 // --- WATCHERS ---
 watch(filtros, () => {
     pagination.value.current_page = 1;
@@ -200,6 +236,7 @@ onMounted(() => {
                 @confirmar-cierre="handleConfirmarCierre"
                 @confirmar-validacion="handleConfirmarValidacion"
                 @update-filtros="handleUpdateFiltros"
+                @export-csv="handleExportCSV"
             />
 
             <!-- Top Right: Interactive Chat/History -->

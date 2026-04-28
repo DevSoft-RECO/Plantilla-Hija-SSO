@@ -4,6 +4,9 @@ export default {
     getSolicitudes(params) {
         return axios.get('/solicitudes', { params });
     },
+    exportSolicitudes(params) {
+        return axios.get('/solicitudes/export', { params, responseType: 'blob' });
+    },
     getMisSolicitudes(params) {
         return axios.get('/solicitudes/mis-solicitudes', { params });
     },

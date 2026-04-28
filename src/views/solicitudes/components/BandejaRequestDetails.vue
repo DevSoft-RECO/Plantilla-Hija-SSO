@@ -13,7 +13,7 @@ const props = defineProps({
     filtros: Object
 });
 
-const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'update-filtros', 'solicitud-reasignada']);
+const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'confirmar-cierre', 'update-filtros', 'solicitud-reasignada', 'export-csv']);
 
 const statusTabs = [
     { label: 'Todas', value: '' },
@@ -90,9 +90,18 @@ const submitCierre = () => {
                     <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase min-w-0">
                         <i class="fas fa-list-ul text-white/80 text-[10px] shrink-0"></i> <span class="truncate">Mi Bandeja Tecnologica</span>
                     </h2>
-                    <span class="text-[10px] font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full shadow-sm shrink-0 whitespace-nowrap">
-                        {{ pagination.total }} TOTAL
-                    </span>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button 
+                            @click="$emit('export-csv')"
+                            class="text-[10px] font-extrabold text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded-lg transition-all flex items-center gap-2 shadow-sm border border-white/10 hover:scale-105 active:scale-95"
+                            title="Descargar Reporte en Excel/CSV"
+                        >
+                            <i class="fas fa-file-download text-xs"></i> <span>DESCARGAR REPORTES</span>
+                        </button>
+                        <span class="text-[10px] font-bold text-blue-900 dark:text-gray-100 bg-white dark:bg-gray-700 px-2 py-0.5 rounded-full shadow-sm shrink-0 whitespace-nowrap">
+                            {{ pagination.total }} TOTAL
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Header Part 2: Functional Filters -->
