@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import SolicitudService from '@/services/SolicitudService';
 import Swal from 'sweetalert2';
 import AsignarSolicitudModal from './components/AsignarSolicitudModal.vue';
@@ -8,6 +8,7 @@ import TomarCasoModal from './components/TomarCasoModal.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const solicitud = ref(null);
 const loading = ref(true);
@@ -239,6 +240,9 @@ const enviarSeguimiento = async () => {
         saving.value = false;
     }
 };
+const backToBandeja = () => {
+    router.push({ name: 'bandeja-solicitudes' });
+};
 </script>
 
 <template>
@@ -249,17 +253,21 @@ const enviarSeguimiento = async () => {
 
             <!-- Columna Izquierda: Información -->
             <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-2xl border border-white/20">
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-2xl border border-verde-cope/30">
+                    <button @click="backToBandeja" class="text-white/40 hover:text-white mb-6 flex items-center gap-2 text-sm transition-colors">
+                        <i class="fas fa-arrow-left"></i> Volver a la Bandeja
+                    </button>
+
                     <div class="mb-4">
                         <span
-                            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+                            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border"
                             :class="{
-                                'bg-red-50 text-red-700': solicitud.estado === 'reportada',
-                                'bg-blue-50 text-blue-700': solicitud.estado === 'asignada',
-                                'bg-yellow-50 text-yellow-700': solicitud.estado === 'en_seguimiento',
-                                'bg-purple-50 text-purple-700': solicitud.estado === 'pendiente_validacion',
-                                'bg-green-50 text-green-700': solicitud.estado === 'cerrada',
-                                'bg-orange-50 text-orange-700': solicitud.estado === 'reabierta'
+                                'bg-red-500/20 text-red-200 border-red-500/30': solicitud.estado === 'reportada',
+                                'bg-blue-500/20 text-blue-200 border-blue-500/30': solicitud.estado === 'asignada',
+                                'bg-yellow-500/20 text-yellow-200 border-yellow-500/30': solicitud.estado === 'en_seguimiento',
+                                'bg-purple-500/20 text-purple-200 border-purple-500/30': solicitud.estado === 'pendiente_validacion',
+                                'bg-green-500/20 text-green-200 border-green-500/30': solicitud.estado === 'cerrada',
+                                'bg-orange-500/20 text-orange-200 border-orange-500/30': solicitud.estado === 'reabierta'
                             }"
                         >
                             {{ solicitud.estado?.replace('_', ' ') }}
@@ -303,8 +311,8 @@ const enviarSeguimiento = async () => {
                                         </option>
                                     </select>
                                     <div class="flex items-center gap-2">
-                                        <button @click="saveAgencia" class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold hover:bg-green-200">Guardar</button>
-                                        <button @click="cancelEditAgencia" class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold hover:bg-red-200">Cancelar</button>
+                                        <button @click="saveAgencia" class="bg-verde-cope text-white px-2 py-1 rounded text-xs font-bold hover:opacity-90">Guardar</button>
+                                        <button @click="cancelEditAgencia" class="bg-white/10 text-white/60 px-2 py-1 rounded text-xs font-bold hover:bg-white/20">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -327,18 +335,18 @@ const enviarSeguimiento = async () => {
 
                         <div class="pt-4 flex flex-col gap-2">
                             <!-- Botones solo para casos reportados (sin asignar) -->
-                            <div v-if="solicitud.estado === 'reportada'" class="flex gap-2">
-                                <button @click="asignarCaso" class="flex-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-bold py-2 rounded transition">
+                            <div v-if="solicitud.estado === 'reportada'" class="flex gap-3">
+                                <button @click="asignarCaso" class="flex-1 bg-white/5 border border-verde-cope/30 hover:bg-verde-cope/10 text-white text-[10px] font-bold py-2.5 rounded-lg transition uppercase tracking-wider">
                                     <i class="fas fa-user-plus mr-1"></i> Asignar
                                 </button>
-                                <button @click="tomarCaso" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition">
+                                <button @click="tomarCaso" class="flex-1 bg-verde-cope hover:opacity-90 text-white text-[10px] font-bold py-2.5 rounded-lg transition uppercase tracking-widest shadow-lg shadow-emerald-900/20">
                                     <i class="fas fa-hand-holding-medical mr-1"></i> Tomar Caso
                                 </button>
                             </div>
 
                             <!-- Botón de reasignación para casos ya asignados -->
                             <div v-else-if="['asignada', 'en_seguimiento', 'pendiente_validacion', 'reabierta'].includes(solicitud.estado)" class="flex gap-2">
-                                <button @click="asignarCaso" class="w-full bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold py-2 rounded transition">
+                                <button @click="asignarCaso" class="w-full bg-orange-500/20 border border-orange-500/30 hover:bg-orange-500/30 text-orange-200 text-[10px] font-bold py-2.5 rounded-lg transition uppercase tracking-widest">
                                     <i class="fas fa-user-edit mr-1"></i> Reasignar Caso
                                 </button>
                             </div>
@@ -347,7 +355,7 @@ const enviarSeguimiento = async () => {
                             <button
                                 v-if="solicitud.estado === 'pendiente_validacion' && authStore.user.tipo !== 'externo'"
                                 @click="abrirValidarModal"
-                                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition flex items-center justify-center gap-2 mt-2"
+                                class="w-full bg-purple-600/40 border border-purple-500/30 hover:bg-purple-600/60 text-white font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2 mt-2 text-[10px] uppercase tracking-widest"
                             >
                                 <i class="fas fa-clipboard-check"></i> Validar Solución
                             </button>
@@ -357,31 +365,31 @@ const enviarSeguimiento = async () => {
             </div>
 
             <!-- Columna Derecha: Chat / Seguimiento -->
-            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 h-[600px]">
+            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 h-[600px] overflow-hidden">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <div class="flex items-center gap-4">
                         <!-- Tabs Selector -->
-                        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                        <div class="flex bg-white/5 border border-white/10 rounded-lg p-1">
                             <button
                                 @click="activeTab = 'chat'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
-                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
+                                :class="activeTab === 'chat' ? 'bg-white text-[var(--color-verde-cope)] shadow-sm' : 'text-white/40 hover:text-white'"
                             >
                                 Actividad
                             </button>
                             <button
                                 @click="activeTab = 'files'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
-                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
+                                :class="activeTab === 'files' ? 'bg-white text-[var(--color-verde-cope)] shadow-sm' : 'text-white/40 hover:text-white'"
                             >
                                 Archivos
-                                <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
+                                <span v-if="allAttachments.length" class="bg-verde-cope text-white px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
                             </button>
                         </div>
 
                          <button
                             @click="cargarDetalle(true)"
-                            class="text-gray-500 hover:text-indigo-600 transition p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                            class="text-white/40 hover:text-white transition p-1.5 rounded-full hover:bg-white/10"
                             title="Actualizar conversación"
                             :disabled="refreshing"
                         >
@@ -394,10 +402,10 @@ const enviarSeguimiento = async () => {
                     <button
                         v-if="solicitud.estado !== 'cerrada'"
                         @click="toggleIntervenir"
-                        class="text-xs px-3 py-1 rounded-full border transition-colors flex items-center gap-1"
-                        :class="isIntervenir ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'"
+                        class="text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-lg border transition-all"
+                        :class="isIntervenir ? 'bg-orange-500/20 text-orange-200 border-orange-500/30' : 'bg-white/5 text-white/40 border-white/10 hover:bg-white/10 hover:text-white'"
                     >
-                        <i class="fas" :class="isIntervenir ? 'fa-unlock' : 'fa-lock'"></i>
+                        <i class="fas mr-1.5" :class="isIntervenir ? 'fa-unlock' : 'fa-lock'"></i>
                         {{ isIntervenir ? 'Interviniendo' : 'Intervenir' }}
                     </button>
                 </div>
@@ -414,17 +422,17 @@ const enviarSeguimiento = async () => {
                             :key="i"
                             :href="file.url"
                             target="_blank"
-                            class="group relative aspect-square bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+                            class="group relative aspect-square bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"
                         >
                             <img v-if="file.is_image" :src="file.url" class="w-full h-full object-cover">
-                            <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 group-hover:bg-gray-100 transition gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
+                            <div v-else class="w-full h-full flex flex-col items-center justify-center bg-white/5 group-hover:bg-white/10 transition gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white/40">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                 </svg>
-                                <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
+                                <span class="text-[10px] font-bold text-white/40 uppercase">Archivo</span>
                             </div>
                             <!-- Metadata overlay on hover -->
-                            <div class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition">
+                            <div class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[9px] font-bold p-1 truncate opacity-0 group-hover:opacity-100 transition tracking-tighter uppercase">
                                 {{ formatFecha(file.date) }}
                             </div>
                         </a>
@@ -442,26 +450,26 @@ const enviarSeguimiento = async () => {
                         class="flex gap-3"
                         :class="{ 'flex-row-reverse': seg.seguimiento_por_id === authStore.user.id }"
                      >
-                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
-                             :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-indigo-500 text-white' : 'bg-white/10 text-white/80'">
+                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm border border-white/20"
+                             :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-white/10 text-white' : 'bg-orange-500/20 text-orange-200'">
                              {{ seg.seguimiento_por_nombre?.charAt(0) }}
                         </div>
 
-                        <div class="max-w-[80%] rounded-2xl p-3 text-sm shadow-sm"
+                        <div class="max-w-[80%] rounded-2xl p-4 text-sm shadow-sm border"
                              :class="[
                                 seg.seguimiento_por_id === authStore.user.id
-                                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                                    : 'bg-white border text-gray-700 rounded-tl-none'
+                                    ? 'bg-blue-600/40 text-white border-blue-500/30 rounded-tr-none'
+                                    : 'bg-white/5 border-white/10 text-white/90 rounded-tl-none'
                              ]">
-                             <div class="flex justify-between items-center gap-4 mb-1 opacity-80 text-[10px] uppercase font-bold">
+                             <div class="flex justify-between items-center gap-4 mb-2 opacity-50 text-[9px] uppercase font-bold tracking-widest">
                                 <span>{{ seg.seguimiento_por_nombre }}</span>
                                 <span>{{ formatFecha(seg.created_at) }}</span>
                              </div>
-                             <p class="whitespace-pre-wrap">{{ seg.comentario }}</p>
+                             <p class="whitespace-pre-wrap leading-relaxed">{{ seg.comentario }}</p>
 
-                             <div v-if="seg.evidencias?.length" class="mt-2 flex flex-wrap gap-2">
-                                <a v-for="(ev, i) in seg.evidencias" :key="i" :href="ev" target="_blank" class="px-2 py-1 bg-black/10 rounded text-xs hover:bg-black/20 transition flex items-center gap-1">
-                                    <i class="fas fa-paperclip"></i> Adjunto
+                             <div v-if="seg.evidencias?.length" class="mt-3 flex flex-wrap gap-2">
+                                <a v-for="(ev, i) in seg.evidencias" :key="i" :href="ev" target="_blank" class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold uppercase tracking-tighter hover:bg-white/10 transition flex items-center gap-2">
+                                    <i class="fas fa-paperclip text-white/40"></i> Adjunto
                                 </a>
                              </div>
                         </div>
@@ -469,19 +477,19 @@ const enviarSeguimiento = async () => {
                     </template>
                 </div>
 
-                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-white/10">
+                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-white/5 border-t border-white/10">
                     <!-- Overlay de bloqueo -->
-                    <div v-if="isChatLocked" class="text-center py-2">
-                        <p class="text-sm text-white/40 italic mb-2">El chat está en modo solo lectura.</p>
-                        <button @click="toggleIntervenir" class="text-blue-600 text-xs hover:underline">Habilitar escritura</button>
+                    <div v-if="isChatLocked" class="text-center py-4 bg-orange-500/10 rounded-xl border border-orange-500/20 mb-2">
+                        <p class="text-xs text-orange-200/60 font-bold uppercase tracking-widest mb-2">Modo Solo Lectura</p>
+                        <button @click="toggleIntervenir" class="text-orange-500 text-[10px] uppercase font-black hover:underline tracking-widest">Habilitar Escritura</button>
                     </div>
 
-                    <div v-else class="flex flex-col gap-2 transition-all">
-                        <textarea v-model="nuevoSeguimiento.comentario" rows="2" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 resize-none" placeholder="Escribe un comentario..."></textarea>
+                    <div v-else class="flex flex-col gap-3 transition-all">
+                        <textarea v-model="nuevoSeguimiento.comentario" rows="2" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 resize-none text-white outline-none placeholder:text-white/20 shadow-inner" placeholder="Escribe un comentario..."></textarea>
                         <div class="flex justify-end items-center">
-                            <button @click="enviarSeguimiento" :disabled="saving" class="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-2">
+                            <button @click="enviarSeguimiento" :disabled="saving" class="bg-[var(--color-azul-cope)] hover:opacity-90 text-white px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition flex items-center gap-2 disabled:opacity-50 shadow-lg">
                                 <i v-if="saving" class="fas fa-spinner fa-spin"></i>
-                                <span>Enviar</span>
+                                <span>Enviar <i class="fas fa-paper-plane ml-1"></i></span>
                             </button>
                         </div>
                     </div>
@@ -508,66 +516,77 @@ const enviarSeguimiento = async () => {
             :isOpen="showTomarModal"
             :solicitudId="solicitud.id"
             :categoriaGeneralId="solicitud.categoria_general_id"
-            @close="showTomarModal = false"
             @taken="onCaseTaken"
         />
 
         <!-- Modal Validar -->
-        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-                <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
-                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60">
+            <div class="bg-[#1e293b]/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-purple-500/30 animate-fade-in-up">
+                <div class="bg-purple-600 p-5 text-white flex justify-between items-center shadow-lg">
+                    <h3 class="font-bold text-lg uppercase tracking-wider"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
+                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-2 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
 
-                <div class="p-6 space-y-4">
-                     <p class="text-sm text-gray-600 dark:text-gray-300">
+                <div class="p-6 space-y-6">
+                     <p class="text-sm text-white/80">
                         ¿Cómo deseas proceder con esta solicitud que está pendiente de validación?
                      </p>
 
                      <div class="flex gap-4">
-                        <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'cerrar' ? 'ring-2 ring-green-500 border-green-500 bg-green-50' : 'border-gray-200'">
+                        <label class="flex-1 border p-4 rounded-xl cursor-pointer transition-all duration-300 group" :class="validarData.accion === 'cerrar' ? 'bg-verde-cope/20 border-verde-cope shadow-lg shadow-emerald-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'">
                             <input type="radio" v-model="validarData.accion" value="cerrar" class="hidden">
                             <div class="text-center">
-                                <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
-                                <div class="font-bold text-sm text-gray-800">Aprobar y Cerrar</div>
+                                <i class="fas fa-check-circle text-3xl mb-2 transition-transform group-hover:scale-110" :class="validarData.accion === 'cerrar' ? 'text-verde-cope' : 'text-white/20'"></i>
+                                <div class="font-bold text-[10px] uppercase tracking-widest" :class="validarData.accion === 'cerrar' ? 'text-white' : 'text-white/40'">Aprobar y Cerrar</div>
                             </div>
                         </label>
 
-                         <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'reabrir' ? 'ring-2 ring-orange-500 border-orange-500 bg-orange-50' : 'border-gray-200'">
+                         <label class="flex-1 border p-4 rounded-xl cursor-pointer transition-all duration-300 group" :class="validarData.accion === 'reabrir' ? 'bg-orange-500/20 border-orange-500 shadow-lg shadow-orange-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'">
                             <input type="radio" v-model="validarData.accion" value="reabrir" class="hidden">
                             <div class="text-center">
-                                <i class="fas fa-undo text-2xl text-orange-500 mb-2"></i>
-                                <div class="font-bold text-sm text-gray-800">Rechazar / Devolver</div>
+                                <i class="fas fa-undo text-3xl mb-2 transition-transform group-hover:scale-110" :class="validarData.accion === 'reabrir' ? 'text-orange-500' : 'text-white/20'"></i>
+                                <div class="font-bold text-[10px] uppercase tracking-widest" :class="validarData.accion === 'reabrir' ? 'text-white' : 'text-white/40'">Rechazar</div>
                             </div>
                         </label>
                      </div>
 
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentario de Validación <span class="text-red-500">*</span></label>
-                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" placeholder="Motivo de la aprobación o rechazo..."></textarea>
+                        <label class="block text-[10px] font-bold text-white/40 uppercase mb-2 tracking-widest">Comentario de Validación <span class="text-red-500">*</span></label>
+                        <textarea v-model="validarData.comentario" rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-500 resize-none text-white outline-none placeholder:text-white/20" placeholder="Motivo de la aprobación o rechazo..."></textarea>
                      </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t">
-                    <button @click="showValidarModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition font-medium">Cancelar</button>
+                <div class="p-5 bg-white/5 flex justify-end gap-3 border-t border-white/10">
+                    <button @click="showValidarModal = false" class="px-5 py-2 text-white/60 hover:text-white transition-colors font-bold text-xs uppercase tracking-widest">Cancelar</button>
                     <button
                         @click="confirmarValidacion"
                         :disabled="validarLoading"
-                        class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md transition font-medium flex items-center gap-2 disabled:opacity-70"
+                        class="px-6 py-2.5 bg-purple-600 hover:opacity-90 text-white rounded-xl shadow-lg shadow-purple-900/20 transition font-bold text-xs uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
                     >
                         <i v-if="validarLoading" class="fas fa-spinner fa-spin"></i>
-                        Confirmar
+                        Confirmar Acción
                     </button>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar { width: 6px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-verde-cope);
+}
 </style>
