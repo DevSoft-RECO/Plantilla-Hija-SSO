@@ -133,8 +133,8 @@ const eliminarSolicitud = async (id) => {
     <div class="p-4 sm:p-6 h-[calc(100dvh-80px)] md:h-[calc(100vh-80px)] overflow-hidden flex flex-col">
         <div class="flex justify-between items-center mb-4 sm:mb-6 flex-shrink-0">
             <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Bandeja de Solicitudes</h1>
-                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Gestión centralizada de casos</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-white">Bandeja de Solicitudes</h1>
+                <p class="text-xs sm:text-sm text-white/70">Gestión centralizada de casos</p>
             </div>
         </div>
 

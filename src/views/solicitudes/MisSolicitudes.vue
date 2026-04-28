@@ -82,8 +82,8 @@ const getEstadoClass = (estado) => {
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ pageTitle }}</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Solicitudes reportadas por mí</p>
+                <h1 class="text-2xl font-bold text-white">{{ pageTitle }}</h1>
+                <p class="text-sm text-white/70">Solicitudes reportadas por mí</p>
             </div>
             <!-- Botón opcional para recargar -->
             <button @click="cargarSolicitudes" class="text-blue-600 hover:text-blue-800 transition">
@@ -172,8 +172,8 @@ const getEstadoClass = (estado) => {
 
         <!-- Pagination Controls -->
         <div v-if="lastPage > 1" class="flex justify-between items-center mt-6">
-            <span class="text-sm text-gray-600 dark:text-gray-400">
-                Página <span class="font-bold text-gray-900 dark:text-white">{{ currentPage }}</span> de <span class="font-bold text-gray-900 dark:text-white">{{ lastPage }}</span>
+            <span class="text-sm text-white/70">
+                Página <span class="font-bold text-white">{{ currentPage }}</span> de <span class="font-bold text-white">{{ lastPage }}</span>
             </span>
             <div class="flex gap-2">
                 <button

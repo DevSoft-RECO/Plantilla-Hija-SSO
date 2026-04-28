@@ -129,7 +129,7 @@ const eliminarCategoria = async (id) => {
 <template>
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Gestión de Categorías Generales</h1>
+            <h1 class="text-2xl font-bold text-white">Gestión de Categorías Generales</h1>
             <button @click="crearCategoria" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition shadow-lg">
                 + Nueva Categoría General
             </button>

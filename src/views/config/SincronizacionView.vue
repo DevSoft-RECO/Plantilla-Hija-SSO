@@ -56,7 +56,7 @@ onMounted(() => {
 
 <template>
     <div class="p-6 max-w-4xl mx-auto">
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Sincronización de Datos</h1>
+        <h1 class="text-2xl font-bold text-white mb-6">Sincronización de Datos</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Card Agencias -->

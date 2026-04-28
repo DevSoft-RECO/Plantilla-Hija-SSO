@@ -1,5 +1,7 @@
 <template>
-  <div class="flex h-screen bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 font-sans overflow-hidden transition-colors duration-300">
+  <div class="flex h-screen bg-linear-to-br from-[#013d7b] via-[#012a55] to-[#011a3b] dark:bg-gray-950 text-white dark:text-gray-100 font-sans overflow-hidden transition-colors duration-300 relative">
+    <!-- Capa de profundidad opcional para el fondo -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from)_0%,_transparent_40%)] from-white/10 to-transparent pointer-events-none"></div>
 
     <AdminSidebar />
 
@@ -10,7 +12,7 @@
 
       <AdminHeader />
 
-      <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 relative custom-scrollbar">
+      <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 relative custom-scrollbar text-white">
         <RouterView v-slot="{ Component }">
             <component :is="Component" />
         </RouterView>

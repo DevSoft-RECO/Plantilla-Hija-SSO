@@ -15,10 +15,10 @@
           <!-- Header & Filters -->
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 sm:mb-6">
               <div>
-                  <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
+                  <h2 class="text-xl sm:text-2xl font-bold text-white">
                       Dashboard de TICKETS
                   </h2>
-                  <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
+                  <p class="text-white/70 text-xs sm:text-sm">
                       Resumen de operaciones y métricas clave
                   </p>
               </div>
@@ -160,12 +160,12 @@
               <!-- KPI Cards -->
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <!-- Total -->
-                  <div class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                  <div class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-white/20 flex items-center justify-between transition-all hover:bg-white/20">
                       <div>
-                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Total Solicitudes</p>
-                          <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mt-1">{{ metrics.kpi?.total || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-white/70">Total Solicitudes</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-white mt-1">{{ metrics.kpi?.total || 0 }}</h3>
                       </div>
-                      <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
+                      <div class="p-3 bg-blue-500/20 rounded-lg text-white">
                           <i class="fas fa-clipboard-list text-xl"></i>
                       </div>
                   </div>
@@ -173,14 +173,14 @@
                   <!-- Open -->
                   <div
                     @click="canDrillDown ? navigateTo('abiertas') : null"
-                    :class="{'cursor-pointer hover:border-emerald-400 transition-colors': canDrillDown}"
-                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+                    :class="{'cursor-pointer hover:bg-white/20 transition-all border-emerald-400/50': canDrillDown}"
+                    class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-white/20 flex items-center justify-between"
                   >
                       <div>
-                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Abiertas</p>
-                          <h3 class="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ metrics.kpi?.open || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-white/70">Abiertas</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-emerald-400 mt-1">{{ metrics.kpi?.open || 0 }}</h3>
                       </div>
-                      <div class="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
+                      <div class="p-3 bg-emerald-500/20 rounded-lg text-emerald-400">
                           <i class="fas fa-clock text-xl"></i>
                       </div>
                   </div>
@@ -188,25 +188,25 @@
                    <!-- Pending Validation -->
                    <div
                      @click="canDrillDown ? navigateTo('validacion') : null"
-                     :class="{'cursor-pointer hover:border-amber-400 transition-colors': canDrillDown}"
-                     class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between"
+                     :class="{'cursor-pointer hover:bg-white/20 transition-all border-amber-400/50': canDrillDown}"
+                     class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-white/20 flex items-center justify-between"
                    >
                       <div>
-                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Por Validar</p>
-                          <h3 class="text-2xl sm:text-3xl font-bold text-amber-500 dark:text-amber-400 mt-1">{{ metrics.kpi?.validation || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-white/70">Por Validar</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-amber-400 mt-1">{{ metrics.kpi?.validation || 0 }}</h3>
                       </div>
-                      <div class="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-amber-500 dark:text-amber-400">
+                      <div class="p-3 bg-amber-500/20 rounded-lg text-amber-400">
                           <i class="fas fa-check-circle text-xl"></i>
                       </div>
                   </div>
 
                    <!-- Closed -->
-                   <div class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                   <div class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-white/20 flex items-center justify-between transition-all hover:bg-white/20">
                       <div>
-                          <p class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">Cerradas</p>
-                          <h3 class="text-2xl sm:text-3xl font-bold text-gray-400 dark:text-gray-500 mt-1">{{ metrics.kpi?.closed || 0 }}</h3>
+                          <p class="text-xs sm:text-sm font-medium text-white/70">Cerradas</p>
+                          <h3 class="text-2xl sm:text-3xl font-bold text-white/60 mt-1">{{ metrics.kpi?.closed || 0 }}</h3>
                       </div>
-                      <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-gray-400 dark:text-gray-500">
+                      <div class="p-3 bg-white/10 rounded-lg text-white/60">
                           <i class="fas fa-archive text-xl"></i>
                       </div>
                   </div>
@@ -217,16 +217,16 @@
                   <!-- Total Resolution -->
                   <div
                     @click="canDrillDown && metrics.resolution?.total > 0 ? openResolutionModal('total') : null"
-                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-l-4 border-l-emerald-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
-                    :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
+                    class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-l-4 border-l-emerald-500 border-y-white/10 border-r-white/10 transition-all group"
+                    :class="{ 'cursor-pointer hover:bg-white/20': canDrillDown }"
                   >
                       <div class="flex items-center justify-between">
                          <div>
-                             <p class="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 mb-1 uppercase tracking-wider">Solución Total</p>
-                             <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.total || 0 }}</h3>
-                             <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas al 100%</p>
+                             <p class="text-xs sm:text-sm font-bold text-emerald-400 mb-1 uppercase tracking-wider">Solución Total</p>
+                             <h3 class="text-2xl sm:text-3xl font-bold text-white">{{ metrics.resolution?.total || 0 }}</h3>
+                             <p class="text-xs text-white/60 mt-1">Solicitudes resueltas al 100%</p>
                          </div>
-                         <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
+                         <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
                              <i class="fas fa-check-double"></i>
                          </div>
                       </div>
@@ -235,16 +235,16 @@
                   <!-- Partial Resolution -->
                    <div
                     @click="canDrillDown && metrics.resolution?.parcial > 0 ? openResolutionModal('parcial') : null"
-                    class="bg-white dark:bg-gray-800 p-4 sm:p-5 rounded-xl shadow-sm border border-l-4 border-l-blue-500 border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 transition-all group"
-                    :class="{ 'cursor-pointer hover:shadow-md': canDrillDown }"
+                    class="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl shadow-xl border border-l-4 border-l-blue-500 border-y-white/10 border-r-white/10 transition-all group"
+                    :class="{ 'cursor-pointer hover:bg-white/20': canDrillDown }"
                   >
                        <div class="flex items-center justify-between">
                          <div>
-                             <p class="text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 mb-1 uppercase tracking-wider">Solución Parcial</p>
-                             <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
-                              <p class="text-xs text-gray-500 mt-1">Solicitudes resueltas parcialmente</p>
+                             <p class="text-xs sm:text-sm font-bold text-blue-400 mb-1 uppercase tracking-wider">Solución Parcial</p>
+                             <h3 class="text-2xl sm:text-3xl font-bold text-white">{{ metrics.resolution?.parcial || 0 }}</h3>
+                              <p class="text-xs text-white/60 mt-1">Solicitudes resueltas parcialmente</p>
                          </div>
-                         <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
+                         <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl transition-transform" :class="{ 'group-hover:scale-110': canDrillDown }">
                              <i class="fas fa-check"></i>
                          </div>
                       </div>
@@ -257,37 +257,37 @@
                    <!-- Left Column: Subcategories & Status -->
                   <div class="space-y-6 flex flex-col">
                       <!-- Subcategories Bar Chart -->
-                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
-                          <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Top Subcategorías</h3>
+                      <div class="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-xl border border-white/20 flex-1">
+                          <h3 class="text-lg font-bold text-white mb-4">Top Subcategorías</h3>
                           <div class="space-y-4">
                               <div v-for="(item, index) in metrics.charts?.subcategories" :key="index" class="space-y-1">
                                   <div class="flex justify-between text-sm">
-                                      <span class="text-gray-600 dark:text-gray-300">{{ item.nombre }}</span>
-                                      <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                                      <span class="text-white/80 dark:text-gray-300">{{ item.nombre }}</span>
+                                      <span class="font-medium text-white dark:text-white">{{ item.count }}</span>
                                   </div>
-                                  <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                                  <div class="w-full bg-white/10 dark:bg-gray-700 rounded-full h-2.5">
                                       <div
                                         class="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
                                         :style="{ width: `${calculateGenericPercentage(item.count)}%` }"
                                       ></div>
                                   </div>
                               </div>
-                              <div v-if="!metrics.charts?.subcategories?.length" class="text-center text-gray-400 py-4">
+                              <div v-if="!metrics.charts?.subcategories?.length" class="text-center text-white/40 py-4">
                                   Sin datos para mostrar
                               </div>
                           </div>
                       </div>
 
                       <!-- Status Distribution -->
-                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1">
-                          <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Estado de Solicitudes</h3>
+                      <div class="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-xl border border-white/20 flex-1">
+                          <h3 class="text-lg font-bold text-white mb-4">Estado de Solicitudes</h3>
                           <div class="space-y-4">
                                <div v-for="(item, index) in metrics.charts?.status" :key="index" class="space-y-1">
                                   <div class="flex justify-between text-sm">
-                                      <span class="text-gray-600 dark:text-gray-300 capitalize">{{ formatStatus(item.estado) }}</span>
-                                      <span class="font-medium text-gray-800 dark:text-white">{{ item.count }}</span>
+                                      <span class="text-white/80 dark:text-gray-300 capitalize">{{ formatStatus(item.estado) }}</span>
+                                      <span class="font-medium text-white dark:text-white">{{ item.count }}</span>
                                   </div>
-                                  <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                                  <div class="w-full bg-white/10 dark:bg-gray-700 rounded-full h-2.5">
                                       <div
                                         class="h-2.5 rounded-full transition-all duration-500"
                                         :class="getStatusColorClass(item.estado)"
@@ -295,7 +295,7 @@
                                       ></div>
                                   </div>
                               </div>
-                              <div v-if="!metrics.charts?.status?.length" class="text-center text-gray-400 py-4">
+                              <div v-if="!metrics.charts?.status?.length" class="text-center text-white/40 py-4">
                                   Sin datos para mostrar
                               </div>
                           </div>
@@ -303,8 +303,8 @@
                   </div>
 
                    <!-- Right Column: Agency Volume (Vertical Bar Chart) -->
-                  <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 flex flex-col h-full">
-                      <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Volumen por Agencia (Top 10)</h3>
+                  <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-xl border border-white/20 flex flex-col h-full">
+                      <h3 class="text-lg font-bold text-white mb-6">Volumen por Agencia (Top 10)</h3>
 
                       <div v-if="metrics.charts?.agencies?.length" class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-8 min-h-[300px]">
                            <!-- Pie Chart -->
@@ -318,14 +318,14 @@
                            <!-- Legend -->
                            <div class="flex-1 w-full xl:w-auto">
                                <ul class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-2">
-                                   <li v-for="(item, index) in metrics.charts?.agencies" :key="index" class="flex items-center justify-between group hover:bg-gray-50 dark:hover:bg-gray-700/50 p-1.5 rounded-lg transition-colors">
+                                   <li v-for="(item, index) in metrics.charts?.agencies" :key="index" class="flex items-center justify-between group hover:bg-white/5 dark:hover:bg-gray-700/50 p-1.5 rounded-lg transition-colors">
                                        <div class="flex items-center gap-2 truncate">
                                            <span class="w-3 h-3 rounded-full shrink-0 shadow-sm" :style="{ backgroundColor: pieColors[index % pieColors.length] }"></span>
-                                           <span class="text-gray-600 dark:text-gray-300 truncate w-[140px] xl:w-[180px]" :title="item.nombre">
+                                           <span class="text-white/80 dark:text-gray-300 truncate w-[140px] xl:w-[180px]" :title="item.nombre">
                                                {{ item.nombre }}
                                            </span>
                                        </div>
-                                       <span class="font-bold text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full text-xs">
+                                       <span class="font-bold text-white dark:text-white bg-white/10 dark:bg-gray-700 px-2 py-0.5 rounded-full text-xs">
                                            {{ item.count }}
                                        </span>
                                    </li>
@@ -334,7 +334,7 @@
                       </div>
 
                        <!-- Empty State -->
-                      <div v-else class="flex-1 flex items-center justify-center text-gray-400">
+                      <div v-else class="flex-1 flex items-center justify-center text-white/40">
                           Sin datos para mostrar
                       </div>
                   </div>
@@ -344,16 +344,16 @@
               </div>
 
               <!-- Full Width Agency Bar Chart (Admin Only - All Agencies) -->
-              <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                  <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Total Solicitudes por todas las agencias</h3>
+              <div v-if="canViewGeneral && !filters.agencia_id" class="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-xl shadow-xl border border-white/20">
+                  <h3 class="text-lg font-bold text-white mb-6">Total Solicitudes por todas las agencias</h3>
                   
                   <div class="space-y-4 max-h-[400px] sm:max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                       <div v-for="(item, index) in metrics.charts?.all_agencies || metrics.charts?.agencies" :key="index" class="space-y-1.5 block">
                           <div class="flex justify-between items-end text-xs sm:text-sm">
-                              <span class="text-gray-600 dark:text-gray-300 truncate pr-4" :title="item.nombre">{{ item.nombre }}</span>
-                              <span class="font-bold text-gray-800 dark:text-white shrink-0">{{ item.count }}</span>
+                              <span class="text-white/80 dark:text-gray-300 truncate pr-4" :title="item.nombre">{{ item.nombre }}</span>
+                              <span class="font-bold text-white dark:text-white shrink-0">{{ item.count }}</span>
                           </div>
-                          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3">
+                          <div class="w-full bg-white/10 dark:bg-gray-700 rounded-full h-3">
                               <div
                                 class="bg-blue-500 hover:bg-blue-400 h-3 rounded-full transition-all duration-500"
                                 :style="{ width: `${calculateGenericPercentage(item.count, (metrics.charts?.all_agencies?.[0]?.count || metrics.charts?.agencies?.[0]?.count))}%` }"
@@ -361,7 +361,7 @@
                           </div>
                       </div>
                       
-                      <div v-if="!(metrics.charts?.all_agencies || metrics.charts?.agencies)?.length" class="text-center text-gray-400 py-4">
+                      <div v-if="!(metrics.charts?.all_agencies || metrics.charts?.agencies)?.length" class="text-center text-white/40 py-4">
                           Sin datos para mostrar
                       </div>
                   </div>
