@@ -447,20 +447,20 @@ const isDeletedFile = (url) => {
         <div v-else class="p-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-100px)]">
 
             <!-- Columna Izquierda: Detalles del Caso -->
-            <div class="lg:col-span-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 p-6 overflow-y-auto custom-scrollbar">
-                <button @click="router.push({ name: backRouteName })" class="text-gray-500 hover:text-gray-700 dark:text-white/40 mb-4 flex items-center gap-2 text-sm">
+            <div class="lg:col-span-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 p-6 overflow-y-auto custom-scrollbar">
+                <button @click="router.push({ name: backRouteName })" class="text-white/40 hover:text-white mb-4 flex items-center gap-2 text-sm transition-colors">
                     <i class="fas fa-arrow-left"></i> Volver a Mi Bandeja
                 </button>
 
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-2 leading-tight">{{ solicitud.titulo }}</h1>
+                <h1 class="text-xl font-bold text-white mb-2 leading-tight">{{ solicitud.titulo }}</h1>
                 <span
-                    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-6"
+                    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-6 border"
                     :class="{
-                        'bg-red-50 text-red-700': solicitud.estado === 'reportada',
-                        'bg-blue-50 text-blue-700': solicitud.estado === 'asignada',
-                        'bg-yellow-50 text-yellow-700': solicitud.estado === 'en_seguimiento',
-                        'bg-purple-50 text-purple-700': solicitud.estado === 'pendiente_validacion',
-                        'bg-green-50 text-green-700': solicitud.estado === 'cerrada'
+                        'bg-red-500/20 text-red-200 border-red-500/30': solicitud.estado === 'reportada',
+                        'bg-blue-500/20 text-blue-200 border-blue-500/30': solicitud.estado === 'asignada',
+                        'bg-yellow-500/20 text-yellow-200 border-yellow-500/30': solicitud.estado === 'en_seguimiento',
+                        'bg-purple-500/20 text-purple-200 border-purple-500/30': solicitud.estado === 'pendiente_validacion',
+                        'bg-green-500/20 text-green-200 border-green-500/30': solicitud.estado === 'cerrada'
                     }"
                 >
                     {{ solicitud.estado?.replace('_', ' ') }}
@@ -469,19 +469,19 @@ const isDeletedFile = (url) => {
                 <div class="mb-6">
                     <h3 class="text-xs font-semibold text-white/40 uppercase mb-2">Solicitante</h3>
                     <div class="flex items-center gap-3">
-                        <div class="bg-blue-100 dark:bg-gray-700 h-8 w-8 rounded-full flex items-center justify-center text-blue-600 dark:text-gray-200 font-bold text-xs">
+                        <div class="bg-white/10 h-8 w-8 rounded-full flex items-center justify-center text-white border border-white/20 font-bold text-xs shadow-sm">
                             {{ (solicitud.creado_por?.name || '?').charAt(0) }}
                         </div>
                         <div>
                             <p class="text-sm font-medium text-white">{{ solicitud.creado_por?.name || 'Usuario desconocido' }}</p>
-                            <p class="text-xs text-gray-500 dark:text-white/40">{{ solicitud.creado_por?.puesto?.nombre || 'Sin Cargo' }}</p>
+                            <p class="text-xs text-white/40">{{ solicitud.creado_por?.puesto?.nombre || 'Sin Cargo' }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-6">
                     <h3 class="text-xs font-semibold text-white/40 uppercase mb-2">Descripción</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">{{ solicitud.descripcion }}</p>
+                    <p class="text-sm text-white/80 whitespace-pre-line leading-relaxed">{{ solicitud.descripcion }}</p>
                 </div>
 
                 <div v-if="solicitud.evidencias_inicial_urls?.length">
@@ -489,7 +489,7 @@ const isDeletedFile = (url) => {
                 </div>
 
                 <!-- Info Contexto -->
-                <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                <div class="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                     <div v-if="solicitud.agencia_id">
                         <span class="block text-xs font-semibold text-white/40 uppercase">Agencia</span>
                         <div class="text-sm font-medium text-white">{{ solicitud.agencia?.nombre }}</div>
@@ -500,11 +500,11 @@ const isDeletedFile = (url) => {
                     </div>
                 </div>
 
-                <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-gray-100 dark:border-gray-700 space-y-3">
+                <div v-if="solicitud.estado !== 'cerrada'" class="pt-6 border-t border-white/10 space-y-3">
                     <button
                         v-if="canFinalize"
                         @click="finalizarCaso"
-                        class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-green-200 dark:shadow-none transition flex items-center justify-center gap-2"
+                        class="w-full bg-verde-cope hover:bg-emerald-600 text-white font-bold py-2.5 rounded-lg shadow-lg shadow-emerald-900/20 transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
                     >
                         <i class="fas fa-check-circle"></i>
                         Finalizar Caso
@@ -513,7 +513,7 @@ const isDeletedFile = (url) => {
                     <button
                         v-if="canValidate"
                         @click="abrirValidarModal"
-                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg shadow-lg shadow-purple-200 dark:shadow-none transition flex items-center justify-center gap-2"
+                        class="w-full bg-purple-600/40 hover:bg-purple-600 text-white font-bold py-2.5 rounded-lg border border-purple-500/30 transition flex items-center justify-center gap-2 text-xs uppercase tracking-widest"
                     >
                         <i class="fas fa-clipboard-check"></i>
                         Validar Solución
@@ -526,7 +526,7 @@ const isDeletedFile = (url) => {
             </div>
 
             <!-- Columna Derecha: Chat / Seguimiento -->
-            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 h-full overflow-hidden">
+            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-verde-cope/30 h-full overflow-hidden">
                 <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <div class="flex items-center gap-4">
                         <!-- Tabs Selector -->
@@ -534,24 +534,24 @@ const isDeletedFile = (url) => {
                             <button
                                 @click="activeTab = 'chat'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
-                                :class="activeTab === 'chat' ? 'bg-white text-indigo-900 shadow-sm' : 'text-white/60 hover:text-white'"
+                                :class="activeTab === 'chat' ? 'bg-white text-[var(--color-verde-cope)] shadow-sm' : 'text-white/60 hover:text-white'"
                             >
                                 Actividad
                             </button>
                             <button
                                 @click="activeTab = 'files'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
-                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
+                                :class="activeTab === 'files' ? 'bg-white text-[var(--color-verde-cope)] shadow-sm' : 'text-white/60 hover:text-white'"
                             >
                                 Archivos
-                                <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
+                                <span v-if="allAttachments.length" class="bg-verde-cope text-white px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
                             </button>
                         </div>
                     </div>
 
                     <button
                         @click="cargarDetalle(true)"
-                        class="text-gray-500 hover:text-indigo-600 transition p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                        class="text-white/40 hover:text-white transition p-1.5 rounded-full hover:bg-white/10"
                         title="Actualizar conversación"
                         :disabled="refreshing"
                     >
@@ -582,11 +582,11 @@ const isDeletedFile = (url) => {
                             >
                                 <a :href="file.url" target="_blank" class="block w-full h-full">
                                     <img v-if="file.is_image" :src="file.url" class="w-full h-full object-cover">
-                                    <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition gap-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-red-500">
+                                    <div v-else class="w-full h-full flex flex-col items-center justify-center bg-white/5 hover:bg-white/10 transition gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white/40">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                         </svg>
-                                        <span class="text-[10px] font-bold text-gray-500 uppercase">Archivo</span>
+                                        <span class="text-[10px] font-bold text-white/40 uppercase">Archivo</span>
                                     </div>
                                 </a>
 
@@ -622,19 +622,19 @@ const isDeletedFile = (url) => {
                     >
                         <!-- Avatar -->
                         <div
-                            class="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
-                            :class="seg.seguimiento_por_id == authStore.user.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-600'"
+                            class="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm border border-white/20"
+                            :class="seg.seguimiento_por_id == authStore.user.id ? 'bg-white/10 text-white' : 'bg-orange-500/20 text-orange-200'"
                         >
                             {{ seg.seguimiento_por_nombre?.charAt(0) }}
                         </div>
 
                         <!-- Bubble -->
                         <div
-                            class="max-w-[80%] rounded-2xl p-4 text-sm shadow-sm"
+                            class="max-w-[80%] rounded-2xl p-4 text-sm shadow-sm border"
                             :class="[
                                 seg.seguimiento_por_id == authStore.user.id
-                                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                                    : 'bg-white border border-gray-100 text-gray-700 rounded-tl-none'
+                                    ? 'bg-blue-600/40 text-white border-blue-500/30 rounded-tr-none'
+                                    : 'bg-white/5 border-white/10 text-white/90 rounded-tl-none'
                             ]"
                         >
                             <div class="flex justify-between items-center gap-4 mb-2 opacity-80 text-xs">
@@ -669,8 +669,8 @@ const isDeletedFile = (url) => {
                                         </div>
                                     </a>
                                     <!-- Deleted Placeholder -->
-                                    <div v-else class="w-32 h-32 aspect-square rounded overflow-hidden border border-gray-100 bg-gray-50 flex flex-col items-center justify-center opacity-60">
-                                         <i class="fas fa-trash text-gray-300 text-2xl mb-1"></i>
+                                    <div v-else class="w-32 h-32 aspect-square rounded overflow-hidden border border-white/10 bg-white/5 flex flex-col items-center justify-center opacity-60">
+                                         <i class="fas fa-trash text-white/20 text-2xl mb-1"></i>
                                          <span class="text-[10px] text-white/40 font-medium">Eliminado</span>
                                     </div>
                                 </template>
@@ -680,14 +680,14 @@ const isDeletedFile = (url) => {
                 </template>
                 </div>
 
-                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-white/5 border-t border-white/10">
                     <div v-if="canComment" class="flex flex-col gap-3">
                         <div class="relative">
                             <textarea
                                 v-model="nuevoSeguimiento.comentario"
                                 rows="3"
                                 placeholder="Escribe un mensaje..."
-                                class="w-full bg-gray-50 dark:bg-gray-700 border-0 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 resize-none text-sm transition-all"
+                                class="w-full bg-white/5 border border-white/10 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 resize-none text-sm transition-all text-white outline-none placeholder:text-white/20 shadow-inner"
                             ></textarea>
 
 
@@ -731,10 +731,10 @@ const isDeletedFile = (url) => {
                             <button
                                 @click="enviarSeguimiento"
                                 :disabled="saving || (!nuevoSeguimiento.comentario && !nuevoSeguimiento.evidencias.length)"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium text-sm transition shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="bg-[var(--color-azul-cope)] hover:opacity-90 text-white px-6 py-2 rounded-lg font-bold text-xs transition shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
                             >
                                 <i v-if="saving" class="fas fa-spinner fa-spin"></i>
-                                <span v-else>Enviar <i class="fas fa-paper-plane ml-1"></i></span>
+                                <span v-else>Enviar Mensaje <i class="fas fa-paper-plane ml-1"></i></span>
                             </button>
                         </div>
                     </div>
@@ -757,121 +757,120 @@ const isDeletedFile = (url) => {
         </div>
 
         <!-- Modal Finalizar Caso -->
-        <div v-if="showFinalizarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
-                <div class="bg-green-600 p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg"><i class="fas fa-check-circle mr-2"></i> Finalizar y Resolver Caso</h3>
-                    <button @click="showFinalizarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+        <div v-if="showFinalizarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60">
+            <div class="bg-[#1e293b]/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-verde-cope/30 animate-fade-in-up">
+                <div class="bg-verde-cope p-5 text-white flex justify-between items-center shadow-lg">
+                    <h3 class="font-bold text-lg uppercase tracking-wider"><i class="fas fa-check-circle mr-2"></i> Finalizar Caso</h3>
+                    <button @click="showFinalizarModal = false" class="hover:bg-white/20 rounded-full p-2 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
 
-                <div class="p-6 space-y-4">
-                    <div class="bg-blue-50 dark:bg-gray-700/50 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-gray-600">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Describe la solución aplicada. Puedes adjuntar evidencias (capturas, documentos) que comprueben la resolución.
+                <div class="p-6 space-y-6">
+                    <div class="bg-white/5 p-4 rounded-xl text-sm text-white/80 border border-white/10">
+                        <i class="fas fa-info-circle mr-2 text-verde-cope"></i>
+                        Describe la solución aplicada y adjunta evidencias de la resolución.
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-white/80 mb-1">Solución / Comentario de Cierre <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Solución / Comentario de Cierre <span class="text-red-500">*</span></label>
                         <textarea
                             v-model="cierreData.comentario"
                             rows="4"
-                            class="w-full border rounded-lg p-3 dark:bg-gray-700 dark:border-gray-600 resize-none focus:ring-2 focus:ring-green-500 text-gray-700 dark:text-gray-200"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl p-3 focus:ring-2 focus:ring-verde-cope resize-none transition-all text-white outline-none placeholder:text-white/20"
                             placeholder="Ej: Se reinició el servicio y se verificó conexión..."
                         ></textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-white/80 mb-1">Evidencias de Solución (Opcional)</label>
+                        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Evidencias de Solución</label>
                         <input
                             type="file"
                             multiple
                             @change="handleCierreFileUpload"
-                            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:text-gray-300"
+                            class="w-full text-xs text-white/40 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 transition cursor-pointer"
                         >
-                        <p class="text-xs text-gray-500 mt-1" v-if="cierreData.evidencias.length">
+                        <p class="text-[10px] text-verde-cope font-bold mt-2 uppercase tracking-widest" v-if="cierreData.evidencias.length">
                             {{ cierreData.evidencias.length }} archivo(s) seleccionado(s)
                         </p>
                     </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
-                    <button @click="showFinalizarModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition font-medium dark:text-gray-300 dark:hover:bg-gray-700">Cancelar</button>
+                <div class="p-5 bg-white/5 flex justify-end gap-3 border-t border-white/10">
+                    <button @click="showFinalizarModal = false" class="px-5 py-2 text-white/60 hover:text-white transition-colors font-bold text-xs uppercase tracking-widest">Cancelar</button>
                     <button
                         @click="confirmarCierre"
                         :disabled="finalizarLoading"
-                        class="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md transition font-medium flex items-center gap-2 disabled:opacity-70"
+                        class="px-6 py-2.5 bg-verde-cope hover:opacity-90 text-white rounded-xl shadow-lg shadow-emerald-900/20 transition font-bold text-xs uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
                     >
                         <i v-if="finalizarLoading" class="fas fa-spinner fa-spin"></i>
-                        {{ finalizarLoading ? 'Enviando...' : 'Confirmar Solución' }}
+                        {{ finalizarLoading ? 'Procesando...' : 'Confirmar Resolución' }}
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Modal Validar -->
-        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-                <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
-                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-1 transition"><i class="fas fa-times"></i></button>
+        <div v-if="showValidarModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60">
+            <div class="bg-[#1e293b]/90 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-purple-500/30 animate-fade-in-up">
+                <div class="bg-purple-600 p-5 text-white flex justify-between items-center shadow-lg">
+                    <h3 class="font-bold text-lg uppercase tracking-wider"><i class="fas fa-clipboard-check mr-2"></i> Validar Solicitud</h3>
+                    <button @click="showValidarModal = false" class="hover:bg-white/20 rounded-full p-2 transition-colors"><i class="fas fa-times"></i></button>
                 </div>
 
-                <div class="p-6 space-y-4">
-                     <p class="text-sm text-gray-600 dark:text-gray-300">
+                <div class="p-6 space-y-6">
+                     <p class="text-sm text-white/80">
                         ¿Cómo deseas proceder con esta solicitud?
                      </p>
 
                      <div class="flex gap-4">
-                        <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'cerrar' ? 'ring-2 ring-green-500 border-green-500 bg-green-50' : 'border-gray-200'">
+                        <label class="flex-1 border p-4 rounded-xl cursor-pointer transition-all duration-300 group" :class="validarData.accion === 'cerrar' ? 'bg-verde-cope/20 border-verde-cope shadow-lg shadow-emerald-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'">
                             <input type="radio" v-model="validarData.accion" value="cerrar" class="hidden">
                             <div class="text-center">
-                                <i class="fas fa-check-circle text-2xl text-green-500 mb-2"></i>
-                                <div class="font-bold text-sm text-gray-800">Aprobar y Cerrar</div>
+                                <i class="fas fa-check-circle text-3xl mb-2 transition-transform group-hover:scale-110" :class="validarData.accion === 'cerrar' ? 'text-verde-cope' : 'text-white/20'"></i>
+                                <div class="font-bold text-xs uppercase tracking-widest" :class="validarData.accion === 'cerrar' ? 'text-white' : 'text-white/40'">Aprobar y Cerrar</div>
                             </div>
                         </label>
 
-                         <label class="flex-1 border p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition" :class="validarData.accion === 'reabrir' ? 'ring-2 ring-orange-500 border-orange-500 bg-orange-50' : 'border-gray-200'">
+                         <label class="flex-1 border p-4 rounded-xl cursor-pointer transition-all duration-300 group" :class="validarData.accion === 'reabrir' ? 'bg-orange-500/20 border-orange-500 shadow-lg shadow-orange-900/20' : 'bg-white/5 border-white/10 hover:bg-white/10'">
                             <input type="radio" v-model="validarData.accion" value="reabrir" class="hidden">
                             <div class="text-center">
-                                <i class="fas fa-undo text-2xl text-orange-500 mb-2"></i>
-                                <div class="font-bold text-sm text-gray-800">Rechazar / Devolver</div>
+                                <i class="fas fa-undo text-3xl mb-2 transition-transform group-hover:scale-110" :class="validarData.accion === 'reabrir' ? 'text-orange-500' : 'text-white/20'"></i>
+                                <div class="font-bold text-xs uppercase tracking-widest" :class="validarData.accion === 'reabrir' ? 'text-white' : 'text-white/40'">Rechazar</div>
                             </div>
                         </label>
                      </div>
 
-                     <div v-if="validarData.accion === 'cerrar'" class="bg-blue-50 dark:bg-gray-700/30 p-3 rounded-lg border border-blue-100 dark:border-gray-600">
-                        <p class="text-sm font-medium text-white/80 mb-2">Alcance de la Solución:</p>
-                        <div class="flex gap-4">
-                             <label class="flex items-center gap-2 cursor-pointer">
-                                 <input type="radio" v-model="validarData.tipo_solucion" value="total" class="text-green-600 focus:ring-green-500">
-                                 <span class="text-sm text-gray-600 dark:text-white/40">Total</span>
+                     <div v-if="validarData.accion === 'cerrar'" class="bg-white/5 p-4 rounded-xl border border-white/10">
+                        <p class="text-[10px] font-bold text-white/40 uppercase mb-3 tracking-widest">Alcance de la Solución:</p>
+                        <div class="flex gap-6">
+                             <label class="flex items-center gap-2 cursor-pointer group">
+                                 <input type="radio" v-model="validarData.tipo_solucion" value="total" class="w-4 h-4 text-verde-cope bg-white/10 border-white/20 focus:ring-verde-cope">
+                                 <span class="text-sm font-medium transition-colors group-hover:text-white" :class="validarData.tipo_solucion === 'total' ? 'text-white' : 'text-white/40'">Total</span>
                              </label>
-                             <label class="flex items-center gap-2 cursor-pointer">
-                                 <input type="radio" v-model="validarData.tipo_solucion" value="parcial" class="text-yellow-600 focus:ring-yellow-500">
-                                 <span class="text-sm text-gray-600 dark:text-gray-400">Parcial</span>
+                             <label class="flex items-center gap-2 cursor-pointer group">
+                                 <input type="radio" v-model="validarData.tipo_solucion" value="parcial" class="w-4 h-4 text-yellow-500 bg-white/10 border-white/20 focus:ring-yellow-500">
+                                 <span class="text-sm font-medium transition-colors group-hover:text-white" :class="validarData.tipo_solucion === 'parcial' ? 'text-white' : 'text-white/40'">Parcial</span>
                              </label>
                         </div>
                      </div>
 
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Comentario
-                            <span v-if="validarData.accion === 'reabrir'" class="text-red-500">*</span>
-                            <span v-else class="text-gray-400 font-normal">(Opcional)</span>
+                        <label class="block text-[10px] font-bold text-white/40 uppercase mb-2 tracking-widest">
+                            Comentario Adicional
+                            <span v-if="validarData.accion === 'reabrir'" class="text-red-500 ml-1">*</span>
                         </label>
-                        <textarea v-model="validarData.comentario" rows="3" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-purple-500 resize-none" :placeholder="validarData.accion === 'reabrir' ? 'Motivo del rechazo...' : 'Observaciones adicionales...'"></textarea>
+                        <textarea v-model="validarData.comentario" rows="3" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm focus:ring-2 focus:ring-purple-500 resize-none text-white outline-none placeholder:text-white/20" :placeholder="validarData.accion === 'reabrir' ? 'Describe el motivo del rechazo...' : 'Observaciones (opcional)...'"></textarea>
                      </div>
                 </div>
 
-                <div class="p-4 bg-gray-50 dark:bg-gray-700/30 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
-                    <button @click="showValidarModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition font-medium dark:text-gray-300 dark:hover:bg-gray-700">Cancelar</button>
+                <div class="p-5 bg-white/5 flex justify-end gap-3 border-t border-white/10">
+                    <button @click="showValidarModal = false" class="px-5 py-2 text-white/60 hover:text-white transition-colors font-bold text-xs uppercase tracking-widest">Cancelar</button>
                     <button
                         @click="confirmarValidacion"
                         :disabled="validarLoading"
-                        class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md transition font-medium flex items-center gap-2 disabled:opacity-70"
+                        class="px-6 py-2.5 bg-purple-600 hover:opacity-90 text-white rounded-xl shadow-lg shadow-purple-900/20 transition font-bold text-xs uppercase tracking-widest flex items-center gap-2 disabled:opacity-50"
                     >
                         <i v-if="validarLoading" class="fas fa-spinner fa-spin"></i>
-                        Confirmar
+                        Confirmar Acción
                     </button>
                 </div>
             </div>
@@ -882,12 +881,18 @@ const isDeletedFile = (url) => {
 <style scoped>
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-verde-cope);
 }
 </style>
