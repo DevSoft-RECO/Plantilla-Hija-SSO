@@ -62,7 +62,7 @@ const allFiles = computed(() => {
 </script>
 
 <template>
-    <div class="div4 bg-white/10 backdrop-blur-md flex flex-col overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-white/20">
+    <div class="div4 bg-white/10 backdrop-blur-md flex flex-col overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-verde-cope/30">
         <div class="p-1.5 px-3 shrink-0 flex items-center justify-between shadow-sm z-10" style="background-color: var(--color-azul-cope)">
             <h2 class="text-[10px] font-bold text-white tracking-wide flex items-center gap-1.5 uppercase">
                 <i class="fas fa-paperclip text-white/80 text-[9px]"></i> Adjuntos

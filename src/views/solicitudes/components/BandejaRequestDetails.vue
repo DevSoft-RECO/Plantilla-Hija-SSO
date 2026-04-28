@@ -80,7 +80,7 @@ const submitCierre = () => {
 </script>
 
 <template>
-    <div class="div2 bg-white/10 backdrop-blur-md flex flex-col h-full overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-white/20">
+    <div class="div2 bg-white/10 backdrop-blur-md flex flex-col h-full overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-verde-cope/30">
 
         <!-- VISTA DE LISTA -->
         <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden w-full min-w-0">
@@ -98,7 +98,7 @@ const submitCierre = () => {
                         >
                             <i class="fas fa-file-download text-xs"></i> <span>DESCARGAR REPORTES</span>
                         </button>
-                        <span class="text-[10px] font-bold text-azul-cope bg-white px-2 py-0.5 rounded-full shadow-sm shrink-0 whitespace-nowrap">
+                        <span class="text-xs font-bold text-verde-cope bg-white px-3 py-1 rounded-full shadow-sm shrink-0 whitespace-nowrap">
                             {{ pagination.total }} TOTAL
                         </span>
                     </div>
@@ -113,7 +113,7 @@ const submitCierre = () => {
                         @click="selectStatus(tab.value)"
                         class="px-2.5 py-1 rounded-md text-[9px] font-bold transition-all whitespace-nowrap uppercase tracking-wider shrink-0"
                         :class="filtros.estado === tab.value
-                            ? 'bg-white text-[var(--color-azul-cope)] shadow-sm'
+                            ? 'bg-white text-[var(--color-verde-cope)] shadow-sm'
                             : 'text-white/70 hover:text-white hover:bg-white/10'"
                     >
                         {{ tab.label }}
@@ -160,12 +160,12 @@ const submitCierre = () => {
                 <div v-else class="space-y-2 px-1 py-1">
                     <div v-for="sol in solicitudes" :key="sol.id"
                          @click="$emit('seleccionar', sol)"
-                         class="bg-white/5 rounded-xl p-3 cursor-pointer border border-white/10 hover:bg-white/10 transition-all duration-300 group relative overflow-hidden flex flex-col gap-1.5">
+                         class="bg-white/5 rounded-xl p-3 cursor-pointer border border-white/10 hover:bg-white/10 hover:border-verde-cope/30 transition-all duration-300 group relative overflow-hidden flex flex-col gap-1.5">
 
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 opacity-0 group-hover:opacity-100 transition-opacity" style="background-color: var(--color-verde-cope)"></div>
 
                         <div class="flex justify-between items-start pl-2 gap-2">
-                            <h3 class="font-bold text-sm text-white leading-tight group-hover:text-blue-300 transition-colors line-clamp-1 min-w-0 flex-1 pr-2">
+                            <h3 class="font-bold text-sm text-white leading-tight group-hover:text-emerald-400 transition-colors line-clamp-1 min-w-0 flex-1 pr-2">
                                 <span class="text-xs text-white/40 font-normal mr-1 shrink-0">#{{ sol.id }}</span>
                                 <span class="break-all">{{ sol.titulo }}</span>
                             </h3>

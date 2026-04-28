@@ -45,7 +45,7 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="div4 bg-white/10 backdrop-blur-md flex flex-col overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-white/20">
+    <div class="div3 bg-white/10 backdrop-blur-md flex flex-col overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-verde-cope/30">
         <div class="p-2 px-4 shrink-0 flex items-center justify-between shadow-sm z-10" style="background-color: var(--color-azul-cope)">
             <h2 class="text-xs font-bold text-white tracking-wide flex items-center gap-2 uppercase">
                 <i class="fas fa-history text-white/80 text-[10px]"></i> Historial de Interacción

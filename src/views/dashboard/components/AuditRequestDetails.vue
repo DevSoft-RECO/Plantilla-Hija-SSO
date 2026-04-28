@@ -35,7 +35,7 @@ const getEstadoIcon = (estado) => {
 </script>
 
 <template>
-    <div class="div2 bg-white/10 backdrop-blur-md flex flex-col h-full overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-white/20">
+    <div class="div2 bg-white/10 backdrop-blur-md flex flex-col h-full overflow-hidden rounded-2xl shadow-2xl relative transition-all border border-verde-cope/30">
 
         <!-- VISTA DE LISTA -->
         <div v-if="!selectedSolicitud" class="flex flex-col h-full overflow-hidden">
@@ -101,14 +101,14 @@ const getEstadoIcon = (estado) => {
                 </div>
             </div>
             <div class="p-4 shrink-0 flex justify-center bg-white/5 z-10 border-t border-white/10">
-                 <div class="flex items-center gap-1 bg-gray-50 dark:bg-gray-700/50 p-1 rounded-xl border border-gray-200 dark:border-gray-600 shadow-inner inline-flex">
-                     <button @click="$emit('cambiarPagina', pagination.current_page - 1)" :disabled="pagination.current_page === 1" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white dark:bg-gray-600 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-500 text-gray-600 dark:text-gray-300 disabled:opacity-50 disabled:shadow-none transition-all disabled:pointer-events-none">
+                 <div class="flex items-center gap-1 bg-white/10 p-1 rounded-xl border border-white/10 shadow-inner inline-flex">
+                     <button @click="$emit('cambiarPagina', pagination.current_page - 1)" :disabled="pagination.current_page === 1" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white/10 text-white shadow-sm hover:bg-white/20 disabled:opacity-30 transition-all disabled:pointer-events-none">
                          <i class="fas fa-chevron-left"></i>
                      </button>
                      <span class="text-[11px] px-3 font-bold text-white/60 tracking-widest uppercase">
                          Pág {{ pagination.current_page }} <span class="mx-0.5 font-normal text-white/20">/</span> {{ pagination.last_page }}
                      </span>
-                     <button @click="$emit('cambiarPagina', pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white dark:bg-gray-600 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-500 text-gray-600 dark:text-gray-300 disabled:opacity-50 disabled:shadow-none transition-all disabled:pointer-events-none">
+                     <button @click="$emit('cambiarPagina', pagination.current_page + 1)" :disabled="pagination.current_page === pagination.last_page" class="w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg bg-white/10 text-white shadow-sm hover:bg-white/20 disabled:opacity-30 transition-all disabled:pointer-events-none">
                          <i class="fas fa-chevron-right"></i>
                      </button>
                  </div>
