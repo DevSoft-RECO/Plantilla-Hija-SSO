@@ -1,13 +1,13 @@
 <template>
-  <div class="flex h-screen bg-linear-to-br from-[#013d7b] via-[#012a55] to-[#011a3b] dark:bg-gray-950 text-white dark:text-gray-100 font-sans overflow-hidden transition-colors duration-300 relative">
+  <div class="flex h-screen bg-linear-to-br from-[#013d7b] via-[#012a55] to-[#011a3b] dark:from-[#001122] dark:to-[#00050a] text-white font-sans overflow-hidden transition-colors duration-500 relative">
     <!-- Capa de profundidad opcional para el fondo -->
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-from)_0%,_transparent_40%)] from-white/10 to-transparent pointer-events-none"></div>
 
     <AdminSidebar />
 
     <div
-      class="flex flex-col flex-1 h-full transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)]"
-      :class="[layoutStore.isCollapsed ? 'md:ml-20' : 'md:ml-64']"
+      class="flex flex-col flex-1 h-full transition-all duration-500 ease-in-out"
+      :class="[layoutStore.isCollapsed ? 'md:ml-24' : 'md:ml-72']"
     >
 
       <AdminHeader />
@@ -44,30 +44,3 @@ onUnmounted(() => {
 })
 </script>
 
-<style>
-/* SCROLLBAR OPTIMIZADO PARA TAILWIND 4
-   Usamos variables CSS nativas que TW4 expone automáticamente.
-*/
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-gray-300);
-  border-radius: 9999px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-gray-400);
-}
-
-/* Soporte Dark Mode */
-:root.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-gray-700);
-}
-:root.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-gray-600);
-}
-</style>

@@ -50,7 +50,7 @@ const avatarClass = computed(() => {
 </script>
 
 <template>
-    <div class="px-4 py-3 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer" @click="emit('ver')">
+    <div class="px-4 py-3 flex items-start gap-3 hover:bg-white/5 transition border-b border-white/10 bg-white/10 backdrop-blur-md cursor-pointer" @click="emit('ver')">
         <!-- Icon -->
         <div class="h-10 w-10 shrink-0 rounded-full flex items-center justify-center text-white shadow-sm mt-0.5" :class="avatarClass">
             <i :class="getEstadoIcon(sol.estado) + (sol.estado === 'en_seguimiento' ? ' fa-spin' : '')" class="text-sm"></i>
@@ -58,8 +58,8 @@ const avatarClass = computed(() => {
         
         <!-- Content -->
         <div class="flex-1 min-w-0">
-            <h3 class="font-bold text-sm text-gray-900 dark:text-white line-clamp-2 leading-tight mb-2">
-                <span class="text-xs text-gray-400 font-mono font-normal mr-1">#{{ sol.id }}</span>
+            <h3 class="font-bold text-sm text-white line-clamp-2 leading-tight mb-2">
+                <span class="text-xs text-white/40 font-mono font-normal mr-1">#{{ sol.id }}</span>
                 {{ sol.titulo }}
             </h3>
             
@@ -67,14 +67,14 @@ const avatarClass = computed(() => {
                 <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide border shadow-sm shrink-0" :class="getEstadoClass(sol.estado)">
                     {{ sol.estado?.replace('_', ' ') }}
                 </span>
-                <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap shrink-0">
+                <span class="text-[10px] text-gray-500 dark:text-white/40 font-medium whitespace-nowrap shrink-0">
                     {{ new Date(sol.created_at).toLocaleDateString(undefined, { day: '2-digit', month: 'short' }) }}
                 </span>
             </div>
         </div>
         
         <!-- Actions -->
-        <div class="shrink-0 flex flex-col items-end gap-1 justify-center pl-2 border-l border-gray-100 dark:border-gray-700 ml-1">
+        <div class="shrink-0 flex flex-col items-end gap-1 justify-center pl-2 border-l border-white/10 ml-1">
             <button @click.stop="emit('ver')" class="text-emerald-500 hover:text-emerald-700 h-8 w-8 rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition flex items-center justify-center">
                 <i class="fas fa-chevron-right text-sm"></i>
             </button>

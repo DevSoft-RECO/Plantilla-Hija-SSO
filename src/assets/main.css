@@ -2,13 +2,61 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 @custom-variant dark (&:where(.dark, .dark *));
 
-
-
 @theme {
-
-
   --color-azul-cope: #013d7b;
   --color-verde-cope: #7AC215;
   --color-gris-cope: #EDEDED;
+}
 
+/* Estilos Globales para SweetAlert2 compatibles con el tema azul/oscuro */
+.swal2-popup {
+  background: rgba(1, 61, 123, 0.9) !important;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  border-radius: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.swal2-title, .swal2-html-container {
+  color: white !important;
+}
+
+.swal2-confirm {
+  background-color: #3b82f6 !important;
+  border-radius: 12px !important;
+}
+
+.swal2-cancel {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+}
+
+/* Scrollbar global premium */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+@layer components {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-azul-cope);
+    border-radius: 4px;
+  }
 }

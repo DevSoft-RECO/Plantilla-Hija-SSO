@@ -447,8 +447,8 @@ const isDeletedFile = (url) => {
         <div v-else class="p-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-100px)]">
 
             <!-- Columna Izquierda: Detalles del Caso -->
-            <div class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 overflow-y-auto custom-scrollbar">
-                <button @click="router.push({ name: backRouteName })" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 mb-4 flex items-center gap-2 text-sm">
+            <div class="lg:col-span-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 p-6 overflow-y-auto custom-scrollbar">
+                <button @click="router.push({ name: backRouteName })" class="text-gray-500 hover:text-gray-700 dark:text-white/40 mb-4 flex items-center gap-2 text-sm">
                     <i class="fas fa-arrow-left"></i> Volver a Mi Bandeja
                 </button>
 
@@ -467,20 +467,20 @@ const isDeletedFile = (url) => {
                 </span>
 
                 <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Solicitante</h3>
+                    <h3 class="text-xs font-semibold text-white/40 uppercase mb-2">Solicitante</h3>
                     <div class="flex items-center gap-3">
                         <div class="bg-blue-100 dark:bg-gray-700 h-8 w-8 rounded-full flex items-center justify-center text-blue-600 dark:text-gray-200 font-bold text-xs">
                             {{ (solicitud.creado_por?.name || '?').charAt(0) }}
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por?.name || 'Usuario desconocido' }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ solicitud.creado_por?.puesto?.nombre || 'Sin Cargo' }}</p>
+                            <p class="text-sm font-medium text-white">{{ solicitud.creado_por?.name || 'Usuario desconocido' }}</p>
+                            <p class="text-xs text-gray-500 dark:text-white/40">{{ solicitud.creado_por?.puesto?.nombre || 'Sin Cargo' }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase mb-2">Descripción</h3>
+                    <h3 class="text-xs font-semibold text-white/40 uppercase mb-2">Descripción</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">{{ solicitud.descripcion }}</p>
                 </div>
 
@@ -491,12 +491,12 @@ const isDeletedFile = (url) => {
                 <!-- Info Contexto -->
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
                     <div v-if="solicitud.agencia_id">
-                        <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.agencia?.nombre }}</div>
+                        <span class="block text-xs font-semibold text-white/40 uppercase">Agencia</span>
+                        <div class="text-sm font-medium text-white">{{ solicitud.agencia?.nombre }}</div>
                     </div>
                     <div v-if="solicitud.area">
-                        <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.area }}</div>
+                        <span class="block text-xs font-semibold text-white/40 uppercase">Área/Ubicación</span>
+                        <div class="text-sm font-medium text-white">{{ solicitud.area }}</div>
                     </div>
                 </div>
 
@@ -519,29 +519,29 @@ const isDeletedFile = (url) => {
                         Validar Solución
                     </button>
 
-                    <p v-if="!canFinalize && !canValidate && solicitud.estado !== 'cerrada'" class="text-xs text-center text-gray-400 italic">
+                    <p v-if="!canFinalize && !canValidate && solicitud.estado !== 'cerrada'" class="text-xs text-center text-white/40 italic">
                         Esperando acción del {{ isRequester ? 'técnico' : 'solicitante' }}...
                     </p>
                 </div>
             </div>
 
-            <!-- Columna Derecha: Área de Trabajo / Chat -->
-            <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+            <!-- Columna Derecha: Chat / Seguimiento -->
+            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 h-full overflow-hidden">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <div class="flex items-center gap-4">
                         <!-- Tabs Selector -->
-                        <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                        <div class="flex bg-white/10 rounded-lg p-1">
                             <button
                                 @click="activeTab = 'chat'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
-                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                                :class="activeTab === 'chat' ? 'bg-white text-indigo-900 shadow-sm' : 'text-white/60 hover:text-white'"
                             >
                                 Actividad
                             </button>
                             <button
                                 @click="activeTab = 'files'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
-                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
                             >
                                 Archivos
                                 <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
@@ -571,7 +571,7 @@ const isDeletedFile = (url) => {
 
                          <!-- Grid -->
                          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-gray-400 italic">
+                            <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-white/40 italic">
                                 No hay archivos adjuntos.
                             </div>
 
@@ -610,7 +610,7 @@ const isDeletedFile = (url) => {
 
                     <!-- TAB: CHAT -->
                     <template v-else>
-                     <div v-if="solicitud.seguimientos.length === 0" class="text-center text-gray-400 py-10 italic">
+                     <div v-if="solicitud.seguimientos.length === 0" class="text-center text-white/40 py-10 italic">
                         No hay actualizaciones aún.
                      </div>
 
@@ -657,9 +657,9 @@ const isDeletedFile = (url) => {
                                             <i v-if="ev.toLowerCase().includes('.pdf')" class="fas fa-file-pdf text-red-500 text-3xl drop-shadow-sm"></i>
                                             <i v-else-if="ev.toLowerCase().includes('.doc') || ev.toLowerCase().includes('.docx')" class="fas fa-file-word text-blue-600 text-3xl drop-shadow-sm"></i>
                                             <i v-else-if="ev.toLowerCase().includes('.xls') || ev.toLowerCase().includes('.xlsx')" class="fas fa-file-excel text-green-600 text-3xl drop-shadow-sm"></i>
-                                            <i v-else class="fas fa-file-alt text-gray-400 text-3xl"></i>
+                                            <i v-else class="fas fa-file-alt text-white/40 text-3xl"></i>
 
-                                            <span class="text-[10px] font-medium text-gray-600 dark:text-gray-400 uppercase truncate w-full text-center">
+                                            <span class="text-[10px] font-medium text-gray-600 dark:text-white/40 uppercase truncate w-full text-center">
                                                 {{ ev.split('/').pop().split('?')[0].replace(/^\d+_/, '') }}
                                             </span>
                                         </div>
@@ -671,7 +671,7 @@ const isDeletedFile = (url) => {
                                     <!-- Deleted Placeholder -->
                                     <div v-else class="w-32 h-32 aspect-square rounded overflow-hidden border border-gray-100 bg-gray-50 flex flex-col items-center justify-center opacity-60">
                                          <i class="fas fa-trash text-gray-300 text-2xl mb-1"></i>
-                                         <span class="text-[10px] text-gray-400 font-medium">Eliminado</span>
+                                         <span class="text-[10px] text-white/40 font-medium">Eliminado</span>
                                     </div>
                                 </template>
                             </div>
@@ -697,7 +697,7 @@ const isDeletedFile = (url) => {
                         <div class="flex items-center justify-between">
                              <button
                                 @click="triggerUpload"
-                                class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 text-sm font-medium flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                                class="text-gray-500 hover:text-indigo-600 dark:text-white/40 dark:hover:text-indigo-400 text-sm font-medium flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                             >
                                 <i class="fas fa-paperclip text-lg"></i>
                                 <span>Adjuntar archivos</span>
@@ -721,7 +721,7 @@ const isDeletedFile = (url) => {
                              >
                                 <i class="fas fa-file text-indigo-500"></i>
                                 <span class="max-w-[150px] truncate text-gray-600 dark:text-gray-300">{{ file.name }}</span>
-                                <button @click="removeAttachedFile(idx)" class="text-gray-400 hover:text-red-500 transition">
+                                <button @click="removeAttachedFile(idx)" class="text-white/40 hover:text-red-500 transition">
                                     <i class="fas fa-times"></i>
                                 </button>
                              </div>
@@ -743,13 +743,13 @@ const isDeletedFile = (url) => {
                         <p class="text-gray-600 dark:text-gray-300 text-sm font-medium">
                             Esperando inicio de soporte...
                         </p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <p class="text-xs text-gray-500 dark:text-white/40 mt-1">
                             Podrás interactuar cuando el agente comience a trabajar en tu caso.
                         </p>
                     </div>
                 </div>
                 <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 text-center">
-                     <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                     <p class="text-sm text-gray-500 dark:text-white/40 italic">
                         <i class="fas fa-lock mr-2"></i> Este caso está cerrado y en modo histórico.
                     </p>
                 </div>
@@ -771,7 +771,7 @@ const isDeletedFile = (url) => {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Solución / Comentario de Cierre <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-white/80 mb-1">Solución / Comentario de Cierre <span class="text-red-500">*</span></label>
                         <textarea
                             v-model="cierreData.comentario"
                             rows="4"
@@ -781,7 +781,7 @@ const isDeletedFile = (url) => {
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Evidencias de Solución (Opcional)</label>
+                        <label class="block text-sm font-medium text-white/80 mb-1">Evidencias de Solución (Opcional)</label>
                         <input
                             type="file"
                             multiple
@@ -840,11 +840,11 @@ const isDeletedFile = (url) => {
                      </div>
 
                      <div v-if="validarData.accion === 'cerrar'" class="bg-blue-50 dark:bg-gray-700/30 p-3 rounded-lg border border-blue-100 dark:border-gray-600">
-                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alcance de la Solución:</p>
+                        <p class="text-sm font-medium text-white/80 mb-2">Alcance de la Solución:</p>
                         <div class="flex gap-4">
                              <label class="flex items-center gap-2 cursor-pointer">
                                  <input type="radio" v-model="validarData.tipo_solucion" value="total" class="text-green-600 focus:ring-green-500">
-                                 <span class="text-sm text-gray-600 dark:text-gray-400">Total</span>
+                                 <span class="text-sm text-gray-600 dark:text-white/40">Total</span>
                              </label>
                              <label class="flex items-center gap-2 cursor-pointer">
                                  <input type="radio" v-model="validarData.tipo_solucion" value="parcial" class="text-yellow-600 focus:ring-yellow-500">

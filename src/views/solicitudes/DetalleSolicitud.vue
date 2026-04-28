@@ -249,7 +249,7 @@ const enviarSeguimiento = async () => {
 
             <!-- Columna Izquierda: Información -->
             <div class="lg:col-span-1 space-y-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-2xl border border-white/20">
                     <div class="mb-4">
                         <span
                             class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
@@ -264,13 +264,13 @@ const enviarSeguimiento = async () => {
                         >
                             {{ solicitud.estado?.replace('_', ' ') }}
                         </span>
-                        <h1 class="text-xl font-bold text-gray-800 dark:text-white mt-2">{{ solicitud.titulo }}</h1>
+                        <h1 class="text-xl font-bold text-white mt-2">{{ solicitud.titulo }}</h1>
                     </div>
 
                     <div class="space-y-4">
                         <div>
-                             <h3 class="text-xs font-semibold text-gray-400 uppercase mb-1">Descripción</h3>
-                             <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ solicitud.descripcion }}</p>
+                             <h3 class="text-xs font-semibold text-white/40 uppercase mb-1">Descripción</h3>
+                             <p class="text-sm text-white/80 whitespace-pre-line">{{ solicitud.descripcion }}</p>
                         </div>
 
 
@@ -279,10 +279,10 @@ const enviarSeguimiento = async () => {
                         </div>
 
                         <!-- Info Contexto -->
-                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-4">
+                        <div class="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                             <div class="relative group">
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="block text-xs font-semibold text-gray-400 uppercase">Agencia</span>
+                                    <span class="block text-xs font-semibold text-white/40 uppercase">Agencia</span>
                                     <button
                                         v-if="solicitud.estado === 'reportada' && !isEditingAgencia"
                                         @click="startEditAgencia"
@@ -292,7 +292,7 @@ const enviarSeguimiento = async () => {
                                     </button>
                                 </div>
 
-                                <div v-if="!isEditingAgencia" class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                <div v-if="!isEditingAgencia" class="text-sm font-medium text-white">
                                     {{ solicitud.agencia?.nombre || 'Sin Agencia Asignada' }}
                                 </div>
                                 <div v-else class="flex flex-col gap-2 mt-1">
@@ -309,19 +309,19 @@ const enviarSeguimiento = async () => {
                                 </div>
                             </div>
                             <div v-if="solicitud.area">
-                                <span class="block text-xs font-semibold text-gray-400 uppercase">Área/Ubicación</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.area }}</div>
+                                <span class="block text-xs font-semibold text-white/40 uppercase">Área/Ubicación</span>
+                                <div class="text-sm font-medium text-white">{{ solicitud.area }}</div>
                             </div>
                         </div>
 
-                        <div class="pt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-1 gap-4">
+                        <div class="pt-4 border-t border-white/10 grid grid-cols-1 gap-4">
                              <div>
-                                <span class="block text-xs font-semibold text-gray-400 uppercase">Solicitante</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.creado_por?.name || 'Desconocido' }}</div>
+                                <span class="block text-xs font-semibold text-white/40 uppercase">Solicitante</span>
+                                <div class="text-sm font-medium text-white">{{ solicitud.creado_por?.name || 'Desconocido' }}</div>
                              </div>
                              <div>
-                                <span class="block text-xs font-semibold text-gray-400 uppercase">Responsable</span>
-                                <div class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ solicitud.responsable?.name || 'Sin Asignar' }}</div>
+                                <span class="block text-xs font-semibold text-white/40 uppercase">Responsable</span>
+                                <div class="text-sm font-medium text-white">{{ solicitud.responsable?.name || 'Sin Asignar' }}</div>
                              </div>
                         </div>
 
@@ -357,22 +357,22 @@ const enviarSeguimiento = async () => {
             </div>
 
             <!-- Columna Derecha: Chat / Seguimiento -->
-            <div class="lg:col-span-2 flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 h-[600px]">
-                <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+            <div class="lg:col-span-2 flex flex-col bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 h-[600px]">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center">
                     <div class="flex items-center gap-4">
                         <!-- Tabs Selector -->
                         <div class="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                             <button
                                 @click="activeTab = 'chat'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all"
-                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                                :class="activeTab === 'chat' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
                             >
                                 Actividad
                             </button>
                             <button
                                 @click="activeTab = 'files'"
                                 class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2"
-                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                                :class="activeTab === 'files' ? 'bg-white dark:bg-gray-600 text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-white/40'"
                             >
                                 Archivos
                                 <span v-if="allAttachments.length" class="bg-indigo-100 text-indigo-700 px-1.5 rounded-full text-[10px]">{{ allAttachments.length }}</span>
@@ -402,11 +402,11 @@ const enviarSeguimiento = async () => {
                     </button>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50 dark:bg-transparent">
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-transparent">
 
                     <!-- TAB: ARCHIVOS (Gallery) -->
                     <div v-if="activeTab === 'files'" class="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                        <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-gray-400 italic">
+                        <div v-if="!allAttachments.length" class="col-span-full text-center py-10 text-white/40 italic">
                             No hay archivos adjuntos.
                         </div>
                         <a
@@ -432,7 +432,7 @@ const enviarSeguimiento = async () => {
 
                     <!-- TAB: CHAT (Existing) -->
                     <template v-else>
-                     <div v-if="!solicitud.seguimientos?.length" class="text-center text-gray-400 py-10 italic">
+                     <div v-if="!solicitud.seguimientos?.length" class="text-center text-white/40 py-10 italic">
                         No hay comentarios aún.
                      </div>
 
@@ -443,7 +443,7 @@ const enviarSeguimiento = async () => {
                         :class="{ 'flex-row-reverse': seg.seguimiento_por_id === authStore.user.id }"
                      >
                         <div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
-                             :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-200 text-gray-600'">
+                             :class="seg.seguimiento_por_id === authStore.user.id ? 'bg-indigo-500 text-white' : 'bg-white/10 text-white/80'">
                              {{ seg.seguimiento_por_nombre?.charAt(0) }}
                         </div>
 
@@ -469,10 +469,10 @@ const enviarSeguimiento = async () => {
                     </template>
                 </div>
 
-                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700">
+                <div v-if="solicitud.estado !== 'cerrada'" class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-white/10">
                     <!-- Overlay de bloqueo -->
                     <div v-if="isChatLocked" class="text-center py-2">
-                        <p class="text-sm text-gray-400 italic mb-2">El chat está en modo solo lectura.</p>
+                        <p class="text-sm text-white/40 italic mb-2">El chat está en modo solo lectura.</p>
                         <button @click="toggleIntervenir" class="text-blue-600 text-xs hover:underline">Habilitar escritura</button>
                     </div>
 
@@ -486,8 +486,8 @@ const enviarSeguimiento = async () => {
                         </div>
                     </div>
                 </div>
-                <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 text-center">
-                     <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+                <div v-else class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-white/10 text-center">
+                     <p class="text-sm text-gray-500 dark:text-white/40 italic">
                         <i class="fas fa-lock mr-2"></i> Este caso está cerrado y en modo histórico.
                     </p>
                 </div>

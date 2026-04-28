@@ -1,9 +1,9 @@
 <template>
   <header
-    class="sticky top-0 z-30 flex h-16 w-full items-center justify-between px-6
+    class="sticky top-4 z-30 flex h-16 mx-4 mt-4 items-center justify-between px-6
            bg-azul-cope/95 dark:bg-gray-900/95 backdrop-blur-md
-           border-b border-verde-cope/30 dark:border-verde-cope/20
-           shadow-xl transition-all duration-300 overflow-hidden"
+           border border-white/10 dark:border-gray-800
+           shadow-2xl rounded-2xl transition-all duration-300 overflow-hidden"
   >
     <!-- Efecto de brillo verde (Verde Cope) para coherencia con el sidebar -->
     <div class="absolute -top-6 -right-10 w-40 h-40 bg-verde-cope/20 rounded-full blur-3xl pointer-events-none"></div>

@@ -15,15 +15,15 @@
   </Transition>
 
   <aside
-    class="fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 shadow-2xl
-           bg-azul-cope dark:bg-gray-900
-           border-r border-transparent dark:border-gray-800"
+    class="fixed top-4 bottom-4 left-4 z-50 flex flex-col transition-all duration-300 shadow-2xl
+           bg-azul-cope/90 dark:bg-gray-900/90 backdrop-blur-xl
+           border border-white/10 dark:border-gray-800 rounded-2xl"
     :class="[
       layoutStore.isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
       layoutStore.isCollapsed ? 'w-20' : 'w-64'
     ]"
   >
-    <div class="h-16 flex items-center justify-between px-6 shrink-0 bg-black/10 dark:bg-black/20 border-b border-white/5 dark:border-gray-800">
+    <div class="h-16 flex items-center justify-between px-6 shrink-0 bg-black/10 dark:bg-black/20 border-b border-white/5 dark:border-gray-800 rounded-t-2xl">
 
       <div v-if="!layoutStore.isCollapsed" class="flex items-center justify-center w-full fade-in">
         <img src="@/assets/logoyk1.svg" alt="YK" class="h-14 w-auto object-contain transition-all" />
@@ -184,7 +184,7 @@
       </template>
     </nav>
 
-    <div class="p-4 mt-auto border-t border-white/10 dark:border-gray-800 shrink-0">
+    <div class="p-4 mt-auto border-t border-white/10 dark:border-gray-800 shrink-0 rounded-b-2xl">
         <div v-if="!layoutStore.isCollapsed" class="fade-in text-center">
             <p class="text-xs font-medium text-gray-400 dark:text-gray-500 mb-1">Desarrollado por</p>
             <p class="text-xs font-bold text-white dark:text-gray-300 tracking-wide">

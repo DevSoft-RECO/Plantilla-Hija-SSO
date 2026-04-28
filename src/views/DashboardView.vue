@@ -2,12 +2,12 @@
     <div class="space-y-6 animate-fade-in-up">
 
       <!-- Access Denied Message -->
-      <div v-if="accessDenied" class="flex flex-col items-center justify-center min-h-[60vh] bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
-          <div class="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6">
-              <i class="fas fa-lock text-3xl text-red-600 dark:text-red-400"></i>
+      <div v-if="accessDenied" class="flex flex-col items-center justify-center min-h-[60vh] bg-white/10 backdrop-blur-md rounded-xl shadow-xl border border-white/20 p-8 text-center">
+          <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mb-6">
+              <i class="fas fa-lock text-3xl text-red-400"></i>
           </div>
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Acceso Restringido</h2>
-          <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto">{{ errorMessage }}</p>
+          <h2 class="text-2xl font-bold text-white mb-2">Acceso Restringido</h2>
+          <p class="text-white/60 max-w-md mx-auto">{{ errorMessage }}</p>
       </div>
 
       <!-- Dashboard Content -->
@@ -51,29 +51,29 @@
                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <!-- Category Filter -->
                       <select
-                          v-model="filters.category_id"
-                          @change="fetchMetrics"
-                          class="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
-                      >
-                          <option :value="null">Todas las Categorías</option>
-                          <option :value="1">Tecnología</option>
-                          <option :value="2">Administración</option>
-                      </select>
+                           v-model="filters.category_id"
+                           @change="fetchMetrics"
+                           class="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 transition-all outline-none"
+                       >
+                           <option :value="null" class="bg-azul-cope text-white">Todas las Categorías</option>
+                           <option :value="1" class="bg-azul-cope text-white">Tecnología</option>
+                           <option :value="2" class="bg-azul-cope text-white">Administración</option>
+                       </select>
 
                       <!-- Agency Filter (Admin Only) -->
                       <div v-if="canViewGeneral && !isAgencyUser" class="relative w-full sm:w-auto">
                         <select
-                              v-model="filters.agencia_id"
-                              @change="fetchMetrics"
-                              class="w-full sm:w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5"
-                          >
-                              <option :value="null">Todas las Agencias</option>
-                              <option v-for="agency in agencies" :key="agency.id" :value="agency.id">
-                                  {{ agency.nombre }}
-                              </option>
-                          </select>
+                               v-model="filters.agencia_id"
+                               @change="fetchMetrics"
+                               class="w-full sm:w-48 bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm rounded-lg shadow-sm focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 transition-all outline-none"
+                           >
+                               <option :value="null" class="bg-azul-cope text-white">Todas las Agencias</option>
+                               <option v-for="agency in agencies" :key="agency.id" :value="agency.id" class="bg-azul-cope text-white">
+                                   {{ agency.nombre }}
+                               </option>
+                           </select>
                       </div>
-                      <div v-else class="flex items-center px-4 py-2.5 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 w-full justify-center sm:w-auto sm:justify-start">
+                      <div v-else class="flex items-center px-4 py-2.5 bg-white/10 backdrop-blur-md rounded-lg text-sm font-medium text-white/70 w-full justify-center sm:w-auto sm:justify-start border border-white/10">
                           <i class="fas fa-building mr-2"></i> {{ authStore.user?.agencia_id ? 'Mi Agencia' : 'Sin Agencia' }}
                       </div>
                    </div>
@@ -83,65 +83,65 @@
           <!-- Skeleton Loading State (Facebook style) -->
           <div v-if="loading" class="animate-pulse space-y-6">
               <!-- KPI Cards Skeleton -->
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div v-for="i in 4" :key="`sk-kpi-${i}`" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 dark:border-gray-700/50 h-[140px] flex flex-col justify-between">
-                      <div class="flex justify-between">
-                           <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
-                           <div class="w-16 h-6 bg-gray-100 dark:bg-gray-800 rounded-md"></div>
-                      </div>
-                      <div>
-                          <div class="w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded-md mb-2"></div>
-                          <div class="w-32 h-4 bg-gray-100 dark:bg-gray-800 rounded-md"></div>
-                      </div>
-                  </div>
-              </div>
+               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                   <div v-for="i in 4" :key="`sk-kpi-${i}`" class="bg-white/5 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/10 h-[140px] flex flex-col justify-between">
+                       <div class="flex justify-between">
+                            <div class="w-12 h-12 bg-white/10 rounded-xl"></div>
+                            <div class="w-16 h-6 bg-white/5 rounded-md"></div>
+                       </div>
+                       <div>
+                           <div class="w-20 h-8 bg-white/10 rounded-md mb-2"></div>
+                           <div class="w-32 h-4 bg-white/5 rounded-md"></div>
+                       </div>
+                   </div>
+               </div>
 
               <!-- Resolution Cards Skeleton -->
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div v-for="i in 2" :key="`sk-res-${i}`" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-t-[6px] border-t-gray-200 dark:border-t-gray-700 border border-gray-100 dark:border-gray-700/50 h-[140px] flex justify-between items-center">
-                       <div>
-                           <div class="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-md mb-3"></div>
-                           <div class="w-12 h-10 bg-gray-300 dark:bg-gray-600 rounded-md mb-2"></div>
-                           <div class="w-48 h-3 bg-gray-100 dark:bg-gray-700 rounded-md"></div>
-                       </div>
-                       <div class="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
-                   </div>
-              </div>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div v-for="i in 2" :key="`sk-res-${i}`" class="bg-white/5 backdrop-blur-md p-6 rounded-2xl shadow-xl border-t-[6px] border-t-white/20 border border-white/10 h-[140px] flex justify-between items-center">
+                        <div>
+                            <div class="w-24 h-4 bg-white/10 rounded-md mb-3"></div>
+                            <div class="w-12 h-10 bg-white/20 rounded-md mb-2"></div>
+                            <div class="w-48 h-3 bg-white/5 rounded-md"></div>
+                        </div>
+                        <div class="w-14 h-14 bg-white/10 rounded-full"></div>
+                    </div>
+               </div>
 
               <!-- Charts Skeleton -->
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <!-- Left Col -->
-                  <div class="space-y-6">
-                      <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
-                          <div class="w-40 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
-                          <div class="space-y-5">
-                              <div v-for="i in 4" :key="`sk-bar1-${i}`">
-                                  <div class="flex justify-between mb-2">
-                                      <div class="w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-                                      <div class="w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-                                  </div>
-                                  <div class="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden"><div class="w-1/2 h-full bg-gray-200 dark:bg-gray-700"></div></div>
-                              </div>
-                          </div>
-                      </div>
-                       <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 h-[280px]">
-                          <div class="w-48 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
-                          <div class="space-y-5">
-                              <div v-for="i in 4" :key="`sk-bar2-${i}`">
-                                  <div class="flex justify-between mb-2">
-                                      <div class="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-                                      <div class="w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-                                  </div>
-                                  <div class="w-full h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden"><div class="w-1/3 h-full bg-gray-200 dark:bg-gray-700"></div></div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+                   <div class="space-y-6">
+                       <div class="bg-white/5 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 h-[280px]">
+                           <div class="w-40 h-6 bg-white/10 rounded-md mb-8"></div>
+                           <div class="space-y-5">
+                               <div v-for="i in 4" :key="`sk-bar1-${i}`">
+                                   <div class="flex justify-between mb-2">
+                                       <div class="w-32 h-4 bg-white/10 rounded-md"></div>
+                                       <div class="w-8 h-4 bg-white/10 rounded-md"></div>
+                                   </div>
+                                   <div class="w-full h-3 bg-white/5 rounded-full overflow-hidden"><div class="w-1/2 h-full bg-white/20"></div></div>
+                               </div>
+                           </div>
+                       </div>
+                        <div class="bg-white/5 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 h-[280px]">
+                           <div class="w-48 h-6 bg-white/10 rounded-md mb-8"></div>
+                           <div class="space-y-5">
+                               <div v-for="i in 4" :key="`sk-bar2-${i}`">
+                                   <div class="flex justify-between mb-2">
+                                       <div class="w-24 h-4 bg-white/10 rounded-md"></div>
+                                       <div class="w-8 h-4 bg-white/10 rounded-md"></div>
+                                   </div>
+                                   <div class="w-full h-3 bg-white/5 rounded-full overflow-hidden"><div class="w-1/3 h-full bg-white/20"></div></div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
                   <!-- Right Col -->
-                  <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 dark:border-gray-700/50 flex flex-col h-[584px]">
-                      <div class="w-56 h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-8"></div>
+                   <div class="bg-white/5 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-xl border border-white/10 flex flex-col h-[584px]">
+                       <div class="w-56 h-6 bg-white/10 rounded-md mb-8"></div>
                       <div class="flex-1 flex flex-col xl:flex-row items-center justify-center gap-10">
-                           <div class="w-64 h-64 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center shadow-inner"></div>
+                           <div class="w-64 h-64 rounded-full bg-white/10 flex items-center justify-center shadow-inner"></div>
                            <div class="flex-1 w-full xl:w-auto space-y-4">
                                <div v-for="i in 5" :key="`sk-leg-${i}`" class="flex items-center justify-between p-2">
                                    <div class="flex items-center gap-3">

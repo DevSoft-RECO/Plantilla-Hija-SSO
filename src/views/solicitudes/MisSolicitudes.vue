@@ -99,24 +99,24 @@ const getEstadoClass = (estado) => {
                 @click="setFiltro(est.value)"
                 class="px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap border"
                 :class="filtroEstado === est.value
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-105'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105'
+                    : 'bg-white/10 backdrop-blur-md text-white/80 border-white/20 hover:bg-white/20'"
             >
                 {{ est.label }}
             </button>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 overflow-hidden">
             <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold">
+                <thead class="bg-white/10 text-white uppercase text-xs font-semibold">
                     <tr>
-                        <th class="p-4 border-b dark:border-gray-700">ID</th>
-                        <th class="p-4 border-b dark:border-gray-700">Título</th>
-                        <th class="p-4 border-b dark:border-gray-700">Solicitante / Agencia</th>
-                        <th class="p-4 border-b dark:border-gray-700">Estado</th>
-                        <th class="p-4 border-b dark:border-gray-700">Asignado A</th>
-                        <th class="p-4 border-b dark:border-gray-700">Fecha Creación</th>
-                        <th class="p-4 border-b dark:border-gray-700 text-center">Acciones</th>
+                        <th class="p-4 border-b border-white/10">ID</th>
+                        <th class="p-4 border-b border-white/10">Título</th>
+                        <th class="p-4 border-b border-white/10">Solicitante / Agencia</th>
+                        <th class="p-4 border-b border-white/10">Estado</th>
+                        <th class="p-4 border-b border-white/10">Asignado A</th>
+                        <th class="p-4 border-b border-white/10">Fecha Creación</th>
+                        <th class="p-4 border-b border-white/10 text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
@@ -131,13 +131,13 @@ const getEstadoClass = (estado) => {
                             <p>No has registrado ninguna solicitud aún.</p>
                         </td>
                     </tr>
-                    <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                        <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
-                        <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
+                    <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-white/5 transition divide-y divide-white/10">
+                        <td class="p-4 font-mono text-white/40">#{{ sol.id }}</td>
+                        <td class="p-4 font-medium text-white">{{ sol.titulo }}</td>
                         <td class="p-4">
                             <div class="flex flex-col">
-                                <span class="font-medium text-gray-900 dark:text-white">{{ sol.creado_por?.name || 'Desconocido' }}</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"><i class="fas fa-building mr-1"></i>{{ sol.agencia?.nombre || 'Sin Agencia' }}</span>
+                                <span class="font-medium text-white">{{ sol.creado_por?.name || 'Desconocido' }}</span>
+                                <span class="text-xs text-white/40 mt-0.5"><i class="fas fa-building mr-1"></i>{{ sol.agencia?.nombre || 'Sin Agencia' }}</span>
                             </div>
                         </td>
                         <td class="p-4">
@@ -145,16 +145,16 @@ const getEstadoClass = (estado) => {
                                 {{ sol.estado?.replace('_', ' ') }}
                             </span>
                         </td>
-                        <td class="p-4 text-gray-600 dark:text-gray-300">
+                        <td class="p-4 text-white/80">
                             <div v-if="sol.responsable" class="flex items-center gap-2">
-                                <div class="bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                <div class="bg-indigo-500/30 text-indigo-100 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
                                     {{ sol.responsable.name.charAt(0) }}
                                 </div>
                                 {{ sol.responsable.name }}
                             </div>
                             <span v-else class="text-gray-400 italic">Sin asignar</span>
                         </td>
-                        <td class="p-4 text-gray-500 dark:text-gray-400">
+                        <td class="p-4 text-white/40">
                             {{ new Date(sol.created_at).toLocaleDateString() }}
                         </td>
                         <td class="p-4 text-center">

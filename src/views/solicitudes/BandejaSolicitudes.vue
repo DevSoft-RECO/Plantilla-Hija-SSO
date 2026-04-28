@@ -147,8 +147,8 @@ const eliminarSolicitud = async (id) => {
                 @click="setFiltro(est.value)"
                 class="px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap border"
                 :class="filtroEstado === est.value
-                    ? 'bg-blue-600 text-white border-blue-600 shadow-md transform scale-105'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg transform scale-105'
+                    : 'bg-white/10 backdrop-blur-md text-white/80 border-white/20 hover:bg-white/20'"
             >
                 {{ est.label }}
             </button>
@@ -159,31 +159,31 @@ const eliminarSolicitud = async (id) => {
             <select
                 :value="filtroEstado"
                 @change="setFiltro($event.target.value)"
-                class="w-full text-sm font-bold text-gray-700 bg-white dark:bg-gray-800 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 px-4 py-3"
+                class="w-full text-sm font-bold text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 px-4 py-3 outline-none"
             >
-                <option v-for="est in estados" :key="est.value" :value="est.value">
+                <option v-for="est in estados" :key="est.value" :value="est.value" class="bg-azul-cope">
                     {{ est.label }}
                 </option>
             </select>
         </div>
 
         <!-- Desktop Table Container -->
-        <div class="hidden sm:flex flex-1 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex-col">
+        <div class="hidden sm:flex flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl border border-white/20 overflow-hidden flex-col">
             <div class="overflow-auto flex-1 custom-scrollbar">
                 <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 uppercase text-xs font-semibold sticky top-0 backdrop-blur-sm z-10">
+                    <thead class="bg-white/10 text-white uppercase text-xs font-semibold sticky top-0 backdrop-blur-md z-10">
                         <tr>
-                            <th class="p-4 border-b dark:border-gray-700">ID</th>
-                            <th class="p-4 border-b dark:border-gray-700">Agencia</th>
-                            <th class="p-4 border-b dark:border-gray-700">Título</th>
-                            <th class="p-4 border-b dark:border-gray-700">Estado</th>
-                            <th class="p-4 border-b dark:border-gray-700">Solicitante</th>
-                            <th class="p-4 border-b dark:border-gray-700">Responsable</th>
-                            <th class="p-4 border-b dark:border-gray-700">Fecha</th>
-                            <th class="p-4 border-b dark:border-gray-700 text-center">Acciones</th>
+                            <th class="p-4 border-b border-white/10">ID</th>
+                            <th class="p-4 border-b border-white/10">Agencia</th>
+                            <th class="p-4 border-b border-white/10">Título</th>
+                            <th class="p-4 border-b border-white/10">Estado</th>
+                            <th class="p-4 border-b border-white/10">Solicitante</th>
+                            <th class="p-4 border-b border-white/10">Responsable</th>
+                            <th class="p-4 border-b border-white/10">Fecha</th>
+                            <th class="p-4 border-b border-white/10 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm divide-y divide-gray-100 dark:divide-gray-700">
+                    <tbody class="text-sm divide-y divide-gray-100 divide-white/10">
                         <tr v-if="loading">
                             <td colspan="8" class="p-8 text-center text-gray-500">
                                 <i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando...
@@ -194,20 +194,20 @@ const eliminarSolicitud = async (id) => {
                                 No se encontraron solicitudes.
                             </td>
                         </tr>
-                        <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                            <td class="p-4 font-mono text-gray-500 dark:text-gray-400">#{{ sol.id }}</td>
-                            <td class="p-4 font-medium text-gray-700 dark:text-gray-300">{{ sol.agencia?.agencia_madre_id || 'N/A' }}</td>
-                            <td class="p-4 font-medium text-gray-900 dark:text-white">{{ sol.titulo }}</td>
+                        <tr v-else v-for="sol in solicitudes" :key="sol.id" class="hover:bg-white/5 transition border-b border-white/10">
+                            <td class="p-4 font-mono text-white/40">#{{ sol.id }}</td>
+                            <td class="p-4 font-medium text-white/80">{{ sol.agencia?.agencia_madre_id || 'N/A' }}</td>
+                            <td class="p-4 font-medium text-white dark:text-white">{{ sol.titulo }}</td>
                             <td class="p-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-bold border" :class="getEstadoClass(sol.estado)">
                                     {{ sol.estado?.replace('_', ' ') }}
                                 </span>
                             </td>
-                            <td class="p-4 text-gray-600 dark:text-gray-300">
+                            <td class="p-4 text-white/80 dark:text-gray-300">
                                 <div class="text-xs font-bold">{{ sol.creado_por?.name || 'Desconocido' }}</div>
                                 <div class="text-xs opacity-75">{{ sol.agencia?.nombre || 'S/A' }}</div>
                             </td>
-                            <td class="p-4 text-gray-600 dark:text-gray-300">
+                            <td class="p-4 text-white/80 dark:text-gray-300">
                                 <div v-if="sol.responsable" class="flex items-center gap-2">
                                     <div class="bg-indigo-100 text-indigo-600 h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
                                         {{ sol.responsable.name.charAt(0) }}
@@ -216,7 +216,7 @@ const eliminarSolicitud = async (id) => {
                                 </div>
                                 <span v-else class="text-gray-400 italic">--</span>
                             </td>
-                            <td class="p-4 text-gray-500 dark:text-gray-400">
+                            <td class="p-4 text-white/40">
                                 {{ new Date(sol.created_at).toLocaleDateString() }}
                             </td>
                             <td class="p-4 text-center">
@@ -235,8 +235,8 @@ const eliminarSolicitud = async (id) => {
             </div>
 
             <!-- Pagination Footer Desktop -->
-            <div class="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-                <div class="text-sm text-gray-500 dark:text-gray-400">
+            <div class="p-4 border-t border-white/10 flex justify-between items-center bg-white/5">
+                <div class="text-sm text-white/40">
                     Mostrando {{ pagination.from || 0 }} - {{ pagination.to || 0 }} de {{ pagination.total }} resultados
                 </div>
 
