@@ -523,6 +523,7 @@ const backToBandeja = () => {
             :isOpen="showTomarModal"
             :solicitudId="solicitud.id"
             :categoriaGeneralId="solicitud.categoria_general_id"
+            @close="showTomarModal = false"
             @taken="onCaseTaken"
         />
 
