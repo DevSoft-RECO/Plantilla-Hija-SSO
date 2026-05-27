@@ -17,6 +17,7 @@ const emit = defineEmits(['seleccionar', 'cambiarPagina', 'verBackToList', 'conf
 
 const statusTabs = [
     { label: 'Todas', value: '' },
+    { label: 'Asignadas', value: 'asignada' },
     { label: 'Reportadas', value: 'reportada' },
     { label: 'En Seguimiento', value: 'en_seguimiento' },
     { label: 'Por Validar', value: 'pendiente_validacion' },
