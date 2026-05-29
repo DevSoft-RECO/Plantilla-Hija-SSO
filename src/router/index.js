@@ -127,14 +127,14 @@ const router = createRouter({
 
 // --- GUARDIA DE NAVEGACIÓN ---
 // --- GUARDIA DE NAVEGACIÓN ---
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const authStore = useAuthStore()
 
   // 0. Si vamos al Callback (Legacy) o Unauthorized, dejamos pasar SIEMPRE
   // Nota: Con la lógica anterior, el 'CallbackView' ya casi no se usará si entra por aquí,
   // pero lo dejamos por compatibilidad o fallback explícito.
   if (to.name === 'callback' || to.name === 'unauthorized') {
-    return next()
+    return true
   }
 
   const isAuthenticated = !!authStore.token
@@ -145,7 +145,7 @@ router.beforeEach(async (to, from, next) => {
       console.log("🔒 Acceso Hija: Usuario sin sesión. Intentando recuperación fluida...");
       // Guardamos a dónde iba para volver allí tras el login
       authStore.login(to.fullPath);
-      return;
+      return false;
     }
   }
 
@@ -159,7 +159,7 @@ router.beforeEach(async (to, from, next) => {
         // Si falla fetchUser (p.ej. token expirado), intentamos re-loguear automáticamente
         console.warn("🔄 Token local inválido. Intentando renovar sesión vía PKCE...");
         authStore.login(to.fullPath);
-        return;
+        return false;
       }
     }
 
@@ -171,7 +171,7 @@ router.beforeEach(async (to, from, next) => {
       console.warn(`⛔ Acceso denegado: Usuario no tiene el permiso '${to.meta.permission}'. Redirigiendo a App Madre...`);
       // DESACTIVADO PARA DEPURACIÓN:
       // window.location.href = `${motherAppUrl}/apps`;
-      // return;
+      // return false;
     }
 
     // Verificar Rol
@@ -182,11 +182,11 @@ router.beforeEach(async (to, from, next) => {
       console.warn(`⛔ Acceso denegado: Usuario no tiene el rol '${to.meta.role}'. Redirigiendo a App Madre...`);
       // DESACTIVADO PARA DEPURACIÓN:
       // window.location.href = `${motherAppUrl}/apps`;
-      // return;
+      // return false;
     }
   }
 
-  next()
+  return true
 })
 
 export default router
