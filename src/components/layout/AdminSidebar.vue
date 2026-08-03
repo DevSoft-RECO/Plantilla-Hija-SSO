@@ -249,7 +249,8 @@ const menuItems = computed(() => {
     const showConfigSolicitudes = authStore.hasRole('Super Admin');
 
     const configGeneralChildren = [
-        { label: 'Sincronización', route: '/admin/config/sincronizacion' }
+        { label: 'Sincronización', route: '/admin/config/sincronizacion' },
+        { label: 'Reporte General', route: '/admin/config/reporte-general' }
     ];
     const showConfigGeneral = authStore.hasRole('Super Admin');
 

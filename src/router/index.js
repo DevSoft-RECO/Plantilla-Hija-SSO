@@ -118,6 +118,12 @@ const router = createRouter({
           component: () => import('@/views/config/SincronizacionView.vue'),
           meta: { title: 'Sincronización', role: 'Super Admin' }
         },
+        {
+          path: 'config/reporte-general',
+          name: 'reporte-general',
+          component: () => import('@/views/config/ReporteGeneralView.vue'),
+          meta: { title: 'Reporte General', role: 'Super Admin' }
+        },
       ]
     },
 

@@ -7,6 +7,9 @@ export default {
     exportSolicitudes(params) {
         return axios.get('/solicitudes/export', { params, responseType: 'blob' });
     },
+    exportGeneralSolicitudes(params) {
+        return axios.get('/solicitudes/export-general', { params, responseType: 'blob' });
+    },
     getMisSolicitudes(params) {
         return axios.get('/solicitudes/mis-solicitudes', { params });
     },
