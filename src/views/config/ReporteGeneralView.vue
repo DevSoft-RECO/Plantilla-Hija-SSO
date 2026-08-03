@@ -41,19 +41,19 @@ const handleExport = async () => {
         if (filters.value.estado) params.estado = filters.value.estado;
 
         const response = await SolicitudService.exportGeneralSolicitudes(params);
-        
+
         // Crear el link de descarga
         const blob = new Blob([response.data], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        
+
         // Nombre de archivo con fecha y hora actual
         const now = new Date();
         const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
         const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
         link.setAttribute('download', `reporte_general_solicitudes_${dateStr}_${timeStr}.csv`);
-        
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -97,8 +97,8 @@ onMounted(() => {
         <!-- Encabezado con estética premium -->
         <div class="mb-8 flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-extrabold text-white tracking-tight">Reporte General del Sistema</h1>
-                <p class="text-sm text-gray-400 mt-2">Exporta un reporte CSV completo del seguimiento, tiempos de resolución y participantes de los tickets del sistema.</p>
+                <h1 class="text-3xl font-extrabold text-white dark:text-white tracking-tight">Reporte General del Sistema</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Exporta un reporte CSV completo del seguimiento, tiempos de resolución y participantes de los tickets del sistema.</p>
             </div>
             <div class="bg-gradient-to-tr from-emerald-500 to-teal-600 text-white p-3 rounded-2xl shadow-xl shadow-teal-500/20">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -108,8 +108,8 @@ onMounted(() => {
         </div>
 
         <!-- Panel de Filtros -->
-        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6">
-            <h2 class="text-lg font-semibold text-gray-200 flex items-center gap-2">
+        <div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-2xl space-y-6">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                 <svg class="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
                 </svg>
@@ -119,33 +119,33 @@ onMounted(() => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Fecha Inicio -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha de Creación Desde</label>
-                    <input 
-                        v-model="filters.fecha_inicio" 
-                        type="date" 
-                        class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha de Creación Desde</label>
+                    <input
+                        v-model="filters.fecha_inicio"
+                        type="date"
+                        class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     />
                 </div>
 
                 <!-- Fecha Fin -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha de Creación Hasta</label>
-                    <input 
-                        v-model="filters.fecha_fin" 
-                        type="date" 
-                        class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                    <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha de Creación Hasta</label>
+                    <input
+                        v-model="filters.fecha_fin"
+                        type="date"
+                        class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                     />
                 </div>
 
                 <!-- Categoría General -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Categoría General</label>
-                    <select 
-                        v-model="filters.categoria_general_id" 
-                        class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all [&>option]:bg-gray-800 [&>option]:text-white"
+                    <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Categoría General</label>
+                    <select
+                        v-model="filters.categoria_general_id"
+                        class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all cursor-pointer"
                     >
-                        <option value="">Todas las Categorías</option>
-                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id">
+                        <option value="" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">Todas las Categorías</option>
+                        <option v-for="cat in categorias" :key="cat.id" :value="cat.id" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                             {{ cat.nombre }}
                         </option>
                     </select>
@@ -153,13 +153,13 @@ onMounted(() => {
 
                 <!-- Estado -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Estado de Solicitud</label>
-                    <select 
-                        v-model="filters.estado" 
-                        class="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all [&>option]:bg-gray-800 [&>option]:text-white"
+                    <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado de Solicitud</label>
+                    <select
+                        v-model="filters.estado"
+                        class="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all cursor-pointer"
                     >
-                        <option value="">Todos los Estados</option>
-                        <option v-for="est in estados" :key="est.value" :value="est.value">
+                        <option value="" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">Todos los Estados</option>
+                        <option v-for="est in estados" :key="est.value" :value="est.value" class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                             {{ est.label }}
                         </option>
                     </select>
@@ -167,17 +167,17 @@ onMounted(() => {
             </div>
 
             <!-- Botones de Acción -->
-            <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-end border-t border-white/5">
-                <button 
-                    @click="cleanFilters" 
+            <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-end border-t border-gray-100 dark:border-gray-700">
+                <button
+                    @click="cleanFilters"
                     type="button"
-                    class="px-6 py-3 border border-white/10 hover:bg-white/5 text-gray-300 font-semibold rounded-xl transition flex items-center justify-center gap-2"
+                    class="px-6 py-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold rounded-xl transition flex items-center justify-center gap-2"
                 >
                     Limpiar Filtros
                 </button>
-                
-                <button 
-                    @click="handleExport" 
+
+                <button
+                    @click="handleExport"
                     :disabled="loading"
                     class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 transition flex items-center justify-center gap-2 min-w-[200px]"
                 >
